@@ -1,15 +1,75 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, Input, Button } from "@heroui/react";
 import { useNavigate } from "react-router";
+import { useTokenStore } from '../hooks/useTokenStore';
 
-function App() {
+function LoginPage() {
   const [submitted, setSubmitted] = React.useState(null);
   const navigate = useNavigate();
-  const onSubmit = (e) => {
+
+  const { setToken, setUser, token, user } = useTokenStore();
+
+   useEffect(() => {
+    if (token && user) {
+      navigate('/home');
+    }
+  }, [token, user, navigate]);
+
+  const onSubmit = async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
     setSubmitted(data);
-    navigate('/home');
+    console.log(data)
+
+    try {
+      let email = data.email
+      let senha = data.senha
+
+      console.log(email)
+            console.log(senha)
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, senha }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Erro no login:', errorText);
+
+        return;
+      }
+      const { token: loginToken } = await response.json();
+
+      const respostaEu = await fetch(`${import.meta.env.VITE_API_URL}/eu`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${loginToken}`,
+        },
+      });
+
+      if (!respostaEu.ok) {
+        const errorText = await respostaEu.text();
+        console.error('Erro ao obter dados do usuário:', errorText);
+
+        return;
+      }
+
+      const userData = await respostaEu.json();
+
+      setToken(loginToken);
+      setUser(userData);
+
+      localStorage.setItem('token', loginToken);
+      localStorage.setItem('user', JSON.stringify(userData));
+
+      navigate('/home');
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+
+    }
   };
 
   return (
@@ -24,15 +84,15 @@ function App() {
             errorMessage="Coloque um email valido"
             name="email"
             className="bg-transparent border-2 border-[#9B7F67] rounded-xl "
-            placeholder="Enter your email"
+            placeholder="Coloque seu email"
             type="email"
           />
           <Input
             isRequired
             errorMessage="Esqueceu a senha"
-            name="password"
+            name="senha"
             className="bg-transparent border-2 border-[#9B7F67] rounded-xl "
-            placeholder="Enter your password"
+            placeholder="Coloque sua senha"
             type="password"
           />
           <Button
@@ -49,4 +109,5 @@ function App() {
   )
 }
 
-export default App
+export default LoginPage
+
