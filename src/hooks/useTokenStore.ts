@@ -20,6 +20,7 @@ interface User {
     naturalidade: string;
     nacionalidade: string;
     raca: string;
+    filhos: number;
     telefone: string;
     celular: string;
     profissao: string;

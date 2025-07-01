@@ -6,7 +6,7 @@ import './index.css'
 // Componentes de página
 import LoginPage from './pages/LoginPage.tsx'
 import HomePage from './pages/HomePage.tsx'
-
+import AddClientes from './pages/AddClientes.tsx'
 
 import { HeroUIProvider } from "@heroui/react"
 import {  createBrowserRouter, useHref, useNavigate, Outlet, RouterProvider } from 'react-router'
@@ -26,9 +26,14 @@ const router = createBrowserRouter([
       },
       {
         element: <RootLayout />,
-        children: [{
+        children: [
+          {
           path: '/home',
           element: <HomePage />
+        },
+        {
+          path: '/add-cliente',
+          element: <AddClientes />
         },
         ]
       }
