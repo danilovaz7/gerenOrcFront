@@ -14,6 +14,7 @@ export interface Usuario {
   complemento: string;
   cidade: string;
   bairro: string;
+   filhos: number;
   cep: string;
   naturalidade: string;
   nacionalidade: string;

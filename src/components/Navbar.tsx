@@ -29,10 +29,10 @@ function Navbar() {
                         <p onClick={()  => {  navigate('/home'); }}>Home</p>
                         <p>|</p>
                         <p>Procedimentos</p>
-                        <p>|</p>
+                        <p>|</p> 
                         <p>Orçamentos</p>
                         <p>|</p>
-                        <p>Clientes</p>
+                        <p onClick={()  => {  navigate('/listagem-clientes'); }}>Clientes</p>
 
                     </div>
                 </div>

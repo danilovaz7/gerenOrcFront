@@ -7,6 +7,8 @@ import './index.css'
 import LoginPage from './pages/LoginPage.tsx'
 import HomePage from './pages/HomePage.tsx'
 import AddClientes from './pages/AddClientes.tsx'
+import ListagemClientesPage from './pages/ListagemClientesPage.tsx'
+import InfoClientes from './pages/InfoCliente.tsx'
 
 import { HeroUIProvider } from "@heroui/react"
 import {  createBrowserRouter, useHref, useNavigate, Outlet, RouterProvider } from 'react-router'
@@ -34,6 +36,14 @@ const router = createBrowserRouter([
         {
           path: '/add-cliente',
           element: <AddClientes />
+        },
+        {
+          path: '/listagem-clientes',
+          element: <ListagemClientesPage />
+        },
+         {
+          path: '/listagem-clientes/:idUsuario',
+          element: <InfoClientes />
         },
         ]
       }

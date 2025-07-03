@@ -62,6 +62,7 @@ function AddClientes() {
             email: '',
             dt_nascimento: '' as string,
             rg: '',
+                cpf: '',
             estado_civil: '',
             sexo: '',
             filhos: undefined,
@@ -154,6 +155,18 @@ function AddClientes() {
                         label="RG"
                         labelPlacement="outside"
                         placeholder="99999999999..."
+                        type="text"
+                    />
+                     <Input
+                        isRequired
+                        className="w-[20%]"
+                        errorMessage="Insira um cpf válido"
+                        onChange={formik.handleChange}
+                        value={formik.values.cpf}
+                        name="cpf"
+                        label="CPF"
+                        labelPlacement="outside"
+                        placeholder="34055948123..."
                         type="text"
                     />
                     <Input
