@@ -6,7 +6,9 @@ import { Button, Checkbox, CheckboxGroup, DateInput, Form, Input, NumberInput, R
 import { CalendarDate, parseDate } from "@internationalized/date";
 
 import type { Usuario } from '../interfaces/Usuario';
-import React from "react";
+import PerguntaSIMNAO from "../components/PerguntaSIMNAO";
+import PerguntaCResp from "../components/PerguntaCResp";
+
 
 export const CalendarIcon = (props: any) => (
     <svg
@@ -38,8 +40,6 @@ function InfoClientes() {
     const [usuario, setUsuario] = useState<Usuario | null>(null);
     const navigate = useNavigate();
 
-
-
     useEffect(() => {
         async function pegaUsuario() {
             const res = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/${idUsuario}`, {
@@ -55,6 +55,28 @@ function InfoClientes() {
         }
         pegaUsuario();
     }, [idUsuario, token]);
+
+    const condFields = ["cond_diabetes", "cond_dist_renais", "cond_dormir", "cond_pressao", "cond_ulcera", "cond_alergia",
+        "cond_vitaminas", "cond_hormonio", "cond_anticoagulante", "cond_sist_nervoso", "cond_artrite", "cond_anticonvulsivante",
+        "cond_dor_cabeca"];
+
+    const alergFields = ["alerg_penincilina", "alerg_sulfa", "alerg_ass", "alerg_anestesico_loc"];
+
+    const sintFields = ["sint_dor_cabeca", "sint_tontura", "sint_nauseas", "sint_dor_nuca", "sint_palpitacoes", "sint_zumbidos",
+        "sint_perda_memoria", "sint_perda_equilibrio",];
+
+    const cardFields = ["card_dor_peito", "card_dor_costas", "card_cansa", "card_arritmia", "card_sopro", "card_dorme_altura",
+        "card_incha_pe"];
+
+    const respFields = ["resp_asma", "resp_bronquite", "resp_tosse", "resp_tb"];
+
+    const vicioFields = ["fuma", "bebe", "range_dentes", "aperta_dentes", "usa_palito"];
+
+    const guFields = ["gu_insuficiencia", "gu_calculo", "gu_infeccao", "gu_doenca_venerea"];
+
+    const doencasFields = ["diarreia_cronica", "febre_const", "sudorese", "cancer_pele", "diabetes_desc", "probl_cicatriz",
+        "doenca_cont", "baixa_imun", "dermatite"];
+
 
 
     const formik = useFormik({
@@ -202,7 +224,6 @@ function InfoClientes() {
                 doenca_cont: usuario?.anamnese?.doenca_cont ?? false,
                 baixa_imun: usuario?.anamnese?.baixa_imun ?? false,
                 dermatite: usuario?.anamnese?.dermatite ?? false,
-
                 familia_info: usuario?.anamnese?.familia_info ?? '',
             },
             examesComplementares: {
@@ -216,8 +237,8 @@ function InfoClientes() {
             },
         },
         onSubmit: async (values) => {
-     
-           
+            console.log(values)
+
             const res = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/${idUsuario}`, {
                 method: 'PUT',
                 headers: {
@@ -226,11 +247,11 @@ function InfoClientes() {
                 },
                 body: JSON.stringify(values),
             });
-            
+
             if (res.ok) navigate('/home');
-           
+
         },
-        
+
     });
 
     if (!usuario) {
@@ -240,7 +261,7 @@ function InfoClientes() {
     return (
         <div className="flex h-full flex-col justify-start gap-16  items-center w-screen p-2">
             <Form
-                className="w-[95%] sm:w-[80%] flex flex-col justify-center items-start text-center  gap-6 bg-[rgba(155,127,103,0.26)]  p-6 sm:p-10 "
+                className="w-[95%] sm:w-[80%] flex flex-col justify-center items-start text-center  gap-10 bg-[rgba(155,127,103,0.26)]  p-6 sm:p-10 "
                 onSubmit={formik.handleSubmit}
                 onReset={formik.handleReset}
             >
@@ -564,206 +585,83 @@ function InfoClientes() {
 
                 {/*            DADOS COMPLEMENTARES           */}
                 <h1 className="items-center">Dados complementares</h1>
+                <PerguntaCResp
+                    pergunta={"Teve complicação durante tratamento odontológico?"} OnValueChangeInput={formik.handleChange} valueStringInput={formik.values.anamnese.comp_trat_odon_obs}
+                    valueStringRadio={String(formik.values.anamnese.comp_trat_odon)} inputName={"anamnese.comp_trat_odon_obs"}
+                    OnValueChangeRadio={(val) => {
+                        const bool = val === "true";
+                        formik.setFieldValue("anamnese.comp_trat_odon", bool);
+                        if (!bool) {
+                            formik.setFieldValue("anamnese.comp_trat_odon_obs", "");
+                        }
+                    }} />
 
-                <div className="flex w-full flex-col gap-2">
-                    <div className="flex justify-between w-[60%]">
-                        <p className="text-black text-lg">
-                            Teve complicação durante
-                            tratamento odontológico?
-                        </p>
-                        <RadioGroup
-                            orientation="horizontal"
-                            value={String(formik.values.anamnese.comp_trat_odon)}
-                            onValueChange={(val) => {
-                                const bool = val === "true";
-                                formik.setFieldValue("anamnese.comp_trat_odon", bool);
-                                if (!bool) {
-                                    formik.setFieldValue("anamnese.comp_trat_odon_obs", "");
-                                }
-                            }}
-                        >
-                            <Radio value="true">Sim</Radio>
-                            <Radio value="false">Não</Radio>
-                        </RadioGroup>
-                    </div>
-                    <Input
-                        className="w-[100%]"
-                        errorMessage=""
-                        onChange={formik.handleChange}
-                        value={formik.values.anamnese.comp_trat_odon_obs}
-                        name="anamnese.comp_trat_odon_obs"
-                        placeholder="Qual?..."
-                        type="text"
-                    />
-                </div>
-                <div className="flex w-full flex-col gap-2 ">
-                    <div className="flex justify-between w-[60%]">
-                        <p className="text-black text-lg">No momento está em tratamento médico?</p>
-                        <RadioGroup
-                            orientation="horizontal"
-                            value={String(formik.values.anamnese.em_trat_medico)}
-                            onValueChange={(val) => {
-                                const bool = val === "true";
-                                formik.setFieldValue("anamnese.em_trat_medico", bool);
-                                if (!bool) {
-                                    formik.setFieldValue("anamnese.em_trat_medico_obs", "");
-                                }
-                            }}
-                        >
-                            <Radio value="true">Sim</Radio>
-                            <Radio value="false">Não</Radio>
-                        </RadioGroup>
-                    </div>
-                    <Input
-                        className="w-[100%]"
-                        errorMessage=""
-                        onChange={formik.handleChange}
-                        value={formik.values.anamnese.em_trat_medico_obs}
-                        name="anamnese.em_trat_medico_obs"
-                        placeholder="Qual?..."
-                        type="text"
-                    />
-                </div>
-                <div className="flex w-full flex-col gap-2 ">
-                    <div className="flex justify-between w-[60%]">
-                        <p className="text-black text-lg">Já fez transfusões de sangue?</p>
-                        <RadioGroup
-                            orientation="horizontal"
-                            value={String(formik.values.anamnese.transfusao)}
-                            onValueChange={(val) => {
-                                const bool = val === "true";
-                                formik.setFieldValue("anamnese.transfusao", bool);
-                                if (!bool) {
-                                    formik.setFieldValue("anamnese.transfusao_obs", "");
-                                }
-                            }}
-                        >
-                            <Radio value="true">Sim</Radio>
-                            <Radio value="false">Não</Radio>
-                        </RadioGroup>
-                    </div>
-                    <Input
-                        className="w-[100%]"
-                        errorMessage=""
-                        onChange={formik.handleChange}
-                        value={formik.values.anamnese.transfusao_obs}
-                        name="anamnese.transfusao_obs"
-                        placeholder="Qual?..."
-                        type="text"
-                    />
-                </div>
-                <div className="flex w-full flex-col gap-2 ">
-                    <div className="flex justify-between w-[60%]">
-                        <p className="text-black text-lg">Tem ou teve alguma doença grave?</p>
-                        <RadioGroup
-                            orientation="horizontal"
-                            value={String(formik.values.anamnese.doenca_grave)}
-                            onValueChange={(val) => {
-                                const bool = val === "true";
-                                formik.setFieldValue("anamnese.doenca_grave", bool);
-                                if (!bool) {
-                                    formik.setFieldValue("anamnese.doenca_grave_obs", "");
-                                }
-                            }}
-                        >
-                            <Radio value="true">Sim</Radio>
-                            <Radio value="false">Não</Radio>
-                        </RadioGroup>
-                    </div>
-                    <Input
-                        className="w-[100%]"
-                        errorMessage=""
-                        onChange={formik.handleChange}
-                        value={formik.values.anamnese.doenca_grave_obs}
-                        name="anamnese.doenca_grave_obs"
-                        placeholder="Qual?..."
-                        type="text"
-                    />
-                </div>
-                <div className="flex w-full flex-col gap-2 ">
-                    <div className="flex justify-between w-[60%]">
-                        <p className="text-black text-lg">Tem alguma alergia geral?</p>
-                        <RadioGroup
-                            orientation="horizontal"
-                            value={String(formik.values.anamnese.alergia_geral)}
-                            onValueChange={(val) => {
-                                const bool = val === "true";
-                                formik.setFieldValue("anamnese.alergia_geral", bool);
-                                if (!bool) {
-                                    formik.setFieldValue("anamnese.alergia_geral_obs", "");
-                                }
-                            }}
-                        >
-                            <Radio value="true">Sim</Radio>
-                            <Radio value="false">Não</Radio>
-                        </RadioGroup>
-                    </div>
-                    <Input
-                        className="w-[100%]"
-                        errorMessage=""
-                        onChange={formik.handleChange}
-                        value={formik.values.anamnese.alergia_geral_obs}
-                        name="anamnese.alergia_geral_obs"
-                        placeholder="Qual?..."
-                        type="text"
-                    />
-                </div>
-                <div className="flex w-full flex-col gap-2 ">
-                    <div className="flex justify-between w-[60%]">
-                        <p className="text-black text-lg">Ja foi hospitalizado?</p>
-                        <RadioGroup
-                            orientation="horizontal"
-                            value={String(formik.values.anamnese.hospitalizado)}
-                            onValueChange={(val) => {
-                                const bool = val === "true";
-                                formik.setFieldValue("anamnese.hospitalizado", bool);
-                                if (!bool) {
-                                    formik.setFieldValue("anamnese.hospitalizado_obs", "");
-                                }
-                            }}
-                        >
-                            <Radio value="true">Sim</Radio>
-                            <Radio value="false">Não</Radio>
-                        </RadioGroup>
-                    </div>
-                    <Input
-                        className="w-[100%]"
-                        errorMessage=""
-                        onChange={formik.handleChange}
-                        value={formik.values.anamnese.hospitalizado_obs}
-                        name="anamnese.hospitalizado_obs"
-                        placeholder="Qual?..."
-                        type="text"
-                    />
-                </div>
-                <div className="flex w-full flex-col gap-2 ">
-                    <div className="flex justify-between w-[60%]">
-                        <p className="text-black text-lg">Ja foi submetido a cirurgia?</p>
-                        <RadioGroup
-                            orientation="horizontal"
-                            value={String(formik.values.anamnese.submetido_cirurgia)}
-                            onValueChange={(val) => {
-                                const bool = val === "true";
-                                formik.setFieldValue("anamnese.submetido_cirurgia", bool);
-                                if (!bool) {
-                                    formik.setFieldValue("anamnese.cirurgia_obs", "");
-                                }
-                            }}
-                        >
-                            <Radio value="true">Sim</Radio>
-                            <Radio value="false">Não</Radio>
-                        </RadioGroup>
-                    </div>
-                    <Input
-                        className="w-[100%]"
-                        errorMessage=""
-                        onChange={formik.handleChange}
-                        value={formik.values.anamnese.cirurgia_obs}
-                        name="anamnese.cirurgia_obs"
-                        placeholder="Qual?..."
-                        type="text"
-                    />
-                </div>
+                <PerguntaCResp
+                    pergunta={"No momento está em tratamento médico?"} OnValueChangeInput={formik.handleChange} valueStringInput={formik.values.anamnese.em_trat_medico_obs}
+                    valueStringRadio={String(formik.values.anamnese.em_trat_medico)} inputName={"anamnese.em_trat_medico_obs"}
+                    OnValueChangeRadio={(val) => {
+                        const bool = val === "true";
+                        formik.setFieldValue("anamnese.em_trat_medico", bool);
+                        if (!bool) {
+                            formik.setFieldValue("anamnese.em_trat_medico_obs", "");
+                        }
+                    }} />
+
+                <PerguntaCResp
+                    pergunta={"Já fez transfusões de sangue?"} OnValueChangeInput={formik.handleChange} valueStringInput={formik.values.anamnese.transfusao_obs}
+                    valueStringRadio={String(formik.values.anamnese.transfusao)} inputName={"anamnese.transfusao_obs"}
+                    OnValueChangeRadio={(val) => {
+                        const bool = val === "true";
+                        formik.setFieldValue("anamnese.transfusao", bool);
+                        if (!bool) {
+                            formik.setFieldValue("anamnese.transfusao_obs", "");
+                        }
+                    }} />
+
+                <PerguntaCResp
+                    pergunta={"Tem ou teve alguma doença grave?"} OnValueChangeInput={formik.handleChange} valueStringInput={formik.values.anamnese.doenca_grave_obs}
+                    valueStringRadio={String(formik.values.anamnese.doenca_grave)} inputName={"anamnese.doenca_grave_obs"}
+                    OnValueChangeRadio={(val) => {
+                        const bool = val === "true";
+                        formik.setFieldValue("anamnese.doenca_grave", bool);
+                        if (!bool) {
+                            formik.setFieldValue("anamnese.doenca_grave_obs", "");
+                        }
+                    }} />
+
+                <PerguntaCResp
+                    pergunta={"Tem alguma alergia geral?"} OnValueChangeInput={formik.handleChange} valueStringInput={formik.values.anamnese.alergia_geral_obs}
+                    valueStringRadio={String(formik.values.anamnese.alergia_geral)} inputName={"anamnese.alergia_geral_obs"}
+                    OnValueChangeRadio={(val) => {
+                        const bool = val === "true";
+                        formik.setFieldValue("anamnese.alergia_geral", bool);
+                        if (!bool) {
+                            formik.setFieldValue("anamnese.alergia_geral_obs", "");
+                        }
+                    }} />
+
+                <PerguntaCResp
+                    pergunta={"Ja foi hospitalizado?"} OnValueChangeInput={formik.handleChange} valueStringInput={formik.values.anamnese.hospitalizado_obs}
+                    valueStringRadio={String(formik.values.anamnese.hospitalizado)} inputName={"anamnese.hospitalizado_obs"}
+                    OnValueChangeRadio={(val) => {
+                        const bool = val === "true";
+                        formik.setFieldValue("anamnese.hospitalizado", bool);
+                        if (!bool) {
+                            formik.setFieldValue("anamnese.hospitalizado_obs", "");
+                        }
+                    }} />
+
+                <PerguntaCResp
+                    pergunta={"Ja foi submetido a cirurgia?"} OnValueChangeInput={formik.handleChange} valueStringInput={formik.values.anamnese.cirurgia_obs}
+                    valueStringRadio={String(formik.values.anamnese.submetido_cirurgia)} inputName={"anamnese.cirurgia_obs"}
+                    OnValueChangeRadio={(val) => {
+                        const bool = val === "true";
+                        formik.setFieldValue("anamnese.submetido_cirurgia", bool);
+                        if (!bool) {
+                            formik.setFieldValue("anamnese.cirurgia_obs", "");
+                        }
+                    }} />
+
                 <div className="flex w-full flex-col gap-2 ">
                     <div className="flex justify-between w-[60%]">
                         <p className="text-black text-lg">Ja recebeu anestesia?</p>
@@ -808,131 +706,661 @@ function InfoClientes() {
                         type="text"
                     />
                 </div>
-                <div className="flex w-full flex-col gap-2 ">
-                    <div className="flex justify-between w-[60%]">
-                        <p className="text-black text-lg">Sente dor em algum dente?</p>
-                        <RadioGroup
-                            orientation="horizontal"
-                            value={String(formik.values.anamnese.dor_dente)}
-                            onValueChange={(val) => {
-                                const bool = val === "true";
-                                formik.setFieldValue("anamnese.dor_dente", bool);
-                                if (!bool) {
-                                    formik.setFieldValue("anamnese.dor_dente_obs", "");
-                                }
-                            }}
-                        >
-                            <Radio value="true">Sim</Radio>
-                            <Radio value="false">Não</Radio>
-                        </RadioGroup>
-                    </div>
-                    <Input
-                        className="w-[100%]"
-                        errorMessage=""
-                        onChange={formik.handleChange}
-                        value={formik.values.anamnese.dor_dente_obs}
-                        name="anamnese.dor_dente_obs"
-                        placeholder="Qual?..."
-                        type="text"
-                    />
-                </div>
-                <div className="flex w-full flex-col gap-2 ">
-                    <div className="flex justify-between w-[60%]">
-                        <p className="text-black text-lg">É portador de prótese cardíaca?</p>
-                        <RadioGroup
-                            orientation="horizontal"
-                            value={String(formik.values.anamnese.protese_cardiaca)}
-                            onValueChange={(val) => {
-                                const bool = val === "true";
-                                formik.setFieldValue("anamnese.protese_cardiaca", bool);
-                                if (!bool) {
-                                    formik.setFieldValue("anamnese.protese_cardiaca_obs", "");
-                                }
-                            }}
-                        >
-                            <Radio value="true">Sim</Radio>
-                            <Radio value="false">Não</Radio>
-                        </RadioGroup>
-                    </div>
-                    <Input
-                        className="w-[100%]"
-                        errorMessage=""
-                        onChange={formik.handleChange}
-                        value={formik.values.anamnese.protese_cardiaca_obs}
-                        name="anamnese.protese_cardiaca_obs"
-                        placeholder="Qual?..."
-                        type="text"
-                    />
-                </div>
-                <div className="flex w-full flex-col gap-2 ">
-                    <div className="flex justify-between w-[60%]">
-                        <p className="text-black text-lg">Ja apresentou sangramento anormal associado com extração, cirurgia ou trauma?</p>
-                        <RadioGroup
-                            orientation="horizontal"
-                            value={String(formik.values.anamnese.sangramento_anormal)}
-                            onValueChange={(val) => {
-                                const bool = val === "true";
-                                formik.setFieldValue("anamnese.sangramento_anormal", bool);
-                                if (!bool) {
-                                    formik.setFieldValue("anamnese.sangramento_anormal_obs", "");
-                                }
-                            }}
-                        >
-                            <Radio value="true">Sim</Radio>
-                            <Radio value="false">Não</Radio>
-                        </RadioGroup>
-                    </div>
-                    <Input
-                        className="w-[100%]"
-                        errorMessage=""
-                        onChange={formik.handleChange}
-                        value={formik.values.anamnese.sangramento_anormal_obs}
-                        name="anamnese.sangramento_anormal_obs"
-                        placeholder="Qual?..."
-                        type="text"
-                    />
-                </div>
 
-                {/*            ANAMNESE          
+                <PerguntaCResp
+                    pergunta={"Sente dor em algum dente?"} OnValueChangeInput={formik.handleChange} valueStringInput={formik.values.anamnese.dor_dente_obs}
+                    valueStringRadio={String(formik.values.anamnese.dor_dente)} inputName={"anamnese.dor_dente_obs"}
+                    OnValueChangeRadio={(val) => {
+                        const bool = val === "true";
+                        formik.setFieldValue("anamnese.dor_dente", bool);
+                        if (!bool) {
+                            formik.setFieldValue("anamnese.dor_dente_obs", "");
+                        }
+                    }} />
+
+                <PerguntaCResp
+                    pergunta={"É portador de prótese cardíaca?"} OnValueChangeInput={formik.handleChange} valueStringInput={formik.values.anamnese.protese_cardiaca_obs}
+                    valueStringRadio={String(formik.values.anamnese.protese_cardiaca)} inputName={"anamnese.protese_cardiaca_obs"}
+                    OnValueChangeRadio={(val) => {
+                        const bool = val === "true";
+                        formik.setFieldValue("anamnese.protese_cardiaca", bool);
+                        if (!bool) {
+                            formik.setFieldValue("anamnese.protese_cardiaca_obs", "");
+                        }
+                    }} />
+
+                <PerguntaCResp
+                    pergunta={"Ja apresentou sangramento anormal associado com extração, cirurgia ou trauma?"} OnValueChangeInput={formik.handleChange} valueStringInput={formik.values.anamnese.sangramento_anormal_obs}
+                    valueStringRadio={String(formik.values.anamnese.sangramento_anormal)} inputName={"anamnese.sangramento_anormal_obs"}
+                    OnValueChangeRadio={(val) => {
+                        const bool = val === "true";
+                        formik.setFieldValue("anamnese.sangramento_anormal", bool);
+                        if (!bool) {
+                            formik.setFieldValue("anamnese.sangramento_anormal_obs", "");
+                        }
+                    }} />
+
+                {/*            ANAMNESE       */}
                 <h1 className="items-center">Anamnese</h1>
-
                 <div className="flex w-full flex-col gap-4 ">
                     <div className="flex justify-between w-[60%]">
                         <p className="text-black text-lg">Esta tomando algum medicamento?</p>
-                        <RadioGroup orientation="horizontal" value={selected} onValueChange={setSelected}>
-                            <Radio value="sim">Sim</Radio>
-                            <Radio value="nao">Não</Radio>
+                        <RadioGroup
+                            orientation="horizontal"
+                            value={String(formik.values.anamnese.tomando_medicamento)}
+                            onValueChange={(val) => {
+                                const bool = val === "true";
+                                formik.setFieldValue("anamnese.tomando_medicamento", bool);
+                                if (!bool) {
+                                    formik.setFieldValue("anamnese.tomando_medicamento_obs", "");
+                                }
+                            }}
+                        >
+                            <Radio value="true">Sim</Radio>
+                            <Radio value="false">Não</Radio>
                         </RadioGroup>
                     </div>
                     <Input
                         className="w-[100%]"
                         errorMessage=""
                         onChange={formik.handleChange}
-                        name=""
+                        value={formik.values.anamnese.tomando_medicamento_obs}
+                        name="anamnese.tomando_medicamento_obs"
                         placeholder="Qual(is)?..."
                         type="text"
                     />
                     <CheckboxGroup
                         color="warning"
-                        value={selected2}
-                        onValueChange={setSelected2}
                         orientation="horizontal"
+                        value={condFields.filter(key => formik.values.anamnese[key as keyof typeof formik.values.anamnese] === true)}
+                        onValueChange={(selected: string[]) => {
+                            condFields.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, false)
+                            );
+                            selected.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, true)
+                            );
+                        }}
                     >
-                        <Checkbox value="buenos-aires">Buenos Aires</Checkbox>
-                        <Checkbox value="sydney">Sydney</Checkbox>
-                        <Checkbox value="san-francisco">San Francisco</Checkbox>
-                        <Checkbox value="rio-de-janeiro">Rio de Janeiro</Checkbox>
-                        <Checkbox value="tokyo">Tokyo</Checkbox>
-                        <Checkbox value="london">London</Checkbox>
-                        <Checkbox value="paris">Paris</Checkbox>
-                        <Checkbox value="berlin">Berlin</Checkbox>
-                        <Checkbox value="madrid">Madrid</Checkbox>
-                        <Checkbox value="rome">Rome</Checkbox>
-                        <Checkbox value="moscow">Moscow</Checkbox>
-                        <Checkbox value="beijing">Beijing</Checkbox>
+                        <Checkbox value="cond_diabetes">Diabetes</Checkbox>
+                        <Checkbox value="cond_dist_renais">Distúrbios renais</Checkbox>
+                        <Checkbox value="cond_dormir">Dormir</Checkbox>
+                        <Checkbox value="cond_coracao">Coração</Checkbox>
+                        <Checkbox value="cond_pressao">Pressão</Checkbox>
+                        <Checkbox value="cond_ulcera">Úlcera</Checkbox>
+                        <Checkbox value="cond_alergia">Alergia</Checkbox>
+                        <Checkbox value="cond_vitaminas">Vitaminas</Checkbox>
+                        <Checkbox value="cond_hormonio">Hormônio</Checkbox>
+                        <Checkbox value="cond_anticoagulante">Anticoagulante</Checkbox>
+                        <Checkbox value="cond_sist_nervoso">Sistema nervoso</Checkbox>
+                        <Checkbox value="cond_artrite">Artrite</Checkbox>
+                        <Checkbox value="cond_anticonvulsivante">Anticonvulsionante</Checkbox>
+                        <Checkbox value="cond_dor_cabeca">Dor de cabeça</Checkbox>
                     </CheckboxGroup>
                 </div>
- */}
+
+                <div className="flex w-full flex-col gap-4 ">
+                    <div className="flex justify-between w-[60%]">
+                        <p className="text-black text-lg">Tem alergia a algum medicamento?</p>
+                        <RadioGroup
+                            orientation="horizontal"
+                            value={String(formik.values.anamnese.alergia_med)}
+                            onValueChange={(val) => {
+                                const bool = val === "true";
+                                formik.setFieldValue("anamnese.alergia_med", bool);
+                                if (!bool) {
+                                    formik.setFieldValue("anamnese.alergia_med_obs", "");
+                                }
+                            }}
+                        >
+                            <Radio value="true">Sim</Radio>
+                            <Radio value="false">Não</Radio>
+                        </RadioGroup>
+                    </div>
+                    <Input
+                        className="w-[100%]"
+                        errorMessage=""
+                        onChange={formik.handleChange}
+                        value={formik.values.anamnese.alergia_med_obs}
+                        name="anamnese.alergia_med_obs"
+                        placeholder="Qual(is)?..."
+                        type="text"
+                    />
+                    <CheckboxGroup
+                        color="warning"
+                        orientation="horizontal"
+                        value={alergFields.filter(key => formik.values.anamnese[key as keyof typeof formik.values.anamnese] === true)}
+                        onValueChange={(selected: string[]) => {
+                            alergFields.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, false)
+                            );
+                            selected.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, true)
+                            );
+                        }}
+                    >
+                        <Checkbox value="alerg_penincilina">Penincelina</Checkbox>
+                        <Checkbox value="alerg_sulfa">Sulfa</Checkbox>
+                        <Checkbox value="alerg_ass">ASS - Ácido Acetil Salicítico</Checkbox>
+                        <Checkbox value="alerg_anestesico_loc">Anestesico local</Checkbox>
+                    </CheckboxGroup>
+                </div>
+
+                <div className="flex w-full flex-col gap-4">
+                    <div className="flex justify-between w-[40%]">
+                        <p className="text-black text-lg">Sua pressão é:</p>
+                        <RadioGroup
+                            orientation="horizontal"
+                            value={formik.values.anamnese.pressao_tipo}
+                            onValueChange={(val: string) =>
+                                formik.setFieldValue("anamnese.pressao_tipo", val)
+                            }
+                        >
+                            <Radio value="Baixa">Baixa</Radio>
+                            <Radio value="Alta">Alta</Radio>
+                            <Radio value="Normal">Normal</Radio>
+                            <Radio value="Não sabe">Não sabe</Radio>
+                        </RadioGroup>
+                    </div>
+                </div>
+
+                <div className="flex w-full flex-col gap-4 ">
+                    <div className="flex justify-between w-[60%]">
+                        <p className="text-black text-lg">Assinale caso apresente algum dos sintomas abaixo:</p>
+                    </div>
+                    <CheckboxGroup
+                        color="warning"
+                        orientation="horizontal"
+                        value={sintFields.filter(key => formik.values.anamnese[key as keyof typeof formik.values.anamnese] === true)}
+                        onValueChange={(selected: string[]) => {
+                            sintFields.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, false)
+                            );
+                            selected.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, true)
+                            );
+                        }}
+                    >
+                        <Checkbox value="sint_dor_cabeca">Dor de cabeça</Checkbox>
+                        <Checkbox value="sint_tontura">Tontura</Checkbox>
+                        <Checkbox value="sint_nauseas">Nauseas</Checkbox>
+                        <Checkbox value="sint_dor_nuca">Dor na nuca</Checkbox>
+                        <Checkbox value="sint_palpitacoes">Palpitações</Checkbox>
+                        <Checkbox value="sint_zumbidos">Zumbidos</Checkbox>
+                        <Checkbox value="sint_perda_memoria">Perda de memória</Checkbox>
+                        <Checkbox value="sint_perda_equilibrio">Perda de equilibrio</Checkbox>
+                    </CheckboxGroup>
+                </div>
+
+                <div className="flex w-full flex-col gap-4 ">
+                    <div className="flex justify-between w-[40%]">
+                        <p className="text-black text-lg">É diabético?</p>
+                        <RadioGroup
+                            orientation="horizontal"
+                            value={String(formik.values.anamnese.diabetico)}
+                            onValueChange={(val: string) =>
+                                formik.setFieldValue("anamnese.diabetico", val)
+                            }
+                        >
+                            <Radio value="SIM">Sim</Radio>
+                            <Radio value="NÃO">Não</Radio>
+                            <Radio value="NÃO SABE">Não sabe</Radio>
+                        </RadioGroup>
+                    </div>
+                </div>
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.diab_familia)} pergunta={"Tem diabetico na familia?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.diab_familia", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.emagreceu)} pergunta={"Emagresceu muito ultimamente?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.emagreceu", bool);
+                }} />
+
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.come_muito)} pergunta={"Come muito?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.come_muito", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.urina_freq)} pergunta={"Urina com frequência?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.urina_freq", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.muita_sede)} pergunta={"Tem muita sede?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.muita_sede", bool);
+                }} />
+
+                <div className="flex w-full flex-col gap-4 ">
+                    <div className="flex justify-between w-[40%]">
+                        <p className="text-black text-lg">Apresenta problemas respiratórios?</p>
+                        <RadioGroup
+                            orientation="horizontal"
+                            value={String(formik.values.anamnese.prob_respiratorio)}
+                            onValueChange={(val) => {
+                                const bool = val === "true";
+                                formik.setFieldValue("anamnese.prob_respiratorio", bool);
+                            }}
+                        >
+                            <Radio value="true">Sim</Radio>
+                            <Radio value="false">Não</Radio>
+                        </RadioGroup>
+                    </div>
+                    <CheckboxGroup
+                        color="warning"
+                        orientation="horizontal"
+                        value={respFields.filter(key => formik.values.anamnese[key as keyof typeof formik.values.anamnese] === true)}
+                        onValueChange={(selected: string[]) => {
+                            respFields.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, false)
+                            );
+                            selected.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, true)
+                            );
+                        }}
+                    >
+                        <Checkbox value="resp_asma">Asma</Checkbox>
+                        <Checkbox value="resp_bronquite">Bronquite</Checkbox>
+                        <Checkbox value="resp_tosse">Tosse frequênte</Checkbox>
+                        <Checkbox value="resp_tb">Tuberculose</Checkbox>
+                    </CheckboxGroup>
+                </div>
+
+                <div className="flex w-full flex-col gap-4 ">
+                    <div className="flex justify-between w-[40%]">
+                        <p className="text-black text-lg">Tem problemas cardíacos?</p>
+                        <RadioGroup
+                            orientation="horizontal"
+                            value={String(formik.values.anamnese.prob_cardiaco)}
+                            onValueChange={(val: string) =>
+                                formik.setFieldValue("anamnese.prob_cardiaco", val)
+                            }
+                        >
+                            <Radio value="SIM">Sim</Radio>
+                            <Radio value="NÃO">Não</Radio>
+                            <Radio value="NÃO SABE">Não sabe</Radio>
+                        </RadioGroup>
+                    </div>
+                    <CheckboxGroup
+                        color="warning"
+                        orientation="horizontal"
+                        value={cardFields.filter(key => formik.values.anamnese[key as keyof typeof formik.values.anamnese] === true)}
+                        onValueChange={(selected: string[]) => {
+                            cardFields.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, false)
+                            );
+                            selected.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, true)
+                            );
+                        }}
+                    >
+                        <Checkbox value="card_dor_peito">Dor no peito</Checkbox>
+                        <Checkbox value="card_dor_costas">Dor nas costas</Checkbox>
+                        <Checkbox value="card_cansa">Cnsa com facilidade</Checkbox>
+                        <Checkbox value="card_arritmia">Arritimia</Checkbox>
+                        <Checkbox value="card_sopro">Sopro</Checkbox>
+                        <Checkbox value="card_dorme_altura">Dorme com a cabeça alta</Checkbox>
+                        <Checkbox value="card_incha_pe">Pés incham com frequência</Checkbox>
+                    </CheckboxGroup>
+                </div>
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.prob_articulacoes)} pergunta={"Tem problemas nas articulações?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.prob_articulacoes", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.gravida)} pergunta={"Está grávida?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.gravida", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.anticoncepcional)} pergunta={"Usa anticoncepcional?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.anticoncepcional", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.sangra_facil)} pergunta={"Costuma sangrar muito quando se machuca?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.sangra_facil", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.hemofilico)} pergunta={"É hemofilico?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.hemofilico", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.sinusite)} pergunta={"Tem sinusite?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.sinusite", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.prob_estomago)} pergunta={"Tem problemas de estômago?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.prob_estomago", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.xerostomia)} pergunta={"Tem xerostomia?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.xerostomia", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.dengue)} pergunta={"Teve dengue?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.dengue", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.estressado)} pergunta={"É estressado(a)?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.estressado", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.abriu_boca)} pergunta={"Tem dificuldade para abrir a boca?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.abriu_boca", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.autoimune)} pergunta={"Possui alguma doença autoimune?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.autoimune", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.possui_HIV)} pergunta={"Possui HIV?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.possui_HIV", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.leucemia)} pergunta={"Leucemia?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.leucemia", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.epilepsia)} pergunta={"Eplepsia?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.epilepsia", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.toma_anticoag)} pergunta={"Toma anticoagulante?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.toma_anticoag", bool);
+                }} />
+
+                <PerguntaSIMNAO valueString={String(formik.values.anamnese.marca_passo)} pergunta={"Portador de marca-passo?"} OnValueChange={(val) => {
+                    const bool = val === "true";
+                    formik.setFieldValue("anamnese.marca_passo", bool);
+                }} />
+
+                <div className="flex w-full flex-col gap-4 ">
+                    <div className="flex justify-between w-[40%]">
+                        <p className="text-black text-lg">Tem anemia?</p>
+                        <RadioGroup
+                            orientation="horizontal"
+                            value={String(formik.values.anamnese.anemia)}
+                            onValueChange={(val: string) =>
+                                formik.setFieldValue("anamnese.anemia", val)
+                            }
+                        >
+                            <Radio value="SIM">Sim</Radio>
+                            <Radio value="NÃO">Não</Radio>
+                            <Radio value="NÃO SABE">Não sabe</Radio>
+                        </RadioGroup>
+                    </div>
+                </div>
+
+                <div className="flex w-full flex-col gap-4 ">
+                    <div className="flex justify-between w-[40%]">
+                        <p className="text-black text-lg">Possui algum vício?</p>
+                        <RadioGroup
+                            orientation="horizontal"
+                            value={String(formik.values.anamnese.vicio)}
+                            onValueChange={(val) => {
+                                const bool = val === "true";
+                                formik.setFieldValue("anamnese.vicio", bool);
+                            }}
+                        >
+                            <Radio value="true">Sim</Radio>
+                            <Radio value="false">Não</Radio>
+                        </RadioGroup>
+                    </div>
+                    <CheckboxGroup
+                        color="warning"
+                        orientation="horizontal"
+                        value={vicioFields.filter(key => formik.values.anamnese[key as keyof typeof formik.values.anamnese] === true)}
+                        onValueChange={(selected: string[]) => {
+                            vicioFields.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, false)
+                            );
+                            selected.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, true)
+                            );
+                        }}
+                    >
+                        <Checkbox value="fuma">Fuma</Checkbox>
+                        <Checkbox value="bebe">Bebe</Checkbox>
+                        <Checkbox value="range_dentes">Range os dentes</Checkbox>
+                        <Checkbox value="aperta_dentes">Aperta os dentes</Checkbox>
+                        <Checkbox value="usa_palito">Palito</Checkbox>
+                    </CheckboxGroup>
+                </div>
+
+                <PerguntaCResp
+                    pergunta={"Usa drogas?"} OnValueChangeInput={formik.handleChange} valueStringInput={formik.values.anamnese.usa_drogas_obs}
+                    valueStringRadio={String(formik.values.anamnese.usa_drogas)} inputName={"anamnese.usa_drogas_obs"}
+                    OnValueChangeRadio={(val) => {
+                        const bool = val === "true";
+                        formik.setFieldValue("anamnese.usa_drogas", bool);
+                        if (!bool) {
+                            formik.setFieldValue("anamnese.usa_drogas_obs", "");
+                        }
+                    }} />
+
+                <div className="flex w-full flex-col gap-4 ">
+                    <div className="flex justify-between w-[40%]">
+                        <p className="text-black text-lg">Possui problemas Gênito-urinarios?</p>
+                        <RadioGroup
+                            orientation="horizontal"
+                            value={String(formik.values.anamnese.gu_problema)}
+                            onValueChange={(val) => {
+                                const bool = val === "true";
+                                formik.setFieldValue("anamnese.gu_problema", bool);
+                            }}
+                        >
+                            <Radio value="true">Sim</Radio>
+                            <Radio value="false">Não</Radio>
+                        </RadioGroup>
+                    </div>
+                    <CheckboxGroup
+                        color="warning"
+                        orientation="horizontal"
+                        value={guFields.filter(key => formik.values.anamnese[key as keyof typeof formik.values.anamnese] === true)}
+                        onValueChange={(selected: string[]) => {
+                            guFields.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, false)
+                            );
+                            selected.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, true)
+                            );
+                        }}
+                    >
+                        <Checkbox value="gu_insuficiencia">Insuficiência</Checkbox>
+                        <Checkbox value="gu_calculo">Cálculo renal</Checkbox>
+                        <Checkbox value="gu_infeccao">Infecções urinarias</Checkbox>
+                        <Checkbox value="gu_doenca_venerea">Doença venérea</Checkbox>
+                    </CheckboxGroup>
+                </div>
+
+
+                <div className="flex w-full flex-col gap-2 ">
+                    <div className="flex justify-between w-[40%]">
+                        <p className="text-black text-lg">Tem ou teve Hepatite?</p>
+                        <RadioGroup
+                            orientation="horizontal"
+                            value={String(formik.values.anamnese.hepa)}
+                            onValueChange={(val: string) => {
+                                formik.setFieldValue("anamnese.hepa", val)
+                                if (val === 'Não' || val === "Não sabe") {
+                                    formik.setFieldValue("anamnese.hepa_obs", "");
+                                }
+                            }
+                            }
+                        >
+                            <Radio value="SIM">Sim</Radio>
+                            <Radio value="NÃO">Não</Radio>
+                            <Radio value="NÃO SABE">Não sabe</Radio>
+                        </RadioGroup>
+                    </div>
+                    <Input
+                        className="w-[100%]"
+                        errorMessage=""
+                        onChange={formik.handleChange}
+                        value={formik.values.anamnese.hepa_obs}
+                        name="anamnese.hepa_obs"
+                        placeholder="Qual?..."
+                        type="text"
+                    />
+                </div>
+
+                <div className="flex w-full flex-col gap-4 ">
+                    <div className="flex justify-between w-[40%]">
+                        <p className="text-black text-lg">Tem alguma doença?</p>
+                        <RadioGroup
+                            orientation="horizontal"
+                            value={String(formik.values.anamnese.outra_doenca)}
+                            onValueChange={(val: string) =>
+                                formik.setFieldValue("anamnese.outra_doenca", val)
+                            }
+                        >
+                            <Radio value="SIM">Sim</Radio>
+                            <Radio value="NÃO">Não</Radio>
+                            <Radio value="NÃO SABE">Não sabe</Radio>
+                        </RadioGroup>
+                    </div>
+                    <CheckboxGroup
+                        color="warning"
+                        orientation="horizontal"
+                        value={doencasFields.filter(key => formik.values.anamnese[key as keyof typeof formik.values.anamnese] === true)}
+                        onValueChange={(selected: string[]) => {
+                            doencasFields.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, false)
+                            );
+                            selected.forEach(key =>
+                                formik.setFieldValue(`anamnese.${key}`, true)
+                            );
+                        }}
+                    >
+                        <Checkbox value="diarreia_cronica">Diarreia crônica</Checkbox>
+                        <Checkbox value="febre_const">Frebre constante</Checkbox>
+                        <Checkbox value="sudorese">Sudorese</Checkbox>
+                        <Checkbox value="cancer_pele">Câncer de pele</Checkbox>
+                        <Checkbox value="diabetes_desc">Diabetes descompensada</Checkbox>
+                        <Checkbox value="probl_cicatriz">Problemas com cicatrização</Checkbox>
+                        <Checkbox value="doenca_cont">Doença contagiosa</Checkbox>
+                        <Checkbox value="baixa_imun">Baixa imunidade</Checkbox>
+                        <Checkbox value="dermatite">Dermatite</Checkbox>
+                    </CheckboxGroup>
+                </div>
+
+                <div className="flex w-full flex-col gap-4 ">
+                    <Input
+                        className="w-[100%]"
+                        errorMessage=""
+                        onChange={formik.handleChange}
+                        label='Outras informações que julta importante, familiar tambem'
+                        labelPlacement="outside"
+                        value={formik.values.anamnese.familia_info}
+                        name="anamnese.familia_info"
+                        placeholder="..."
+                        type="text"
+                    />
+                </div>
+
+                {/*            Exames complementares       */}
+                <h1 className="items-center">Exames complementares</h1>
+                <div className="flex w-full flex-row gap-4 ">
+                      <NumberInput
+                        className="w-[12%]"
+                        errorMessage="Insira um valor valido"
+                        onChange={formik.handleChange}
+                        value={formik.values.examesComplementares.peso}
+                        name="examesComplementares.peso"
+                        label="Peso (em Kg)"
+                        labelPlacement="outside"
+                        placeholder="1Kg..."
+                    />
+                    <DateInput
+                        className="w-[20%]"
+                        value={
+                            formik.values.examesComplementares.data_peso
+                                ? parseDate(formik.values.examesComplementares.data_peso)
+                                : null
+                        }
+                        onChange={(value: CalendarDate | null) => {
+                            formik.setFieldValue(
+                                'examesComplementares.data_peso',
+                                value ? value.toString() : ''
+                            );
+                        }}
+                        name="examesComplementares.data_peso"
+                        label="Data medição"
+                        labelPlacement="outside"
+                        placeholderValue={new CalendarDate(1995, 11, 6)}
+                        endContent={
+                            <CalendarIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                        }
+                    />
+                </div>
+                 <div className="flex w-full flex-row gap-4 ">
+                      <Input
+                        className="w-[10%]"
+                        errorMessage=""
+                        onChange={formik.handleChange}
+                        label='Tipo sanguíneo'
+                        labelPlacement="outside"
+                        value={formik.values.examesComplementares.tipo_sanguineo}
+                        name="examesComplementares.tipo_sanguineo"
+                        placeholder="A..."
+                        type="text"
+                    />
+                </div>
+
+                <div className="flex w-full flex-row gap-4 ">
+                       <Input
+                        className="w-[12%]"
+                        errorMessage=""
+                        onChange={formik.handleChange}
+                        label='Pressão (em mmHg)'
+                        labelPlacement="outside"
+                        value={formik.values.examesComplementares.pressao}
+                        name="examesComplementares.pressao"
+                        placeholder="120/80 mmHg..."
+                        type="text"
+                    />
+                    <DateInput
+                        className="w-[20%]"
+                        value={
+                            formik.values.examesComplementares.data_pressao
+                                ? parseDate(formik.values.examesComplementares.data_pressao)
+                                : null
+                        }
+                        onChange={(value: CalendarDate | null) => {
+                            formik.setFieldValue(
+                                'examesComplementares.data_pressao',
+                                value ? value.toString() : ''
+                            );
+                        }}
+                        name="examesComplementares.data_pressao"
+                        label="Data medição"
+                        labelPlacement="outside"
+                        placeholderValue={new CalendarDate(1995, 11, 6)}
+                        endContent={
+                            <CalendarIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                        }
+                    />
+                </div>
+
                 <div className="flex flex-wrap w-full sm:flex-nowrap gap-2 justify-center">
                     <Button size="lg" className="w-[15%] text-white bg-[#7F634B]" type="submit">
                         Salvar
