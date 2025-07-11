@@ -2,10 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useTokenStore } from '../hooks/useTokenStore';
-import { useForm, Controller, FormProvider, type ErrorOption, type FieldArray, type FieldArrayPath, type FieldError, type FieldErrors, type FieldName, type FieldValues, type FormState, type InternalFieldName, type ReadFormState, type RegisterOptions, type SubmitErrorHandler, type SubmitHandler, type UseFormRegisterReturn } from "react-hook-form";
-import { PerguntaSimNaoObs } from "../components/PerguntaSimNaoObs";
-import { PerguntaSimNao } from "../components/PerguntaSIMNAO";
-import InfoUsuarioCampos from "../components/infoUsuarioCampos";
+import { useForm, Controller, FormProvider,} from "react-hook-form";
+import InfoUsuarioCampos from "../components/InfoUsuarioCampos.tsx";
 
 import {
   Button,
@@ -13,16 +11,11 @@ import {
   DateInput,
   Select,
   SelectItem,
-  Radio,
-  RadioGroup,
-  Checkbox,
-  CheckboxGroup,
   Form as HForm,
-  NumberInput
 } from "@heroui/react";
-import { CalendarDate, parseDate } from "@internationalized/date";
+import {  parseDate } from "@internationalized/date";
 import type { Usuario } from '../interfaces/Usuario';
-import CheckboxGroupCliente from "../components/CheckboxGroupCliente";
+
 import ExamesComplementares from "../components/ExamesComplementaresCliente";
 import AnamneseCliente from "../components/AnamneseCliente";
 

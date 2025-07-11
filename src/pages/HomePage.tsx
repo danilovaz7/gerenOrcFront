@@ -67,7 +67,7 @@ function HomePage() {
                 <button onClick={() => { navigate('/add-cliente'); }} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
                     <p >ADICIONAR CLIENTE</p>
                 </button>
-                <button className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
+                <button onClick={() => { navigate('/add-orcamento'); }} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
                     <p>ADICIONAR ORÇAMENTO</p>
                 </button>
             </div>

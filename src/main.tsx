@@ -9,6 +9,7 @@ import HomePage from './pages/HomePage.tsx'
 import AddClientes from './pages/AddClientes.tsx'
 import ListagemClientesPage from './pages/ListagemClientesPage.tsx'
 import InfoClientes from './pages/InfoCliente.tsx'
+import AddOrcamentos from './pages/AddOrcamentos.tsx'
 
 import { HeroUIProvider } from "@heroui/react"
 import {  createBrowserRouter, useHref, useNavigate, Outlet, RouterProvider } from 'react-router'
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
         {
           path: '/add-cliente',
           element: <AddClientes />
+        },
+        {
+          path: '/add-orcamento',
+          element: <AddOrcamentos />
         },
         {
           path: '/listagem-clientes',
