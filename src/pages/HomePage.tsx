@@ -58,9 +58,10 @@ function HomePage() {
                 <button className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
                     <p >VER PROCEDIMENTOS</p>
                 </button>
-                <button className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
+                <button onClick={() => { navigate('/listagem-orcamentos'); }} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
                     <p>VER ORÇAMENTOS</p>
                 </button>
+                
                 <button onClick={() => { navigate('/listagem-clientes'); }} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
                     <p>VER CLIENTES</p>
                 </button>

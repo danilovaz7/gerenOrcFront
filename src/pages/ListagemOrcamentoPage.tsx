@@ -4,16 +4,14 @@ import { useEffect, useState } from "react";
 import { useFormik } from 'formik';
 import { Button, Form, Input, Select, SelectItem } from "@heroui/react";
 
-
 import type { Usuario } from '../interfaces/Usuario';
-import CardPaciente from "../components/CardPaciente";
+import type { Orcamento } from "../interfaces/Orcamento";
 
-
-function ListagemClientesPage() {
+function ListagemOrcamentoPage() {
     const navigate = useNavigate();
     const { token, user } = useTokenStore();
     const [usuario, setUsuario] = useState<Usuario>();
-    const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+    const [orcamentos, setOrcamentos] = useState<Orcamento[]>([]);
 
 
     useEffect(() => {
@@ -34,8 +32,8 @@ function ListagemClientesPage() {
     }, []);
 
     useEffect(() => {
-        async function pegaUsuarios() {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/usuarios`, {
+        async function pegaOrcamentos() {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/orcamentos`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,20 +41,20 @@ function ListagemClientesPage() {
                 },
             })
 
-            const usuariosResponse = await response.json()
-            setUsuarios(usuariosResponse)
+            const orcamentosResponse = await response.json()
+            setOrcamentos(orcamentosResponse)
 
         }
-        pegaUsuarios();
+        pegaOrcamentos();
     }, []);
-
 
     const formik = useFormik({
         initialValues: {
             nome: '',
         },
         onSubmit: async (values) => {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/usuarios?nome=${values.nome}`, {
+            
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/orcamentos?nome=${values.nome}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,10 +62,9 @@ function ListagemClientesPage() {
                 },
             })
 
-
-            const usuariosResponse = await response.json()
-            console.log('usuariosResponse', usuariosResponse)
-            setUsuarios(usuariosResponse)
+            const orcamentoResponse = await response.json()
+            console.log('orcamentoResponse', orcamentoResponse)
+            setOrcamentos(orcamentoResponse)
         }
     });
 
@@ -82,7 +79,6 @@ function ListagemClientesPage() {
             >
                 <div className="w-full gap-12 flex justify-start items-center">
                     <Input
-                        isRequired
                         className="w-[90%]"
                         errorMessage="Insira um nome válido"
                         onChange={formik.handleChange}
@@ -101,9 +97,16 @@ function ListagemClientesPage() {
             </Form>
 
             <div className="w-[90%] flex flex-col p-4 gap-5 justify-center items-center bg-[rgba(155,127,103,0.26)] rounded-sm">
-                {usuarios.map((usuario, index) => {
+                {orcamentos.map((orcamento, index) => {
                     return (
-                       <CardPaciente id={usuario.id} index={index} nome={usuario.nome} />
+                        <div key={index} className="flex w-full text-white justify-between border border-[#9B7F67] items-center bg-[#9B7F67] p-3 rounded-md hover:bg-[#E3DCD4]   hover:text-black">
+                            <p>ID orçamento: {orcamento.id}</p>
+                            <p>Qtd procedimentos: {`(${orcamento.procedimentosCount})`}</p>
+                            <p>Data criação: {new Date(orcamento.createdAt).toLocaleDateString('pt-BR')}</p>
+                            <p>Valor total: {`R$${orcamento.valor_total}`}</p>
+                            <p>Método: {orcamento.forma_pagamento}</p>
+                            <p className="underline">Ver Mais</p>
+                        </div>
                     );
                 })}
             </div>
@@ -113,4 +116,4 @@ function ListagemClientesPage() {
     )
 }
 
-export default ListagemClientesPage
+export default ListagemOrcamentoPage

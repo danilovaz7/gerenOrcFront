@@ -30,7 +30,7 @@ function Navbar() {
                         <p>|</p>
                         <p>Procedimentos</p>
                         <p>|</p> 
-                        <p>Orçamentos</p>
+                        <p onClick={()  => {  navigate('/listagem-orcamentos'); }}>Orçamentos</p>
                         <p>|</p>
                         <p onClick={()  => {  navigate('/listagem-clientes'); }}>Clientes</p>
 

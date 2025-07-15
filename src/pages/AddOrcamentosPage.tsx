@@ -37,7 +37,7 @@ type FormValues = {
     procedimentos: ProcedimentoForm[];
 };
 
-function AddOrcamentos() {
+function AddOrcamentosPage() {
     const { token, user } = useTokenStore();
     const navigate = useNavigate();
 
@@ -99,9 +99,7 @@ function AddOrcamentos() {
                     onSubmit={handleSubmit(onSubmit)}
                 >
                     <Controller
-                        name="usuario_id"
-                        control={control}
-                        rules={{ required: "Obrigatório" }}
+                        name="usuario_id" control={control} rules={{ required: "Obrigatório" }}
                         render={({ field }) => (
                             <NumberInput
                                 {...field}
@@ -116,10 +114,7 @@ function AddOrcamentos() {
                             key={item.id}
                             className="bg-red-200 w-full p-4 rounded flex flex-wrap gap-3"
                         >
-                            <Controller
-                                name={`procedimentos.${index}.nome_procedimento`}
-                                control={control}
-                                rules={{ required: "Obrigatório" }}
+                            <Controller name={`procedimentos.${index}.nome_procedimento`} control={control} rules={{ required: "Obrigatório" }}
                                 render={({ field }) => (
                                     <Input
                                         {...field}
@@ -130,10 +125,7 @@ function AddOrcamentos() {
                                 )}
                             />
 
-                            <Controller
-                                name={`procedimentos.${index}.valor_procedimento`}
-                                control={control}
-                                rules={{ required: "Obrigatório" }}
+                            <Controller name={`procedimentos.${index}.valor_procedimento`} control={control} rules={{ required: "Obrigatório" }}
                                 render={({ field }) => (
                                     <NumberInput
                                         {...field}
@@ -144,10 +136,7 @@ function AddOrcamentos() {
                                 )}
                             />
 
-                            <Controller
-                                name={`procedimentos.${index}.dt_realizacao`}
-                                control={control}
-                                rules={{ required: "Obrigatório" }}
+                            <Controller name={`procedimentos.${index}.dt_realizacao`} control={control} rules={{ required: "Obrigatório" }}
                                 render={({ field }) => (
                                     <DateInput
                                         className="w-[15%]"
@@ -159,19 +148,13 @@ function AddOrcamentos() {
                                 )}
                             />
 
-                            <Controller
-                                name={`procedimentos.${index}.obs_procedimento`}
-                                control={control}
+                            <Controller name={`procedimentos.${index}.obs_procedimento`} control={control}
                                 render={({ field }) => (
                                     <Input {...field} label="Observação (opcional)" />
                                 )}
                             />
 
-                            <button
-                                type="button"
-                                onClick={() => remove(index)}
-                                className="w-[12%] bg-[#7F634B] text-white rounded"
-                            >
+                            <button type="button" onClick={() => remove(index)} className="w-[12%] bg-[#7F634B] text-white rounded">
                                 Remover
                             </button>
                         </div>
@@ -194,9 +177,7 @@ function AddOrcamentos() {
 
                     <div className="flex w-full flex-col gap-4">
                         <Controller
-                            name="forma_pagamento"
-                            control={control}
-                            rules={{ required: "Obrigatório" }}
+                            name="forma_pagamento" control={control} rules={{ required: "Obrigatório" }}
                             render={({ field }) => (
                                 <Select
                                     {...field}
@@ -212,8 +193,7 @@ function AddOrcamentos() {
                         />
 
                         <Controller
-                            name="valor_total"
-                            control={control}
+                            name="valor_total" control={control}
                             render={({ field }) => (
                                 <NumberInput
                                     {...field}
@@ -226,11 +206,7 @@ function AddOrcamentos() {
                         />
                     </div>
 
-                    <Button
-                        size="lg"
-                        type="submit"
-                        className="bg-[#7F634B] text-white w-[10%] self-center"
-                    >
+                    <Button size="lg" type="submit" className="bg-[#7F634B] text-white w-[10%] self-center">
                         Salvar
                     </Button>
                 </HForm>
@@ -239,4 +215,4 @@ function AddOrcamentos() {
     );
 }
 
-export default AddOrcamentos;
+export default AddOrcamentosPage;

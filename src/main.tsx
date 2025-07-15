@@ -6,10 +6,11 @@ import './index.css'
 // Componentes de página
 import LoginPage from './pages/LoginPage.tsx'
 import HomePage from './pages/HomePage.tsx'
-import AddClientes from './pages/AddClientes.tsx'
+import AddClientes from './pages/AddClientesPage.tsx'
 import ListagemClientesPage from './pages/ListagemClientesPage.tsx'
 import InfoClientes from './pages/InfoCliente.tsx'
-import AddOrcamentos from './pages/AddOrcamentos.tsx'
+import AddOrcamentos from './pages/AddOrcamentosPage.tsx'
+import ListagemOrcamentoPage from './pages/ListagemOrcamentoPage.tsx'
 
 import { HeroUIProvider } from "@heroui/react"
 import {  createBrowserRouter, useHref, useNavigate, Outlet, RouterProvider } from 'react-router'
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
          {
           path: '/listagem-clientes/:idUsuario',
           element: <InfoClientes />
+        },
+         {
+          path: '/listagem-orcamentos',
+          element: <ListagemOrcamentoPage />
         },
         ]
       }

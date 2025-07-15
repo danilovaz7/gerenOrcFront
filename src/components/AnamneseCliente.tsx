@@ -4,7 +4,7 @@ import { Controller, type Control } from "react-hook-form";
 import { type FormValues } from "../pages/InfoCliente.tsx";
 import { Checkbox, Input, Radio, RadioGroup } from "@heroui/react";
 import CheckboxGroupCliente from "./CheckboxGroupCliente.tsx";
-import { PerguntaSimNao } from "./PerguntaSIMNAO.tsx";
+import { PerguntaSimNao } from "./PerguntaSimNao.tsx";
 import { PerguntaSimNaoObs } from "./PerguntaSimNaoObs.tsx";
 
 export interface ExamesComplementaresProps {
@@ -32,9 +32,33 @@ const doencasFields = [
     "probl_cicatriz", "doenca_cont", "baixa_imun", "dermatite"
 ] as const;
 
+const perguntasComObs = [
+    { name: "anamnese.comp_trat_odon", nameObs: "anamnese.comp_trat_odon_obs", label: "Teve complicação durante tratamento odontológico?" },
+    { name: "anamnese.em_trat_medico", nameObs: "anamnese.em_trat_medico_obs", label: "No momento está em tratamento médico?" },
+    { name: "anamnese.transfusao", nameObs: "anamnese.transfusao_obs", label: "Já fez transfusão de sangue?" },
+    { name: "anamnese.doenca_grave", nameObs: "anamnese.doenca_grave_obs", label: "Tem ou teve alguma doença grave?" },
+    { name: "anamnese.alergia_geral", nameObs: "anamnese.alergia_geral_obs", label: "Tem alguma alergia geral?" },
+    { name: "anamnese.hospitalizado", nameObs: "anamnese.hospitalizado_obs", label: "Já foi hospitalizado?" },
+    { name: "anamnese.submetido_cirurgia", nameObs: "anamnese.cirurgia_obs", label: "Já fez cirurgia?" },
+    { name: "anamnese.comp_anestesia", nameObs: "anamnese.comp_anestesia_obs", label: "Teve complicações após anestesia?" },
+    { name: "anamnese.dor_dente", nameObs: "anamnese.dor_dente_obs", label: "Tem dor de dente frequente?" },
+    { name: "anamnese.protese_cardiaca", nameObs: "anamnese.protese_cardiaca_obs", label: "Possui prótese cardíaca?" },
+    { name: "anamnese.sangramento_anormal", nameObs: "anamnese.sangramento_anormal_obs", label: "Já apresentou sangramento anormal associado com extração, cirurgia ou trauma?" },
+];
+
+
 export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ control }) => {
     return (
         <section className="space-y-6">
+            {perguntasComObs.map(({ name, nameObs, label }) => (
+                <PerguntaSimNaoObs
+                    key={name}
+                    control={control}
+                    name={name}
+                    nameObs={nameObs}
+                    label={label}
+                />
+            ))}
             <h2 className="text-xl font-semibold">Anamnese</h2>
             <PerguntaSimNaoObs
                 control={control}
