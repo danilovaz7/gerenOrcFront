@@ -15,10 +15,12 @@ import {
     FormProvider,
     useForm,
     useFieldArray,
-    useWatch
+    useWatch,
+    useController
 } from "react-hook-form";
 import { parseDate } from "@internationalized/date";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import type { Usuario } from "../interfaces/Usuario";
 
 type ProcedimentoForm = {
     nome_procedimento: string;
@@ -37,9 +39,74 @@ type FormValues = {
     procedimentos: ProcedimentoForm[];
 };
 
+function UsuarioAutocomplete({
+    control,
+    name,
+    usuarios
+}: {
+    control: any;
+    name: string;
+    usuarios: Usuario[];
+}) {
+    const { field, fieldState } = useController({ control, name, rules: { required: "Obrigatório" } });
+    const [query, setQuery] = useState(usuarios.find(u => u.id === field.value)?.nome || "");
+    const [filtered, setFiltered] = useState<Usuario[]>([]);
+
+    useEffect(() => {
+        const q = query.toLowerCase();
+        setFiltered(
+            usuarios.filter(u => u.nome.toLowerCase().includes(q)).slice(0, 5)
+        );
+    }, [query, usuarios]);
+
+    return (
+        <div className="relative w-[40%]">
+            <Input
+                value={query}
+                label="Pesquisar paciênte..."
+                isRequired
+                errorMessage={fieldState.error?.message}
+                onChange={(e) => {
+                    setQuery(e.target.value);
+                    field.onChange(0);
+                }}
+            />
+            {filtered.length > 0 && query && (
+                <ul className="absolute bg-white border z-10 w-full max-h-40 overflow-auto rounded">
+                    {filtered.map((u) => (
+                        <li
+                            key={u.id}
+                            onClick={() => {
+                                field.onChange(u.id);
+                                setQuery(u.nome);
+                                setFiltered([]);
+                            }}
+                            className="p-2 text-black hover:bg-gray-200 cursor-pointer"
+                        >
+                            {u.nome}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+}
+
+
 function AddOrcamentosPage() {
     const { token, user } = useTokenStore();
     const navigate = useNavigate();
+
+    const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+
+    useEffect(() => {
+        fetch(`${import.meta.env.VITE_API_URL}/usuarios`, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            .then((r) => r.json())
+            .then((data: Usuario[]) => setUsuarios(data))
+            .catch(console.error);
+    }, [token]);
 
     const methods = useForm<FormValues>({
         defaultValues: {
@@ -99,32 +166,28 @@ function AddOrcamentosPage() {
                     onSubmit={handleSubmit(onSubmit)}
                 >
                     <Controller
-                        name="usuario_id" control={control} rules={{ required: "Obrigatório" }}
-                        render={({ field }) => (
-                            <NumberInput
-                                {...field}
-                                className="w-[20%]"
-                                label="ID do Usuário"
-                                isRequired
-                            />
+                        name="usuario_id"
+                        control={control}
+                        render={() => (
+                            <UsuarioAutocomplete control={control} name="usuario_id" usuarios={usuarios} />
                         )}
                     />
+
                     {fields.map((item, index) => (
                         <div
                             key={item.id}
-                            className="bg-red-200 w-full p-4 rounded flex flex-wrap gap-3"
+                            className="w-full bg-[rgba(155,127,103,0.5)] p-2 rounded flex flex-wrap gap-3"
                         >
                             <Controller name={`procedimentos.${index}.nome_procedimento`} control={control} rules={{ required: "Obrigatório" }}
                                 render={({ field }) => (
                                     <Input
                                         {...field}
-                                        className="w-[60%]"
+                                        className="w-[73%]"
                                         label="Nome do procedimento"
                                         isRequired
                                     />
                                 )}
                             />
-
                             <Controller name={`procedimentos.${index}.valor_procedimento`} control={control} rules={{ required: "Obrigatório" }}
                                 render={({ field }) => (
                                     <NumberInput
@@ -135,7 +198,6 @@ function AddOrcamentosPage() {
                                     />
                                 )}
                             />
-
                             <Controller name={`procedimentos.${index}.dt_realizacao`} control={control} rules={{ required: "Obrigatório" }}
                                 render={({ field }) => (
                                     <DateInput

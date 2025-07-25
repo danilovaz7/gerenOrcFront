@@ -24,7 +24,7 @@ export function PerguntaSimNaoObs({ control, name, nameObs, label, rules }: Prop
           onValueChange={v => {
             const bool = v === 'true'
             radioField.onChange(bool)
-            if (!bool) obsField.onChange('')  // limpa se “Não”
+            if (!bool) obsField.onChange('') 
           }}
         >
           <Radio value="true">Sim</Radio>

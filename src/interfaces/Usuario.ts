@@ -5,6 +5,9 @@ export interface Usuario {
   senha: string;
   dt_nascimento: string;
   rg: string;
+  orcamentosCount: number;
+  procedimentosCount: number;
+  ultimoRetorno: string;
   cpf: string;
   id_tipo_usuario: number;
   estado_civil: string;

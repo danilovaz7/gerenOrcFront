@@ -11,6 +11,7 @@ import ListagemClientesPage from './pages/ListagemClientesPage.tsx'
 import InfoClientes from './pages/InfoCliente.tsx'
 import AddOrcamentos from './pages/AddOrcamentosPage.tsx'
 import ListagemOrcamentoPage from './pages/ListagemOrcamentoPage.tsx'
+import ListagemProcedimentoPage from './pages/ListagemProcedimentoPage.tsx'
 
 import { HeroUIProvider } from "@heroui/react"
 import {  createBrowserRouter, useHref, useNavigate, Outlet, RouterProvider } from 'react-router'
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
          {
           path: '/listagem-orcamentos',
           element: <ListagemOrcamentoPage />
+        },
+         {
+          path: '/listagem-procedimentos',
+          element: <ListagemProcedimentoPage />
         },
         ]
       }

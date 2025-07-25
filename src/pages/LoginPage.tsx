@@ -4,12 +4,11 @@ import { useNavigate } from "react-router";
 import { useTokenStore } from '../hooks/useTokenStore';
 
 function LoginPage() {
-  const [submitted, setSubmitted] = React.useState(null);
   const navigate = useNavigate();
 
   const { setToken, setUser, token, user } = useTokenStore();
 
-   useEffect(() => {
+  useEffect(() => {
     if (token && user) {
       navigate('/home');
     }
@@ -18,15 +17,10 @@ function LoginPage() {
   const onSubmit = async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
-    setSubmitted(data);
-    console.log(data)
 
     try {
       let email = data.email
       let senha = data.senha
-
-      console.log(email)
-            console.log(senha)
 
       const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
         method: 'POST',

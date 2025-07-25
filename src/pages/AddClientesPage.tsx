@@ -7,7 +7,7 @@ import { CalendarDate, parseDate } from "@internationalized/date";
 
 
 import type { Usuario } from '../interfaces/Usuario';
-import { Controller, FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
 import InfoUsuarioCampos from "../components/InfoUsuarioCampos";
 
 export const CalendarIcon = (props: any) => {
@@ -94,11 +94,36 @@ function AddClientesPage() {
         }
     });
 
-    const {
-        handleSubmit,
-        control,
-        formState: { errors }
-    } = methods;
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors }
+  } = methods;
+
+    // Observa o CEP
+  const cepValue = useWatch({ control, name: 'cep' });
+
+  // Ao mudar o CEP, busca no ViaCEP e completa endereço
+  useEffect(() => {
+    const fetchEndereco = async () => {
+      const cepLimpo = cepValue?.replace(/\D/g, '');
+      if (cepLimpo && cepLimpo.length === 8) {
+        try {
+          const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+          const data = await res.json();
+          if (!data.erro) {
+            setValue('endereco', data.logradouro || '');
+            setValue('bairro', data.bairro || '');
+            setValue('cidade', data.localidade || '');
+          }
+        } catch (err) {
+          console.error('Erro ao buscar endereço do CEP', err);
+        }
+      }
+    };
+    fetchEndereco();
+  }, [cepValue, setValue]);
 
     const onSubmit = async (values: FormValues) => {
         const resposta = await fetch(`${import.meta.env.VITE_API_URL}/usuarios`, {
@@ -146,7 +171,22 @@ function AddClientesPage() {
                         <InfoUsuarioCampos control={control} name={"rg"} label={"RG"} className={"w-[20%]"} errorMessage={errors.rg?.message} />
                         <InfoUsuarioCampos control={control} name={"cpf"} label={"CPF"} className={"w-[20%]"} errorMessage={errors.cpf?.message} />
                         <InfoUsuarioCampos control={control} name={"estado_civil"} label={"Estado civil"} className={"w-[20%]"} errorMessage={errors.estado_civil?.message} />
-                        <InfoUsuarioCampos control={control} name={"sexo"} label={"Sexo"} className={"w-[15%]"} errorMessage={errors.sexo?.message} />
+                       <Controller
+                            name="sexo"
+                            control={control}
+                            render={({ field }) => (
+                                <Select
+                                    selectedKeys={field.value ? new Set([field.value]) : new Set()}
+                                    onSelectionChange={keys => field.onChange(Array.from(keys)[0])}
+                                    label="Sexo"
+                                    className="w-[15%]"
+                                >
+                                    <SelectItem className="text-black" key="masc">Masculino</SelectItem>
+                                    <SelectItem className="text-black" key="fem">Feminino</SelectItem>
+                                    <SelectItem className="text-black" key="outro">Outro</SelectItem>
+                                </Select>
+                            )}
+                        />
                         <Controller
                             name="filhos" control={control} render={({ field }) => (
                                 <Input
@@ -177,10 +217,10 @@ function AddClientesPage() {
                                     label="Raça"
                                     className="w-[17%]"
                                 >
-                                    <SelectItem key="branca">Branca</SelectItem>
-                                    <SelectItem key="amarela">Amarela</SelectItem>
-                                    <SelectItem key="negra">Negra</SelectItem>
-                                    <SelectItem key="outra">Outra</SelectItem>
+                                    <SelectItem className="text-black" key="branca">Branca</SelectItem>
+                                    <SelectItem className="text-black" key="amarela">Amarela</SelectItem>
+                                    <SelectItem className="text-black" key="negra">Negra</SelectItem>
+                                    <SelectItem className="text-black" key="outra">Outra</SelectItem>
                                 </Select>
                             )}
                         />

@@ -6,7 +6,7 @@ import { Button, Form, Input, Select, SelectItem } from "@heroui/react";
 
 
 import type { Usuario } from '../interfaces/Usuario';
-import CardPaciente from "../components/CardPaciente";
+import PacienteCard from "../components/PacienteCard";
 
 
 function ListagemClientesPage() {
@@ -14,7 +14,6 @@ function ListagemClientesPage() {
     const { token, user } = useTokenStore();
     const [usuario, setUsuario] = useState<Usuario>();
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-
 
     useEffect(() => {
         async function pegaUsuario() {
@@ -103,7 +102,7 @@ function ListagemClientesPage() {
             <div className="w-[90%] flex flex-col p-4 gap-5 justify-center items-center bg-[rgba(155,127,103,0.26)] rounded-sm">
                 {usuarios.map((usuario, index) => {
                     return (
-                       <CardPaciente id={usuario.id} index={index} nome={usuario.nome} />
+                       <PacienteCard id={usuario.id} key={index} nome={usuario.nome} orcamentosCount={usuario.orcamentosCount} procedimentosCount={usuario.procedimentosCount} ultimo_retorno={usuario.ultimoRetorno} />
                     );
                 })}
             </div>
