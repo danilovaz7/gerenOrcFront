@@ -6,6 +6,11 @@ interface Props {
 }
 
 export function ProcedimentoHome({ cliente, procedimento_nome, dt_retorno, num_retorno }: Props) {
+    function formatDateOnly(dateStr: string) {
+        const [y, m, d] = dateStr.split('-');
+        return `${d}/${m}/${y}`;
+    }
+
     return (
         <div
             className="
@@ -25,7 +30,7 @@ export function ProcedimentoHome({ cliente, procedimento_nome, dt_retorno, num_r
         >
             <p>Cliente : {cliente}</p>
             <p>Procedimento: {procedimento_nome}</p>
-            <p>Data de retorno: {dt_retorno}</p>
+            <p>Data de retorno: {formatDateOnly(dt_retorno)}</p>
             <p>Numero do retorno: {num_retorno}</p>
         </div>
     )

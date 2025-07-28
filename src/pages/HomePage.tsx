@@ -12,7 +12,6 @@ function HomePage() {
   const [procedimentos, setProcediementos] = useState<Procedimento[]>([]);
   const navigate = useNavigate();
 
-  // 1) Busca dados do usuário logado
   useEffect(() => {
     if (!user?.id) return;
     fetch(`${import.meta.env.VITE_API_URL}/usuarios/${user.id}`, {
@@ -26,14 +25,13 @@ function HomePage() {
       .catch(console.error);
   }, [token, user?.id]);
 
-  // 2) Busca próximos procedimentos,
-  //    enviando nome apenas se id_tipo_usuario === 2
+
   useEffect(() => {
     if (!usuario) return;
 
     const params = new URLSearchParams();
     if (usuario.id_tipo_usuario === 2) {
-      params.set('nome', usuario.nome);
+      params.set('usuario_id', usuario.id.toString());
     }
 
     fetch(
@@ -61,28 +59,34 @@ function HomePage() {
           <p className="text-lg">Lista de retornos próximos</p>
         </div>
         <div className="flex flex-col gap-5 p-5 justify-center bg-[rgba(155,127,103,0.26)] w-full">
-          {procedimentos
-            .filter(p => p.orcamento?.usuario)
-            .map((procedimento, idx) => (
-              <ProcedimentoHome
-                key={idx}
-                cliente={procedimento.orcamento!.usuario!.nome}
-                procedimento_nome={procedimento.nome_procedimento}
-                dt_retorno={new Date(procedimento.dt_realizacao)
-                  .toLocaleDateString('pt-BR')}
-                num_retorno={procedimento.num_retorno}
-              />
-            ))}
+          {procedimentos.length === 0 ? (
+            <div className='flex flex-col w-full justify-center items-center gap-5'>
+              <h2 className="text-center text-3xl text-[#75614e]"> Parece que você ainda não tem procedimentos</h2>
+              <p className='text-lg text-[#75614e]'>Faça seu orçamento com a doutora primeiro!</p>
+            </div>
+          ) : (
+            procedimentos
+              .filter(p => p.orcamento?.usuario)
+              .map((procedimento, idx) => (
+                <ProcedimentoHome
+                  key={idx}
+                  cliente={procedimento.orcamento!.usuario!.nome}
+                  procedimento_nome={procedimento.nome_procedimento}
+                  dt_retorno={procedimento.dt_realizacao}
+                  num_retorno={procedimento.num_retorno}
+                />
+              ))
+          )}
         </div>
       </div>
       <div className="flex w-[60%] gap-5 justify-around flex-wrap items-center p-2">
         {
           usuario.id_tipo_usuario === 2 ?
             <>
-              <button onClick={() => navigate(`/listagem-procedimentos?nome=${usuario.nome}`)} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
+              <button onClick={() => navigate(`/listagem-procedimentos?usuario_id=${usuario.id}`)} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
                 <p>VER PROCEDIMENTOS</p>
               </button>
-              <button onClick={() => navigate(`/listagem-orcamentos?nome=${usuario.nome}`)} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
+              <button onClick={() => navigate(`/listagem-orcamentos?usuario_id=${usuario.id}`)} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
                 <p>VER ORÇAMENTOS</p>
               </button>
             </> : null

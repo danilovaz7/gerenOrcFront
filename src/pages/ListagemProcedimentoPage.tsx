@@ -21,7 +21,7 @@ import { ProcedimentoCard } from '../components/ProcedimentoCard';
 import type { Procedimento } from '../interfaces/Procedimento';
 import type { Usuario } from '../interfaces/Usuario';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 
 export type FormValues = Omit<Procedimento, 'id'> & {
 };
@@ -32,11 +32,12 @@ export const CalendarIcon: React.FC<React.SVGProps<SVGSVGElement>> = props => (
   </svg>
 );
 
+
 function ListagemProcedimentoPage() {
 
   const { token, user } = useTokenStore();
   const [searchParams] = useSearchParams();
-  const pacienteNome = searchParams.get('nome');
+  const usuarioId = searchParams.get('usuario_id');
 
   const [procedimentos, setProcedimentos] = useState<Procedimento[]>([]);
   const [usuario, setUsuario] = useState<Usuario>();
@@ -62,10 +63,11 @@ function ListagemProcedimentoPage() {
     })();
   }, [token, user?.id]);
 
+
   const fetchProcedimentos = async () => {
     const url = new URL(`${import.meta.env.VITE_API_URL}/procedimentos`);
-    if (pacienteNome) {
-      url.searchParams.set('nome', pacienteNome);
+    if (usuarioId) {
+      url.searchParams.set('usuario_id', usuarioId);
     }
     const response = await fetch(url.toString(), {
       headers: {
@@ -81,16 +83,17 @@ function ListagemProcedimentoPage() {
     fetchProcedimentos();
   }, [token]);
 
-
   const formik = useFormik({
     initialValues: {},
     onSubmit: async () => {
       const params = new URLSearchParams();
       if (valorBusca) params.set(parametro, valorBusca);
       const url = new URL(`${import.meta.env.VITE_API_URL}/procedimentos?${params.toString()}`)
-      if (pacienteNome) {
-        url.searchParams.set('nome', pacienteNome);
+
+      if (usuarioId) {
+        url.searchParams.set('usuario_id', usuarioId);
       }
+
       const resp = await fetch(
         url.toString(),
         {
@@ -158,6 +161,8 @@ function ListagemProcedimentoPage() {
       onClose();
       await fetchProcedimentos();
     }
+
+
   };
   return (
     <div className="flex flex-col gap-4 items-center w-screen">
@@ -178,11 +183,16 @@ function ListagemProcedimentoPage() {
               setValorBusca('');
             }}
           >
-            <SelectItem className='text-black' key="nome">Nome</SelectItem>
+            {
+              usuario?.id_tipo_usuario === 1 ?
+                <SelectItem className='text-black' key="nome">Nome</SelectItem>
+                : null
+            }
+
             <SelectItem className='text-black' key="status">Status</SelectItem>
             <SelectItem className='text-black' key="dt_realizacao">Data de Retorno</SelectItem>
           </Select>
-          {parametro === 'nome' && (
+          {parametro === 'nome' && usuario?.id_tipo_usuario === 1 && (
             <Input
               className="flex-1 w-[80%]"
               label="Nome do paciente"
@@ -222,26 +232,36 @@ function ListagemProcedimentoPage() {
         </div>
       </Form>
       <div className="w-[90%] flex flex-col gap-5 p-4 bg-[rgba(155,127,103,0.26)] rounded-sm">
-        {procedimentos
-          .filter((p) => p.orcamento?.usuario)
-          .map((p, i) => (
-            <>
-              <ProcedimentoCard
-                key={i}
-                nome_cliente={p.orcamento.usuario.nome}
-                procedimento_nome={p.nome_procedimento}
-                dt_realizacao={p.dt_realizacao}
-                status={p.status_retorno}
-                num_retorno={p.num_retorno}
-                usuario_id_tipo={usuario?.id_tipo_usuario ?? 0}
-                onclick={() => {
-                  setIdProcedimento(p.id);
-                  onOpen();
+        <div className="flex flex-col gap-5 p-5 justify-center bg-[rgba(155,127,103,0.26)] w-full">
+          {procedimentos.length === 0 ? (
+            <div className='flex flex-col w-full justify-center items-center gap-5'>
+              <h2 className="text-center text-3xl text-[#75614e]"> Parece que você ainda não tem procedimentos</h2>
+              <p className='text-lg text-[#75614e]'>Faça seu orçamento com a doutora primeiro!</p>
+            </div>
+          ) : (
+            procedimentos
+              .filter((p) => p.orcamento?.usuario)
+              .map((p, i) => (
+                <ProcedimentoCard
+                  key={i}
+                  nome_cliente={p.orcamento.usuario.nome}
+                  procedimento_nome={p.nome_procedimento}
+                  dt_realizacao={p.dt_realizacao}
+                  status={p.status_retorno}
+                  num_retorno={p.num_retorno}
+                  usuario_id_tipo={usuario?.id_tipo_usuario ?? 0}
+                  onclick={() => {
+                    if (usuario?.id_tipo_usuario === 2) {
+                      return
+                    }
+                    setIdProcedimento(p.id);
+                    onOpen();
 
-                }}
-              />
-            </>
-          ))}
+                  }}
+                />
+              ))
+          )}
+        </div>
       </div>
 
       <Modal className='bg-[#e5ded8]' isOpen={isOpen} size={'3xl'} onClose={onClose}>

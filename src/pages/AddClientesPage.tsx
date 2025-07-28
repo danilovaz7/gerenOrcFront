@@ -64,66 +64,67 @@ function AddClientesPage() {
         pegaUsuarios();
     }, [user, token]);
 
-    const methods = useForm<FormValues>({
-        defaultValues: {
-            nome: "",
-            email: "",
-            dt_nascimento: "",
-            rg: "",
-            cpf: "",
-            estado_civil: "",
-            sexo: "",
-            filhos: 0,
-            cep: "",
-            endereco: "",
-            num_endereco: "",
-            complemento: "",
-            cidade: "",
-            bairro: "",
-            nacionalidade: "",
-            naturalidade: "",
-            raca: "",
-            telefone: "",
-            celular: "",
-            profissao: "",
-            local_trabalho: "",
-            instagram: "",
-            facebook: "",
-            id_tipo_usuario: 2
+    function isValidCPF(cpf: string): boolean {
+        cpf = cpf.replace(/\D/g, '');
+        if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
 
+        const calc = (n: number) => {
+            let sum = 0;
+            for (let i = 0; i < n; i++) {
+                sum += parseInt(cpf.charAt(i)) * ((n + 1) - i);
+            }
+            const res = (sum * 10) % 11;
+            return res === 10 ? 0 : res;
+        };
+
+        return calc(9) === parseInt(cpf.charAt(9)) && calc(10) === parseInt(cpf.charAt(10));
+    }
+
+    function isValidRG(rg: string): boolean {
+        const onlyDigits = rg.replace(/\D/g, '');
+        return /^[0-9]{7,9}$/.test(onlyDigits);
+    }
+
+    const methods = useForm<FormValues>({
+        mode: 'onBlur',           // roda validação sempre que o usuário sai de um campo
+        reValidateMode: 'onChange',
+        defaultValues: {
+            nome: "", email: "", dt_nascimento: "", rg: "", cpf: "", estado_civil: "", sexo: "", filhos: 0, cep: "", endereco: "",
+            num_endereco: "", complemento: "", cidade: "", bairro: "", nacionalidade: "", naturalidade: "", raca: "", telefone: "",
+            celular: "", profissao: "", local_trabalho: "", instagram: "", facebook: "", id_tipo_usuario: 2
         }
     });
 
-  const {
-    handleSubmit,
-    control,
-    setValue,
-    formState: { errors }
-  } = methods;
+    const {
+        handleSubmit,
+        control,
+        setValue,
+        formState: { errors }
+    } = methods;
 
     // Observa o CEP
-  const cepValue = useWatch({ control, name: 'cep' });
+    const cepValue = useWatch({ control, name: 'cep' });
 
-  // Ao mudar o CEP, busca no ViaCEP e completa endereço
-  useEffect(() => {
-    const fetchEndereco = async () => {
-      const cepLimpo = cepValue?.replace(/\D/g, '');
-      if (cepLimpo && cepLimpo.length === 8) {
-        try {
-          const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
-          const data = await res.json();
-          if (!data.erro) {
-            setValue('endereco', data.logradouro || '');
-            setValue('bairro', data.bairro || '');
-            setValue('cidade', data.localidade || '');
-          }
-        } catch (err) {
-          console.error('Erro ao buscar endereço do CEP', err);
-        }
-      }
-    };
-    fetchEndereco();
-  }, [cepValue, setValue]);
+    // Ao mudar o CEP, busca no ViaCEP e completa endereço
+    useEffect(() => {
+        const fetchEndereco = async () => {
+            const cepLimpo = cepValue?.replace(/\D/g, '');
+            if (cepLimpo && cepLimpo.length === 8) {
+                try {
+                    const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+                    const data = await res.json();
+                    if (!data.erro) {
+                        setValue('endereco', data.logradouro || '');
+                        setValue('bairro', data.bairro || '');
+                        setValue('cidade', data.localidade || '');
+                    }
+                } catch (err) {
+                    console.error('Erro ao buscar endereço do CEP', err);
+                }
+            }
+        };
+        fetchEndereco();
+    }, [cepValue, setValue]);
 
     const onSubmit = async (values: FormValues) => {
         const resposta = await fetch(`${import.meta.env.VITE_API_URL}/usuarios`, {
@@ -168,10 +169,47 @@ function AddClientesPage() {
                                 />
                             )}
                         />
-                        <InfoUsuarioCampos control={control} name={"rg"} label={"RG"} className={"w-[20%]"} errorMessage={errors.rg?.message} />
-                        <InfoUsuarioCampos control={control} name={"cpf"} label={"CPF"} className={"w-[20%]"} errorMessage={errors.cpf?.message} />
+                        <Controller
+                            name="rg"
+                            control={control}
+                            rules={{
+                                required: 'RG é obrigatório',
+                                validate: v => isValidRG(v) || 'RG inválido (7–9 dígitos numéricos)',
+                            }}
+                            render={({ field, fieldState }) => (
+                                <Input
+                                    {...field}
+                                    label="RG"
+                                    className="w-[20%]"
+                                    isRequired
+                                    validationState={fieldState.error ? 'invalid' : 'valid'}
+                                    errorMessage={fieldState.error?.message}
+                                    onBlur={field.onBlur}
+                                />
+                            )}
+                        />
+                        <Controller
+                            name="cpf"
+                            control={control}
+                            rules={{
+                                required: 'CPF é obrigatório',
+                                validate: v => isValidCPF(v) || 'CPF inválido (11 dígitos e cálculo)',
+                            }}
+                            render={({ field, fieldState }) => (
+                                <Input
+                                    {...field}
+                                    label="CPF"
+                                    className="w-[20%]"
+                                    isRequired
+                                    validationState={fieldState.error ? 'invalid' : 'valid'}
+                                    errorMessage={fieldState.error?.message}
+
+                                    onBlur={field.onBlur}
+                                />
+                            )}
+                        />
                         <InfoUsuarioCampos control={control} name={"estado_civil"} label={"Estado civil"} className={"w-[20%]"} errorMessage={errors.estado_civil?.message} />
-                       <Controller
+                        <Controller
                             name="sexo"
                             control={control}
                             render={({ field }) => (
@@ -234,7 +272,7 @@ function AddClientesPage() {
                         <Controller
                             name="id_tipo_usuario"
                             control={control}
-                            defaultValue={2}        
+                            defaultValue={2}
                             render={({ field }) => (
                                 <input type="hidden" {...field} />
                             )}

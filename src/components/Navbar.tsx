@@ -1,10 +1,14 @@
 import { useNavigate } from "react-router";
 import { useTokenStore } from "../hooks/useTokenStore";
+import { useEffect, useState } from "react";
+import type { Usuario } from "../interfaces/Usuario";
 
 
 function Navbar() {
     const navigate = useNavigate();
     const { setToken, setUser } = useTokenStore();
+    const { token, user } = useTokenStore();
+    const [usuario, setUsuario] = useState<Usuario>();
 
     function handleLogout() {
         localStorage.removeItem('token');
@@ -13,6 +17,21 @@ function Navbar() {
         setUser(undefined);
         navigate('/');
     }
+
+    useEffect(() => {
+        (async () => {
+            const resp = await fetch(
+                `${import.meta.env.VITE_API_URL}/usuarios/${user?.id}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                }
+            );
+            setUsuario(await resp.json());
+        })();
+    }, [token, user?.id]);
 
 
     return (
@@ -28,11 +47,29 @@ function Navbar() {
                 <div className="flex text-md justify-end gap-5">
                     <p onClick={() => { navigate('/home'); }}>Home</p>
                     <p>|</p>
-                    <p onClick={() => { navigate('/listagem-procedimentos'); }}>Procedimentos</p>
-                    <p>|</p>
-                    <p onClick={() => { navigate('/listagem-orcamentos'); }}>Orçamentos</p>
-                    <p>|</p>
-                    <p onClick={() => { navigate('/listagem-clientes'); }}>Clientes</p>
+                    {
+                        usuario?.id_tipo_usuario === 2 ?
+                            <>
+                                <p onClick={() => { navigate(`/listagem-procedimentos?usuario_id=${usuario.id}`); }}>Procedimentos</p>
+                                <p>|</p>
+                                <p onClick={() => { navigate(`/listagem-orcamentos?usuario_id=${usuario.id}`); }}>Orçamentos</p>
+                                <p>|</p>
+                            </>
+                            :
+                            <>
+                                <p onClick={() => { navigate('/listagem-procedimentos'); }}>Procedimentos</p>
+                                <p>|</p>
+                                <p onClick={() => { navigate('/listagem-orcamentos'); }}>Orçamentos</p>
+                                <p>|</p>
+                            </>
+                    }
+                    {
+                        usuario?.id_tipo_usuario === 1 ?
+                            <p onClick={() => { navigate('/listagem-clientes'); }}>Clientes</p>
+                            :
+                            <p onClick={() => { navigate(`/listagem-clientes/${usuario?.id}`); }}>Meus Dados</p>
+                    }
+
 
                 </div>
             </div>
