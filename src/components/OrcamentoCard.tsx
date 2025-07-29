@@ -1,4 +1,4 @@
-interface Props {
+interface OrcamentoProps {
     id_orcamento: number;
     qtd_procedimentos: number;
     dt_criacao: string;
@@ -6,31 +6,19 @@ interface Props {
     metodo_pag: string;
 }
 
-export function OrcamentoCard({ id_orcamento, qtd_procedimentos, dt_criacao, valor_total, metodo_pag }: Props) {
+export function OrcamentoCard({ id_orcamento, qtd_procedimentos, dt_criacao, valor_total, metodo_pag }: OrcamentoProps) {
+    const formatDate = new Date(dt_criacao).toLocaleDateString('pt-BR');
 
     return (
-        <div
-            className="
-                grid
-                grid-cols-[1fr_1fr_1fr_1fr_1fr_auto]
-                gap-4
-                w-full
-                text-white
-                border border-[#9B7F67]
-                items-center
-                bg-[#9B7F67]
-                p-3
-                rounded-md
-                hover:bg-[#E3DCD4]
-                hover:text-black
-            "
-        >
-            <p>ID orçamento: {id_orcamento}</p>
-            <p>Qtd procedimentos: {`(${qtd_procedimentos})`}</p>
-            <p>Data criação: {new Date(dt_criacao).toLocaleDateString('pt-BR')}</p>
-            <p>Valor total: {`R$${valor_total}`}</p>
-            <p>Método: {metodo_pag}</p>
-            <p className="underline">Ver Mais</p>
+        <div className="flex flex-col gap-2 sm:flex-row items-start sm:items-center bg-[#9B7F67] text-white p-4 rounded-md border border-[#9B7F67] hover:bg-[#E3DCD4] hover:text-black transition-colors">
+            <span className="flex-1 text-sm sm:text-base">ID: {id_orcamento}</span>
+            <span className="flex-1 text-sm sm:text-base">Qtd procedimentos: ({qtd_procedimentos})</span>
+            <span className="flex-1 text-sm sm:text-base">Data: {formatDate}</span>
+            <span className="flex-1 text-sm sm:text-base">Valor: R${valor_total.toFixed(2)}</span>
+            <span className="flex-1 text-sm sm:text-base">Método: {metodo_pag}</span>
+            <button className="mt-2 sm:mt-0 self-end sm:self-auto text-sm underline">
+                Ver Mais
+            </button>
         </div>
     );
 }

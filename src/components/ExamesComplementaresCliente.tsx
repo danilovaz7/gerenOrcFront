@@ -12,8 +12,8 @@ export interface ExamesComplementaresProps {
 
 export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ control }) => {
   return (
-     <section className="w-full flex flex-col justify-center gap-4">
-            <h2 className="text-xl text-black font-semibold">Exames Complementares</h2>
+     <section className="w-full flex flex-col justify-center gap-10">
+            <h2 className="text-xl text-black text-center font-semibold">Exames Complementares</h2>
             <div className="flex w-full flex-row gap-4">
               <Controller
                 name="examesComplementares.peso"
@@ -25,7 +25,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 render={({ field, fieldState }) => (
                   <NumberInput
                     {...field}
-                    className="w-[12%]"
+                    className="w-[50%] sm:w-[12%]"
                     label="Peso (em Kg)"
                     labelPlacement="outside"
                     placeholder="1Kg..."
@@ -41,7 +41,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                   <DateInput
                     value={field.value ? parseDate(field.value) : null}
                     onChange={v => field.onChange(v?.toString() ?? "")}
-                    className="w-[20%]"
+                    className="w-[45%] sm:w-[20%]"
                     label="Data medição"
                     labelPlacement="outside"
                     placeholderValue={new CalendarDate(1995, 11, 6)}
@@ -59,7 +59,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 render={({ field, fieldState }) => (
                   <Input
                     {...field}
-                    className="w-[10%]"
+                    className="w-[40%] sm:w-[10%]"
                     label="Tipo sanguíneo"
                     labelPlacement="outside"
                     placeholder="A+..."
@@ -76,7 +76,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 render={({ field, fieldState }) => (
                   <Input
                     {...field}
-                    className="w-[12%]"
+                    className="w-[50%] sm:w-[12%]"
                     label="Pressão (em mmHg)"
                     labelPlacement="outside"
                     placeholder="120/80..."
@@ -92,7 +92,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                   <DateInput
                     value={field.value ? parseDate(field.value) : null}
                     onChange={v => field.onChange(v?.toString() ?? "")}
-                    className="w-[20%]"
+                    className="w-[45%] sm:w-[20%]"
                     label="Data medição"
                     labelPlacement="outside"
                     placeholderValue={new CalendarDate(1995, 11, 6)}

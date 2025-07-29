@@ -86,7 +86,7 @@ function AddClientesPage() {
     }
 
     const methods = useForm<FormValues>({
-        mode: 'onBlur',           // roda validação sempre que o usuário sai de um campo
+        mode: 'onBlur',           
         reValidateMode: 'onChange',
         defaultValues: {
             nome: "", email: "", dt_nascimento: "", rg: "", cpf: "", estado_civil: "", sexo: "", filhos: 0, cep: "", endereco: "",
@@ -165,7 +165,7 @@ function AddClientesPage() {
                                     endContent={<CalendarIcon />}
                                     isRequired
                                     errorMessage={errors.dt_nascimento?.message}
-                                    className="w-[10%]"
+                                    className="w-full sm:w-[10%] "
                                 />
                             )}
                         />
@@ -180,7 +180,7 @@ function AddClientesPage() {
                                 <Input
                                     {...field}
                                     label="RG"
-                                    className="w-[20%]"
+                                    className="w-full sm:w-[20%]"
                                     isRequired
                                     validationState={fieldState.error ? 'invalid' : 'valid'}
                                     errorMessage={fieldState.error?.message}
@@ -199,7 +199,7 @@ function AddClientesPage() {
                                 <Input
                                     {...field}
                                     label="CPF"
-                                    className="w-[20%]"
+                                    className="w-full sm:w-[20%]"
                                     isRequired
                                     validationState={fieldState.error ? 'invalid' : 'valid'}
                                     errorMessage={fieldState.error?.message}
@@ -208,7 +208,7 @@ function AddClientesPage() {
                                 />
                             )}
                         />
-                        <InfoUsuarioCampos control={control} name={"estado_civil"} label={"Estado civil"} className={"w-[20%]"} errorMessage={errors.estado_civil?.message} />
+                        <InfoUsuarioCampos control={control} name={"estado_civil"} label={"Estado civil"} className={"w-full sm:w-[20%]"} errorMessage={errors.estado_civil?.message} />
                         <Controller
                             name="sexo"
                             control={control}
@@ -217,7 +217,7 @@ function AddClientesPage() {
                                     selectedKeys={field.value ? new Set([field.value]) : new Set()}
                                     onSelectionChange={keys => field.onChange(Array.from(keys)[0])}
                                     label="Sexo"
-                                    className="w-[15%]"
+                                    className="w-[48%] sm:w-[15%]"
                                 >
                                     <SelectItem className="text-black" key="masc">Masculino</SelectItem>
                                     <SelectItem className="text-black" key="fem">Feminino</SelectItem>
@@ -233,18 +233,18 @@ function AddClientesPage() {
                                     label="Filhos"
                                     isRequired
                                     errorMessage={errors.filhos?.message}
-                                    className="w-[12%]"
+                                    className="w-[48%] sm:w-[12%]"
                                 />
                             )}
                         />
-                        <InfoUsuarioCampos control={control} name={"cep"} label={"CEP"} className={"w-[20%]"} errorMessage={errors.cep?.message} />
-                        <InfoUsuarioCampos control={control} name={"endereco"} label={"Endereço"} className={"w-[62%]"} errorMessage={errors.endereco?.message} />
-                        <InfoUsuarioCampos control={control} name={"num_endereco"} label={"N°"} className={"w-[6%]"} errorMessage={errors.num_endereco?.message} />
-                        <InfoUsuarioCampos control={control} name={"complemento"} label={"Complemento"} className={"w-[10%]"} errorMessage={errors.complemento?.message} />
-                        <InfoUsuarioCampos control={control} name={"cidade"} label={"Cidade"} className={"w-[20%]"} errorMessage={errors.cidade?.message} />
-                        <InfoUsuarioCampos control={control} name={"bairro"} label={"Bairro"} className={"w-[20%]"} errorMessage={errors.bairro?.message} />
-                        <InfoUsuarioCampos control={control} name={"nacionalidade"} label={"Nacionalidade"} className={"w-[20%]"} errorMessage={errors.nacionalidade?.message} />
-                        <InfoUsuarioCampos control={control} name={"naturalidade"} label={"Naturalidade"} className={"w-[20%]"} errorMessage={errors.naturalidade?.message} />
+                        <InfoUsuarioCampos control={control} name={"cep"} label={"CEP"} className={"w-full sm:w-[20%]"} errorMessage={errors.cep?.message} />
+                        <InfoUsuarioCampos control={control} name={"endereco"} label={"Endereço"} className={"w-full sm:w-[62%]"} errorMessage={errors.endereco?.message} />
+                        <InfoUsuarioCampos control={control} name={"num_endereco"} label={"N°"} className={"w-[48%] sm:w-[6%]"} errorMessage={errors.num_endereco?.message} />
+                        <InfoUsuarioCampos control={control} name={"complemento"} label={"Complemento"} className={"w-[48%] sm:w-[10%]"} errorMessage={errors.complemento?.message} />
+                        <InfoUsuarioCampos control={control} name={"cidade"} label={"Cidade"} className={"w-full sm:w-[20%]"} errorMessage={errors.cidade?.message} />
+                        <InfoUsuarioCampos control={control} name={"bairro"} label={"Bairro"} className={"w-full sm:w-[20%]"} errorMessage={errors.bairro?.message} />
+                        <InfoUsuarioCampos control={control} name={"nacionalidade"} label={"Nacionalidade"} className={"w-full sm:w-[20%]"} errorMessage={errors.nacionalidade?.message} />
+                        <InfoUsuarioCampos control={control} name={"naturalidade"} label={"Naturalidade"} className={"w-full sm:w-[20%]"} errorMessage={errors.naturalidade?.message} />
                         <Controller
                             name="raca"
                             control={control}
@@ -253,7 +253,7 @@ function AddClientesPage() {
                                     selectedKeys={field.value ? new Set([field.value]) : new Set()}
                                     onSelectionChange={keys => field.onChange(Array.from(keys)[0])}
                                     label="Raça"
-                                    className="w-[17%]"
+                                    className="w-full sm:w-[17%]"
                                 >
                                     <SelectItem className="text-black" key="branca">Branca</SelectItem>
                                     <SelectItem className="text-black" key="amarela">Amarela</SelectItem>
@@ -262,13 +262,13 @@ function AddClientesPage() {
                                 </Select>
                             )}
                         />
-                        <InfoUsuarioCampos control={control} name={"telefone"} label={"Telefone residencial"} className={"w-[20%]"} errorMessage={errors.telefone?.message} />
-                        <InfoUsuarioCampos control={control} name={"celular"} label={"Celular"} className={"w-[20%]"} errorMessage={errors.celular?.message} />
-                        <InfoUsuarioCampos control={control} name={"profissao"} label={"Profissão"} className={"w-[20%]"} errorMessage={errors.profissao?.message} />
-                        <InfoUsuarioCampos control={control} name={"local_trabalho"} label={"Local de trabalho"} className={"w-[38%]"} errorMessage={errors.local_trabalho?.message} />
-                        <InfoUsuarioCampos control={control} name={"email"} label={"Email"} className={"w-[58%]"} errorMessage={errors.email?.message} />
-                        <InfoUsuarioCampos control={control} name={"instagram"} label={"Instagram"} className={"w-[20%]"} errorMessage={errors.instagram?.message} />
-                        <InfoUsuarioCampos control={control} name={"facebook"} label={"Facebook"} className={"w-[20%]"} errorMessage={errors.facebook?.message} />
+                        <InfoUsuarioCampos control={control} name={"telefone"} label={"Telefone residencial"} className={"w-full sm:w-[20%]"} errorMessage={errors.telefone?.message} />
+                        <InfoUsuarioCampos control={control} name={"celular"} label={"Celular"} className={"w-full sm:w-[20%]"} errorMessage={errors.celular?.message} />
+                        <InfoUsuarioCampos control={control} name={"profissao"} label={"Profissão"} className={"w-full sm:w-[20%]"} errorMessage={errors.profissao?.message} />
+                        <InfoUsuarioCampos control={control} name={"local_trabalho"} label={"Local de trabalho"} className={"w-full sm:w-[38%]"} errorMessage={errors.local_trabalho?.message} />
+                        <InfoUsuarioCampos control={control} name={"email"} label={"Email"} className={"w-full sm:w-[58%]"} errorMessage={errors.email?.message} />
+                        <InfoUsuarioCampos control={control} name={"instagram"} label={"Instagram"} className={"w-full sm:w-[20%]"} errorMessage={errors.instagram?.message} />
+                        <InfoUsuarioCampos control={control} name={"facebook"} label={"Facebook"} className={"w-full sm:w-[20%]"} errorMessage={errors.facebook?.message} />
                         <Controller
                             name="id_tipo_usuario"
                             control={control}
@@ -279,8 +279,8 @@ function AddClientesPage() {
                         />
                     </section>
 
-                    <div className="flex flex-wrap w-full sm:flex-nowrap gap-2 justify-center">
-                        <Button size="lg" className="w-[15%] text-white bg-[#7F634B]" type="submit">
+                    <div className="flex flex-wrap w-full sm:w-full sm:flex-nowrap gap-2 justify-center">
+                        <Button size="lg" className="w-full sm:w-[15%] text-white bg-[#7F634B]" type="submit">
                             Salvar
                         </Button>
                     </div>

@@ -25,7 +25,6 @@ function HomePage() {
       .catch(console.error);
   }, [token, user?.id]);
 
-
   useEffect(() => {
     if (!usuario) return;
 
@@ -49,16 +48,17 @@ function HomePage() {
   }, [token, usuario]);
 
   if (!usuario) {
-    return <p>Carregando...</p>;
+    return <p className="text-center mt-8">Carregando...</p>;
   }
 
   return (
-    <div className="flex h-full flex-col justify-start gap-16 items-center w-screen p-2">
-      <div className="flex w-[70%] flex-col items-start">
-        <div className="flex w-full p-5 justify-center bg-[#9B7F67]">
-          <p className="text-lg">Lista de retornos próximos</p>
+    <div className="flex flex-col items-center w-full px-4 py-6 gap-8">
+  
+      <div className="w-[100%] sm:w-[70%] flex flex-col">
+        <div className="w-full p-4 text-center bg-[#9B7F67] rounded-t-lg">
+          <p className="text-base sm:text-lg md:text-xl text-white font-semibold">Lista de retornos próximos</p>
         </div>
-        <div className="flex flex-col gap-5 p-5 justify-center bg-[rgba(155,127,103,0.26)] w-full">
+          <div className="flex flex-col gap-5 p-5 justify-center bg-[rgba(155,127,103,0.26)] w-full">
           {procedimentos.length === 0 ? (
             <div className='flex flex-col w-full justify-center items-center gap-5'>
               <h2 className="text-center text-3xl text-[#75614e]"> Parece que você ainda não tem procedimentos</h2>
@@ -79,40 +79,59 @@ function HomePage() {
           )}
         </div>
       </div>
-      <div className="flex w-[60%] gap-5 justify-around flex-wrap items-center p-2">
-        {
-          usuario.id_tipo_usuario === 2 ?
-            <>
-              <button onClick={() => navigate(`/listagem-procedimentos?usuario_id=${usuario.id}`)} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
-                <p>VER PROCEDIMENTOS</p>
-              </button>
-              <button onClick={() => navigate(`/listagem-orcamentos?usuario_id=${usuario.id}`)} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
-                <p>VER ORÇAMENTOS</p>
-              </button>
-            </> : null
-        }
 
-        {
-          usuario.id_tipo_usuario === 1 ?
-            <>
-              <button onClick={() => navigate('/listagem-procedimentos')} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
-                <p>VER PROCEDIMENTOS</p>
-              </button>
-              <button onClick={() => navigate('/listagem-orcamentos')} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
-                <p>VER ORÇAMENTOS</p>
-              </button>
-              <button onClick={() => navigate('/listagem-clientes')} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
-                <p>VER CLIENTES</p>
-              </button>
-              <button onClick={() => navigate('/add-cliente')} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
-                <p>ADICIONAR CLIENTE</p>
-              </button>
-              <button onClick={() => navigate('/add-orcamento')} className="w-[30%] flex justify-center p-2 rounded-lg bg-[#9B7F67]">
-                <p>ADICIONAR ORÇAMENTO</p>
-              </button>
-            </> : null
-        }
+      <div className="w-[70%]  flex flex-col sm:flex-row flex-wrap justify-center gap-4">
+        {usuario.id_tipo_usuario === 2 && (
+          <>
+            <button
+              onClick={() => navigate(`/listagem-procedimentos?usuario_id=${usuario.id}`)}
+              className="w-full sm:w-1/2 md:w-1/3 py-3 rounded-lg bg-[#9B7F67] text-white font-medium"
+            >
+              VER PROCEDIMENTOS
+            </button>
+            <button
+              onClick={() => navigate(`/listagem-orcamentos?usuario_id=${usuario.id}`)}
+              className="w-full sm:w-1/2 md:w-1/3 py-3 rounded-lg bg-[#9B7F67] text-white font-medium"
+            >
+              VER ORÇAMENTOS
+            </button>
+          </>
+        )}
 
+        {usuario.id_tipo_usuario === 1 && (
+          <>
+            <button
+              onClick={() => navigate('/listagem-procedimentos')}
+              className="w-full sm:w-1/2 md:w-1/3 py-3 rounded-lg bg-[#9B7F67] text-white font-medium"
+            >
+              VER PROCEDIMENTOS
+            </button>
+            <button
+              onClick={() => navigate('/listagem-orcamentos')}
+              className="w-full sm:w-1/2 md:w-1/3 py-3 rounded-lg bg-[#9B7F67] text-white font-medium"
+            >
+              VER ORÇAMENTOS
+            </button>
+            <button
+              onClick={() => navigate('/listagem-clientes')}
+              className="w-full sm:w-1/2 md:w-1/3 py-3 rounded-lg bg-[#9B7F67] text-white font-medium"
+            >
+              VER CLIENTES
+            </button>
+            <button
+              onClick={() => navigate('/add-cliente')}
+              className="w-full sm:w-1/2 md:w-1/3 py-3 rounded-lg bg-[#9B7F67] text-white font-medium"
+            >
+              ADICIONAR CLIENTE
+            </button>
+            <button
+              onClick={() => navigate('/add-orcamento')}
+              className="w-full sm:w-1/2 md:w-1/3 py-3 rounded-lg bg-[#9B7F67] text-white font-medium"
+            >
+              ADICIONAR ORÇAMENTO
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

@@ -5,7 +5,6 @@ import { useTokenStore } from '../hooks/useTokenStore';
 
 function LoginPage() {
   const navigate = useNavigate();
-
   const { setToken, setUser, token, user } = useTokenStore();
 
   useEffect(() => {
@@ -14,13 +13,13 @@ function LoginPage() {
     }
   }, [token, user, navigate]);
 
-  const onSubmit = async (e) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
 
     try {
-      let email = data.email
-      let senha = data.senha
+      const email = (data as any).email;
+      const senha = (data as any).senha;
 
       const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
         method: 'POST',
@@ -29,79 +28,61 @@ function LoginPage() {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Erro no login:', errorText);
-
+        console.error('Erro no login:', await response.text());
         return;
       }
-      const { token: loginToken } = await response.json();
 
-      const respostaEu = await fetch(`${import.meta.env.VITE_API_URL}/eu`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${loginToken}`,
-        },
+      const { token: loginToken } = await response.json();
+      const userResp = await fetch(`${import.meta.env.VITE_API_URL}/eu`, {
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${loginToken}` },
       });
 
-      if (!respostaEu.ok) {
-        const errorText = await respostaEu.text();
-        console.error('Erro ao obter dados do usuário:', errorText);
-
+      if (!userResp.ok) {
+        console.error('Erro ao obter dados do usuário:', await userResp.text());
         return;
       }
 
-      const userData = await respostaEu.json();
-
+      const userData = await userResp.json();
       setToken(loginToken);
       setUser(userData);
-
       localStorage.setItem('token', loginToken);
       localStorage.setItem('user', JSON.stringify(userData));
-
       navigate('/home');
     } catch (error) {
       console.error('Erro ao fazer login:', error);
-
     }
   };
 
   return (
-    <div className=' w-screen h-screen flex flex-col justify-center items-center' >
-      <div className="w-[60%]  flex-col flex justify-center items-center p-5 ">
-        <div className="w-[50%]">
-          <img className="w-full" src="../src/assets/logo.PNG" alt="" />
+    <div className="w-screen min-h-screen flex items-center justify-center ">
+      <div className="w-[90%] md:w-[30%] bg-[#ece7e2] p-6 rounded-lg shadow-md">
+        <div className="flex justify-center mb-6">
+          <img src="../src/assets/logo.PNG" alt="Logo" className="h-30 w-auto" />
         </div>
-        <Form className="w-[50%] flex flex-col items-center  justify-center" onSubmit={onSubmit}>
+        <Form onSubmit={onSubmit} className="space-y-4">
           <Input
             isRequired
-            errorMessage="Coloque um email valido"
+            errorMessage="Coloque um email válido"
             name="email"
-            className="bg-transparent border-2 border-[#9B7F67] rounded-xl "
-            placeholder="Coloque seu email"
+            placeholder="Email"
             type="email"
+            className="w-full bg-transparent border-2 border-[#9B7F67] rounded-xl"
           />
           <Input
             isRequired
             errorMessage="Esqueceu a senha"
             name="senha"
-            className="bg-transparent border-2 border-[#9B7F67] rounded-xl "
-            placeholder="Coloque sua senha"
+            placeholder="Senha"
             type="password"
+            className="w-full bg-transparent border-2 border-[#9B7F67] rounded-xl"
           />
-          <Button
-            type="submit"
-            className="w-[40%] mt-5 bg-[#9B7F67] tracking-wider"
-            size="lg"
-          >
+          <Button type="submit" size="lg" className="w-full bg-[#9B7F67] tracking-wider">
             Entrar
           </Button>
         </Form>
       </div>
-
     </div>
-  )
+  );
 }
 
-export default LoginPage
-
+export default LoginPage;

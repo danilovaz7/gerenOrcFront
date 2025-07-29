@@ -60,7 +60,7 @@ function UsuarioAutocomplete({
     }, [query, usuarios]);
 
     return (
-        <div className="relative w-[40%]">
+        <div className="relative w-full sm:w-[40%]">
             <Input
                 value={query}
                 label="Pesquisar paciênte..."
@@ -159,7 +159,7 @@ function AddOrcamentosPage() {
     };
 
     return (
-        <div className="flex w-[70%] h-full flex-col items-center p-4">
+        <div className="flex w-[100%] sm:w-[70%] h-full flex-col items-center p-4">
             <FormProvider {...methods}>
                 <HForm
                     className="w-full flex flex-col gap-6 bg-[rgba(155,127,103,0.1)] p-4 rounded"
@@ -182,7 +182,7 @@ function AddOrcamentosPage() {
                                 render={({ field }) => (
                                     <Input
                                         {...field}
-                                        className="w-[73%]"
+                                        className="w-full sm:w-[73%]"
                                         label="Nome do procedimento"
                                         isRequired
                                     />
@@ -192,7 +192,7 @@ function AddOrcamentosPage() {
                                 render={({ field }) => (
                                     <NumberInput
                                         {...field}
-                                        className="w-[10%]"
+                                        className="w-[50%] sm:w-[10%]"
                                         label="Valor"
                                         isRequired
                                     />
@@ -201,7 +201,7 @@ function AddOrcamentosPage() {
                             <Controller name={`procedimentos.${index}.dt_realizacao`} control={control} rules={{ required: "Obrigatório" }}
                                 render={({ field }) => (
                                     <DateInput
-                                        className="w-[15%]"
+                                        className="w-[45%] sm:w-[15%]"
                                         value={field.value ? parseDate(field.value) : null}
                                         onChange={v => field.onChange(v?.toString() ?? "")}
                                         label="Data de realização"
@@ -216,7 +216,7 @@ function AddOrcamentosPage() {
                                 )}
                             />
 
-                            <button type="button" onClick={() => remove(index)} className="w-[12%] bg-[#7F634B] text-white rounded">
+                            <button type="button" onClick={() => remove(index)} className="w-[40%] sm:w-[12%] bg-[#7F634B] text-white rounded">
                                 Remover
                             </button>
                         </div>
@@ -243,7 +243,7 @@ function AddOrcamentosPage() {
                             render={({ field }) => (
                                 <Select
                                     {...field}
-                                    className="w-[20%]"
+                                    className="w-[60%] sm:w-[20%]"
                                     label="Forma de pagamento"
                                     isRequired
                                 >
@@ -259,7 +259,7 @@ function AddOrcamentosPage() {
                             render={({ field }) => (
                                 <NumberInput
                                     {...field}
-                                    className="w-[20%]"
+                                    className="w-[60%] sm:w-[20%]"
                                     label="Valor Total"
                                     isDisabled
                                     value={field.value}

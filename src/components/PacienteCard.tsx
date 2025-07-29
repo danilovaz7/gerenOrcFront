@@ -19,7 +19,8 @@ function PacienteCard({ id, nome, orcamentosCount, procedimentosCount, ultimo_re
         <div
             className="
                 grid
-                grid-cols-[2fr_1fr_1fr_1fr_auto]
+                grid-cols-1
+                sm:grid-cols-[2fr_1fr_1fr_1fr_auto]
                 gap-4
                 w-full
                 text-white

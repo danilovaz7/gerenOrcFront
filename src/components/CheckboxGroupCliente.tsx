@@ -1,4 +1,4 @@
-// src/components/PerguntaSimNaoObs.tsx
+
 import React from "react";
 import { Controller, type Control } from "react-hook-form";
 import { CheckboxGroup } from "@heroui/react";

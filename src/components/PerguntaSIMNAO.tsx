@@ -15,8 +15,8 @@ export function PerguntaSimNao({ control, name, label, rules }: Props) {
   const { field } = useController({ control, name, rules })
   return (
     <div className="flex w-full flex-col gap-2">
-      <div className="flex justify-between w-[40%] items-center">
-        <p className="text-black text-lg">{label}</p>
+      <div className="flex justify-between w-full sm:w-[40%] items-center">
+        <p className="text-black text-sm sm:text-lg">{label}</p>
         <RadioGroup
           orientation="horizontal"
           value={String(field.value)}

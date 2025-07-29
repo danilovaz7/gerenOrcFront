@@ -59,7 +59,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                     label={label}
                 />
             ))}
-            <h2 className="text-xl font-semibold">Anamnese</h2>
+            <h2 className="text-xl font-semibold text-center text-black">Anamnese</h2>
             <PerguntaSimNaoObs
                 control={control}
                 name="anamnese.tomando_medicamento"
@@ -95,8 +95,8 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 <Checkbox value="alerg_anestesico_loc">Anestesico local</Checkbox>
             </CheckboxGroupCliente>
             <div className="flex w-full flex-col gap-2">
-                <div className="flex justify-between w-[50%] items-center">
-                    <p className="text-black text-lg">Sua pressão é:</p>
+                <div className="flex justify-between w-full sm:w-[50%] items-center">
+                    <p className="text-black text-md sm:text-lg">Sua pressão é:</p>
                     <Controller
                         name="anamnese.pressao_tipo"
                         control={control}
@@ -116,7 +116,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 </div>
             </div>
             <div className="w-full flex flex-col">
-                <p className="text-black text-lg">Assinale caso apresente algum dos sintomas abaixo: </p>
+                <p className="text-black text-md sm:text-lg">Assinale caso apresente algum dos sintomas abaixo: </p>
                 <CheckboxGroupCliente control={control} array={sintFields} >
                     <Checkbox value="sint_dor_cabeca">Dor de cabeça</Checkbox>
                     <Checkbox value="sint_tontura">Tontura</Checkbox>
@@ -133,8 +133,8 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 name="anamnese.diabetico"
                 control={control}
                 render={({ field }) => (
-                    <div className="flex justify-between w-[50%] items-center">
-                        <p className="text-black text-lg">É diabético?</p>
+                    <div className="flex justify-between w-full sm:w-[50%] items-center">
+                        <p className="text-black text-md sm:text-lg">É diabético?</p>
                         <RadioGroup
                             orientation="horizontal"
                             value={String(field.value)}
@@ -173,8 +173,8 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 label="Tem muita sede?"
             />
             <div className="flex w-full flex-col gap-2">
-                <div className="flex justify-between w-[40%] items-center">
-                    <p className="text-black text-lg">Apresenta problemas respiratórios?</p>
+                <div className="flex justify-between w-full sm:w-[40%] items-center">
+                    <p className="text-black text-md sm:text-lg">Apresenta problemas respiratórios?</p>
                     <Controller
                         name="anamnese.prob_respiratorio"
                         control={control}
@@ -198,8 +198,8 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 </CheckboxGroupCliente>
             </div>
             <div className="flex w-full flex-col gap-2">
-                <div className="flex justify-between w-[50%] items-center">
-                    <p className="text-black text-lg">Tem problemas cardíacos?</p>
+                <div className="flex justify-between w-full sm:w-[50%] items-center">
+                    <p className="text-black text-md sm:text-lg">Tem problemas cardíacos?</p>
                     <Controller
                         name="anamnese.prob_cardiaco"
                         control={control}
@@ -243,8 +243,8 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
             <PerguntaSimNao control={control} name="anamnese.epilepsia" label="Epilepsia?" />
             <PerguntaSimNao control={control} name="anamnese.toma_anticoag" label="Toma anticoagulante?" />
             <PerguntaSimNao control={control} name="anamnese.marca_passo" label="Portador de marca‑passo?" />
-            <div className="flex justify-between w-[50%] items-center">
-                <p className="text-black text-lg">Tem anemia?</p>
+            <div className="flex justify-between w-full sm:w-[50%] items-center">
+                <p className="text-black text-md sm:text-lg">Tem anemia?</p>
                 <Controller
                     name="anamnese.anemia"
                     control={control}
@@ -293,8 +293,8 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                     rules={{ required: "Obrigatório" }}
                     render={({ field, fieldState }) => (
                         <>
-                            <div className="flex justify-between w-[50%] items-center">
-                                <p className="text-black text-lg">Tem ou teve Hepatite?</p>
+                            <div className="flex justify-between w-full sm:w-[50%] items-center">
+                                <p className="text-black text-md sm:text-lg">Tem ou teve Hepatite?</p>
                                 <RadioGroup
                                     orientation="horizontal"
                                     value={String(field.value)}
@@ -333,8 +333,8 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                     name="anamnese.outra_doenca"
                     control={control}
                     render={({ field }) => (
-                        <div className="flex justify-between w-[50%] items-center">
-                            <p className="text-black text-lg">Tem outra doença?</p>
+                        <div className="flex justify-between w-full sm:w-[50%] items-center">
+                            <p className="text-black text-md sm:text-lg">Tem outra doença?</p>
                             <RadioGroup
                                 orientation="horizontal"
                                 value={String(field.value)}

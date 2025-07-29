@@ -16,8 +16,8 @@ export function PerguntaSimNaoObs({ control, name, nameObs, label, rules }: Prop
   const { field: obsField }   = useController({ control, name: nameObs })
   return (
     <div className="flex w-full flex-col gap-2">
-      <div className="flex justify-between w-[40%] items-center">
-        <p className="text-black text-lg">{label}</p>
+      <div className="flex justify-between w-full sm:w-[40%] gap-2 items-center">
+        <p className="text-black text-sm sm:text-lg">{label}</p>
         <RadioGroup
           orientation="horizontal"
           value={String(radioField.value)}
