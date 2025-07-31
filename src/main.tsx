@@ -18,6 +18,7 @@ import {  createBrowserRouter, useHref, useNavigate, Outlet, RouterProvider } fr
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RootLayout } from './layout/RootLayout.tsx'
+import RedefinirSenhaPage from './pages/RedefinirSenhaPage.tsx'
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <LoginPage />,
+      },
+        {
+        path: "/redefinir-senha/:token",
+        element: <RedefinirSenhaPage />,
       },
       {
         element: <RootLayout />,
