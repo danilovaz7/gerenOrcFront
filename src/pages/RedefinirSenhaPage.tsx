@@ -110,12 +110,12 @@ export default function RedefinirSenhaPage() {
         <div className="w-screen min-h-screen flex items-center justify-center">
             <FormProvider {...methods}>
                 <HForm
-                    className="w-[50%] flex flex-col gap-10 p-6 sm:p-10"
+                    className=" w-full sm:w-[50%] flex flex-col justify-center items-center gap-10 p-6 sm:p-10"
                     onSubmit={handleSubmit(onSubmit)}
                 >
-                    <section className="flex flex-wrap gap-2 justify-center items-center w-full bg-red-500 p-2">
-                        <h1>Redefina sua senha!</h1>
-                        <p>
+                    <section className="flex flex-wrap gap-2 justify-center items-center w-full sm:w-[70%] bg-[#ece7e2] shadow-md rounded-lg px-2 py-12">
+                        <h1 className="text-[#7F634B] text-3xl sm:text-5xl text-center">Redefina sua senha!</h1>
+                        <p className="text-[#7F634B] text-center">
                             Para conseguir redefinir sua senha basta digitar sua nova senha e
                             confirmar
                         </p>
@@ -129,7 +129,7 @@ export default function RedefinirSenhaPage() {
                                     label="Insira sua nova senha"
                                     isRequired
                                     errorMessage={erroSenha}
-                                    className="w-[100%]"
+                                    className=" w-[90%] sm:w-[80%]"
                                 />
                             )}
                         />
@@ -150,7 +150,7 @@ export default function RedefinirSenhaPage() {
                                     label="Confirme sua senha"
                                     isRequired
                                     errorMessage={erroConfirmSenha}
-                                    className="w-[100%]"
+                                    className="w-[90%] sm:w-[80%]"
                                 />
                             )}
                         />

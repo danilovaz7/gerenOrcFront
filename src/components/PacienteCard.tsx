@@ -34,8 +34,8 @@ function PacienteCard({ id, nome, orcamentosCount, procedimentosCount, ultimo_re
             "
         >
             <p>Nome: {nome}</p>
-            <p className="hover:cursor-pointer" onClick={() => { navigate(`/listagem-orcamentos?nome=${nome}`); }}>Ver oçamentos {`(${orcamentosCount})`}</p>
-            <p className="hover:cursor-pointer" onClick={() => { navigate(`/listagem-procedimentos?nome=${nome}`); }}>Ver procedimentos {`(${procedimentosCount})`}</p>
+            <p className="hover:cursor-pointer" onClick={() => { navigate(`/listagem-orcamentos?usuario_id=${id}`); }}>Ver oçamentos {`(${orcamentosCount})`}</p>
+            <p className="hover:cursor-pointer" onClick={() => { navigate(`/listagem-procedimentos?usuario_id=${id}`); }}>Ver procedimentos {`(${procedimentosCount})`}</p>
             <p>Dt ultimo retorno: {ultimo_retorno ? formatDateOnly(ultimo_retorno) : "N/a"}</p>
             <p className="underline hover:cursor-pointer" onClick={() => { navigate(`/listagem-clientes/${id}`); }}>Ver Mais</p>
         </div>
