@@ -4,30 +4,106 @@ import { Input } from "@heroui/react";
 import type { FormValues } from "../pages/InfoCliente.tsx";
 
 export interface InfoUsuarioCamposProps {
-    control: Control<FormValues>;
-    name: 'nome' | 'email' | 'dt_nascimento' | 'rg' | 'cpf' | 'estado_civil' | 'sexo' | 'filhos' | 'cep' | 'endereco' | 'num_endereco' | 'complemento' | 'cidade' | 'bairro' | 'nacionalidade' | 'naturalidade' | 'raca' | 'telefone' | 'celular' | 'profissao' | 'local_trabalho' | 'instagram' | 'facebook';
-    label: string;
-    className: string;
-    errorMessage: string | undefined;
+  control: Control<FormValues>;
+  name:
+    | "nome"
+    | "email"
+    | "dt_nascimento"
+    | "rg"
+    | "cpf"
+    | "estado_civil"
+    | "sexo"
+    | "filhos"
+    | "cep"
+    | "endereco"
+    | "num_endereco"
+    | "complemento"
+    | "cidade"
+    | "bairro"
+    | "nacionalidade"
+    | "naturalidade"
+    | "raca"
+    | "telefone"
+    | "celular"
+    | "profissao"
+    | "local_trabalho"
+    | "instagram"
+    | "facebook";
+  label: string;
+  className: string;
+  errorMessage: string | undefined;
 }
 
-export const InfoUsuarioCampos: React.FC<InfoUsuarioCamposProps> = ({ control,errorMessage, label, className, name }) => {
-    return (
-        <Controller
-            name={name}
-            control={control}
-            rules={{ required: "Obrigatório" }}
-            render={({ field }) => (
-                <Input
-                    {...field}
-                    label={label}
-                    isRequired
-                    errorMessage={errorMessage}
-                    className={className}
-                />
-            )}
-        />
-    );
+export const InfoUsuarioCampos: React.FC<InfoUsuarioCamposProps> = ({
+  control,
+  errorMessage,
+  label,
+  className,
+  name,
+}) => {
+  const numericFields = ["filhos", "num_endereco"] as const;
+
+  return (
+    <Controller
+      name={name}
+      control={control}
+      rules={{ required: "Obrigatório" }}
+      render={({ field }) => {
+        const { name: fieldName, ref, onBlur, onChange: fieldOnChange, value } =
+          field;
+
+        const isNumberField = (numericFields as readonly string[]).includes(
+          fieldName
+        );
+
+        function handleChange(e: React.ChangeEvent<HTMLInputElement>): void;
+        function handleChange(v: number | string): void;
+        function handleChange(arg: React.ChangeEvent<HTMLInputElement> | number | string) {
+          if (typeof arg === "object" && "target" in arg) {
+            const v = arg.target.value;
+            if (isNumberField) {
+              if (v === "") {
+                fieldOnChange(undefined);
+                return;
+              }
+              const n = Number(v);
+              if (!Number.isNaN(n)) fieldOnChange(n);
+              else fieldOnChange(undefined);
+            } else {
+              fieldOnChange(v === "" ? undefined : v);
+            }
+            return;
+          }
+
+          if (isNumberField) {
+            if (arg === "" || arg == null) {
+              fieldOnChange(undefined);
+              return;
+            }
+            const n = typeof arg === "number" ? arg : Number(arg);
+            if (!Number.isNaN(n)) fieldOnChange(n);
+            else fieldOnChange(undefined);
+          } else {
+            fieldOnChange(arg == null ? undefined : String(arg));
+          }
+        }
+
+        return (
+          <Input
+            name={fieldName}
+            ref={ref}
+            className={className}
+            label={label}
+            isRequired
+            errorMessage={errorMessage}
+            value={value == null ? "" : String(value)}
+            onBlur={onBlur}
+            onChange={handleChange}
+          />
+        );
+      }}
+    />
+  );
 };
 
 export default InfoUsuarioCampos;

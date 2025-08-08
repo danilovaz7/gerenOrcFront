@@ -35,7 +35,7 @@ export type FormValues = Omit<Usuario, 'id'> & {
 export default function InfoClientes() {
   const { token } = useTokenStore();
   const { idUsuario } = useParams<{ idUsuario: string }>();
-  const [usuario, setUsuario] = useState<Usuario | null>(null);
+  const [, setUsuario] = useState<Usuario | null>(null);
 
   function isValidCPF(cpf: string): boolean {
     cpf = cpf.replace(/\D/g, '');
@@ -390,16 +390,29 @@ export default function InfoClientes() {
               )}
             />
             <Controller
-              name="filhos" control={control} render={({ field }) => (
-                <Input
-                  {...field}
-                  type="number"
-                  label="Filhos"
-                  isRequired
-                  errorMessage={errors.filhos?.message}
-                  className="w-[48%] sm:w-[12%]"
-                />
-              )}
+              name="filhos"
+              control={control}
+              render={({ field }) => {
+                const { name, ref, onBlur, onChange, value } = field;
+
+                return (
+                  <Input
+                    type="number"
+                    label="Filhos"
+                    isRequired
+                    errorMessage={errors.filhos?.message}
+                    className="w-[48%] sm:w-[12%]"
+                    name={name}
+                    ref={ref}
+                    value={value === undefined || value === null ? '' : String(value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const v = e.target.value;
+                      onChange(v === '' ? undefined : Number(v));
+                    }}
+                    onBlur={onBlur}
+                  />
+                );
+              }}
             />
             <InfoUsuarioCampos control={control} name={"cep"} label={"CEP"} className={"w-full sm:w-[20%]"} errorMessage={errors.cep?.message} />
             <InfoUsuarioCampos control={control} name={"endereco"} label={"Endereço"} className={"w-full sm:w-[62%]"} errorMessage={errors.endereco?.message} />

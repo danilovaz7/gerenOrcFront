@@ -26,7 +26,10 @@ export type FormValues = Omit<Procedimento, 'id'>;
 
 export const CalendarIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg aria-hidden="true" fill="none" height="1em" role="presentation" viewBox="0 0 24 24" width="1em" {...props}>
-    <path d="M7.75 2.5a.75.75 0 0 0-1.5 0v1.58..." fill="currentColor" />
+    <path
+      d="M7.75 2.5a.75.75 0 0 0-1.5 0V4H4.75A2.75 2.75 0 0 0 2 6.75v11.5A2.75 2.75 0 0 0 4.75 21h14.5A2.75 2.75 0 0 0 22 18.25V6.75A2.75 2.75 0 0 0 19.25 4H17V2.5a.75.75 0 0 0-1.5 0V4H8.5V2.5zM4.75 5.5h14.5c.69 0 1.25.56 1.25 1.25V9H3.5V6.75c0-.69.56-1.25 1.25-1.25zM3.5 10h17v8.25c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25V10z"
+      fill="currentColor"
+    />
   </svg>
 );
 
@@ -47,18 +50,29 @@ function ListagemProcedimentoPage() {
   // Formik para pesquisa
   const formik = useFormik({
     initialValues: {
-      parametro: 'nome',
+      parametro: usuario?.id_tipo_usuario === 1 ? 'nome' : 'status',
       valorBusca: '',
     },
+    enableReinitialize: true,
     onSubmit: async ({ parametro, valorBusca }) => {
-      const url = new URL(`${import.meta.env.VITE_API_URL}/procedimentos`);
-      if (usuarioId) url.searchParams.set('usuario_id', usuarioId);
-      if (valorBusca) url.searchParams.set(parametro, valorBusca);
+      const url = new URL(`${import.meta.env.VITE_API_URL}/procedimentos`)
+      if (usuarioId) url.searchParams.set('usuario_id', usuarioId)
+      if (valorBusca) url.searchParams.set(parametro, valorBusca)
+
       const res = await fetch(url.toString(), {
         headers: { Authorization: `Bearer ${token}` },
-      });
-      const data: Procedimento[] = await res.json();
-      setProcedimentos(data);
+      })
+      const data: Procedimento[] = await res.json()
+
+      // —> aqui replicamos o mesmo mapeamento de fetchFotoUrl
+      const withUrls = await Promise.all(
+        data.map(async p => {
+          if (p.foto_antes) p.foto_antes = await fetchFotoUrl(p.id, 'antes')
+          if (p.foto_depois) p.foto_depois = await fetchFotoUrl(p.id, 'depois')
+          return p
+        })
+      )
+      setProcedimentos(withUrls)
     },
   });
 
@@ -113,32 +127,35 @@ function ListagemProcedimentoPage() {
       dt_realizacao: '',
       dt_ultimo_retorno: '',
       obs_procedimento: '',
-      num_retorno: undefined,
+      num_retorno: 0,
       status_retorno: '',
     },
   });
   const { reset, handleSubmit, control, formState: { errors } } = methods;
 
-  // Carrega procedimento para editar
   useEffect(() => {
-    if (!idProcedimento) return;
+    if (!idProcedimento) return
     (async () => {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}`,
         { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const data: Procedimento = await res.json();
-      setProcedimento(data);
+      )
+      const data: Procedimento = await res.json()
+
+      if (data.foto_antes) data.foto_antes = await fetchFotoUrl(data.id, 'antes')
+      if (data.foto_depois) data.foto_depois = await fetchFotoUrl(data.id, 'depois')
+
+      setProcedimento(data)
       reset({
         dt_realizacao: data.dt_realizacao || '',
         dt_ultimo_retorno: data.dt_ultimo_retorno || '',
         obs_procedimento: data.obs_procedimento || '',
         num_retorno: data.num_retorno ?? 0,
         status_retorno: data.status_retorno || '',
-      });
-      onOpen();
-    })().catch(console.error);
-  }, [idProcedimento, token, reset, onOpen]);
+      })
+      onOpen()
+    })().catch(console.error)
+  }, [idProcedimento, token, reset, onOpen])
 
   const onEditSubmit = async (values: FormValues) => {
     if (!idProcedimento) return;
@@ -156,7 +173,6 @@ function ListagemProcedimentoPage() {
     }
   };
 
-  // Upload de imagem
   const handleFileChange = () => {
     if (!fileInputRef.current?.files?.length || !uploading || !idProcedimento) return;
     const file = fileInputRef.current.files[0];
@@ -202,10 +218,10 @@ function ListagemProcedimentoPage() {
             }}
           >
             {usuario?.id_tipo_usuario === 1 ? (
-              <SelectItem key="nome">Nome</SelectItem>
+              <SelectItem className='text-black' key="nome">Nome</SelectItem>
             ) : null}
-            <SelectItem key="status">Status</SelectItem>
-            <SelectItem key="dt_realizacao">Data de Retorno</SelectItem>
+            <SelectItem className='text-black' key="status">Status</SelectItem>
+            <SelectItem className='text-black' key="dt_realizacao">Data de Retorno</SelectItem>
           </Select>
 
           {formik.values.parametro === 'nome' && usuario?.id_tipo_usuario === 1 && (
@@ -223,9 +239,9 @@ function ListagemProcedimentoPage() {
               selectedKeys={new Set([formik.values.valorBusca])}
               onSelectionChange={(keys) => formik.setFieldValue('valorBusca', Array.from(keys)[0] ?? '')}
             >
-              <SelectItem key="aguardando procedimento">Aguardando</SelectItem>
-              <SelectItem key="retorno">Retorno</SelectItem>
-              <SelectItem key="finalizado">Finalizado</SelectItem>
+              <SelectItem className='text-black' key="aguardando procedimento">Aguardando</SelectItem>
+              <SelectItem className='text-black' key="retorno">Retorno</SelectItem>
+              <SelectItem className='text-black' key="finalizado">Finalizado</SelectItem>
             </Select>
           )}
           {formik.values.parametro === 'dt_realizacao' && (
@@ -279,7 +295,7 @@ function ListagemProcedimentoPage() {
 
       <Modal className='bg-[#e5ded8]' isOpen={isOpen} size={'3xl'} onClose={onClose}>
         <ModalContent className='text-black max-h-[80vh] overflow-y-auto'>
-          {(onClose) => (
+          {() => (
             <>
               <ModalHeader className="flex flex-col gap-1">Edição de procedimento</ModalHeader>
               <ModalBody className="flex h-full flex-col items-center p-2">
@@ -296,9 +312,9 @@ function ListagemProcedimentoPage() {
                             label="Status do procedimento"
                             className="w-[100%]"
                           >
-                            <SelectItem key="aguardando procedimento">Aguardando procedimento</SelectItem>
-                            <SelectItem key="retorno">Retorno</SelectItem>
-                            <SelectItem key="finalizado">Finalizado</SelectItem>
+                            <SelectItem className='text-black' key="aguardando procedimento">Aguardando procedimento</SelectItem>
+                            <SelectItem className='text-black' key="retorno">Retorno</SelectItem>
+                            <SelectItem className='text-black' key="finalizado">Finalizado</SelectItem>
                           </Select>
                         )}
                       />
@@ -321,16 +337,34 @@ function ListagemProcedimentoPage() {
                       <Controller
                         name="num_retorno"
                         control={control}
-                        render={({ field }) => (
-                          <Input
-                            {...field}
-                            label="N° retorno"
-                            isRequired
-                            errorMessage={errors.num_retorno?.message}
-                            className="w-[50%]"
-                          />
-                        )}
+                        render={({ field }) => {
+                          const { name, ref, onBlur, onChange, value } = field;
+                          return (
+                            <Input
+                              name={name}
+                              ref={ref}
+                              type="number"
+                              label="N° retorno"
+                              isRequired
+                              errorMessage={errors.num_retorno?.message}
+                              className="w-[50%]"
+                              value={value === undefined || value === null ? '' : String(value)}
+                              onBlur={onBlur}
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                const v = e.target.value;
+                                if (v === '') {
+                                  onChange(undefined);
+                                  return;
+                                }
+                                const n = Number(v);
+                                if (!Number.isNaN(n)) onChange(n);
+                                else onChange(undefined);
+                              }}
+                            />
+                          );
+                        }}
                       />
+
                       <Controller
                         name="obs_procedimento"
                         control={control}
@@ -347,17 +381,17 @@ function ListagemProcedimentoPage() {
                     </section>
                     <div className="w-full flex flex-col sm:flex-row gap-5 p-2">
                       {(['antes', 'depois'] as const).map((type) => (
-                        <div key={type} className="w-full sm:w-1/2 flex flex-col items-center bg-yellow-400 p-2 gap-2">
+                        <div key={type} className="w-full sm:w-[50%] flex flex-col justify-center items-center rounded-md bg-[#9B7F67] gap-2 p-2">
                           {procedimento?.[type === 'antes' ? 'foto_antes' : 'foto_depois'] ? (
                             <img
                               src={procedimento[type === 'antes' ? 'foto_antes' : 'foto_depois']!}
                               alt={type}
-                              className="w-full h-auto object-contain"
+                              className="w-full h-auto object-contain rounded-md"
                             />
                           ) : (
                             <div className="w-full h-96 bg-black" />
                           )}
-                          <p className="capitalize">{type}</p>
+                          <p className="capitalize text-white text-lg">{type}</p>
                           <Button
                             type="button"
                             className="text-white bg-[#7F634B] px-4 py-2 rounded"

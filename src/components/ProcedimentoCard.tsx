@@ -73,10 +73,10 @@ export function ProcedimentoCard({
                     </p>
                 )}
             </div>
-
+                
             <Modal className='bg-[#e5ded8]' isOpen={isOpen} size={'3xl'} onClose={onClose}>
                 <ModalContent className='text-black max-h-[80vh] overflow-y-auto'>
-                    {(onClose) => (
+                    {() => (
                         <>
                             <ModalHeader className="flex flex-col gap-1">Antes e Depois procedimento</ModalHeader>
                             <ModalBody className="flex h-full flex-col  items-center p-2">

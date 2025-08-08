@@ -12,7 +12,9 @@ export interface Procedimento {
     status_retorno: string;
     valor_procedimento: number;
     orcamento: {
-        usuario: {}
+        usuario: {
+            nome:string;
+        }
     } 
     createdAt: string;
     updatedAt: string;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Input,
     Button,
@@ -17,7 +17,7 @@ type FormValues = {
 export default function RedefinirSenhaPage() {
     const navigate = useNavigate();
     const { token } = useParams<{ token: string }>();
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { onClose } = useDisclosure();
 
     const [mensagem, setMensagem] = useState("");
     const [mensagemCor, setMensagemCor] =
@@ -25,15 +25,13 @@ export default function RedefinirSenhaPage() {
     const [erroSenha, setErroSenha] = useState("");
     const [erroConfirmSenha, setErroConfirmSenha] = useState("");
 
-    // sua validação manual
+   
     const validatePassword = (values: FormValues) => {
         console.log('to aqui')
         const errors: { senha?: string; confirmarSenha?: string } = {};
-
         const passwordRegex =
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
         console.log(passwordRegex.test(values.senha))
-        // limpa erros anteriores
         setErroSenha("");
         setErroConfirmSenha("");
 

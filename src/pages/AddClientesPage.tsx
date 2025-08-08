@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router";
 import { useTokenStore } from '../hooks/useTokenStore';
 import { useEffect, useState } from "react";
-import { useFormik } from 'formik';
-import { Button, DateInput, Form, Input, NumberInput, Select, SelectItem, Form as HForm, } from "@heroui/react";
-import { CalendarDate, parseDate } from "@internationalized/date";
+import { Button, DateInput, Input, Select, SelectItem, Form as HForm, } from "@heroui/react";
+import { parseDate } from "@internationalized/date";
 
 
 import type { Usuario } from '../interfaces/Usuario';
@@ -44,7 +43,7 @@ export type FormValues = Omit<Usuario, 'id'> & {
 
 function AddClientesPage() {
     const { token, user } = useTokenStore();
-    const [usuario, setUsuario] = useState<Usuario>();
+    const [, setUsuario] = useState<Usuario>();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -86,7 +85,7 @@ function AddClientesPage() {
     }
 
     const methods = useForm<FormValues>({
-        mode: 'onBlur',           
+        mode: 'onBlur',
         reValidateMode: 'onChange',
         defaultValues: {
             nome: "", email: "", dt_nascimento: "", rg: "", cpf: "", estado_civil: "", sexo: "", filhos: 0, cep: "", endereco: "",
@@ -226,16 +225,28 @@ function AddClientesPage() {
                             )}
                         />
                         <Controller
-                            name="filhos" control={control} render={({ field }) => (
-                                <Input
-                                    {...field}
-                                    type="number"
-                                    label="Filhos"
-                                    isRequired
-                                    errorMessage={errors.filhos?.message}
-                                    className="w-[48%] sm:w-[12%]"
-                                />
-                            )}
+                            name="filhos"
+                            control={control}
+                            render={({ field }) => {
+                                const { name, ref, onBlur, onChange, value } = field;
+                                return (
+                                    <Input
+                                        type="number"
+                                        label="Filhos"
+                                        isRequired
+                                        errorMessage={errors.filhos?.message}
+                                        className="w-[48%] sm:w-[12%]"
+                                        name={name}
+                                        ref={ref}
+                                        value={value === undefined || value === null ? '' : String(value)}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                            const v = e.target.value;
+                                            onChange(v === '' ? undefined : Number(v)); 
+                                        }}
+                                        onBlur={onBlur}
+                                    />
+                                );
+                            }}
                         />
                         <InfoUsuarioCampos control={control} name={"cep"} label={"CEP"} className={"w-full sm:w-[20%]"} errorMessage={errors.cep?.message} />
                         <InfoUsuarioCampos control={control} name={"endereco"} label={"Endereço"} className={"w-full sm:w-[62%]"} errorMessage={errors.endereco?.message} />

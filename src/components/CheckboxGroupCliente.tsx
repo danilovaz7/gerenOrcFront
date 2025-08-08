@@ -2,7 +2,7 @@
 import React from "react";
 import { Controller, type Control } from "react-hook-form";
 import { CheckboxGroup } from "@heroui/react";
-import type { FormValues } from "../pages/InfoClientPage.tsx";
+import type { FormValues } from "../pages/InfoCliente.tsx";
 
 export interface CheckboxGroupClienteProps {
   control: Control<FormValues>;

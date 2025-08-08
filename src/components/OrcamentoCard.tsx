@@ -47,7 +47,7 @@ export function OrcamentoCard({
       <button
         onClick={handleVerPdf}
         disabled={loadingPdf}
-        className="mt-2 sm:mt-0 self-end sm:self-auto text-sm underline disabled:opacity-50"
+        className="mt-2 sm:mt-0 self-end sm:self-auto text-sm underline bg-[#4d3c2d] disabled:opacity-50"
       >
         {loadingPdf ? 'Carregando...' : 'Ver PDF'}
       </button>

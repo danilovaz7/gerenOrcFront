@@ -1,8 +1,7 @@
-import { useNavigate } from "react-router";
 import { useTokenStore } from '../hooks/useTokenStore';
 import { useEffect, useState } from "react";
 import { useFormik } from 'formik';
-import { Button, Form, Input, Select, SelectItem } from "@heroui/react";
+import { Button, Form, Input } from "@heroui/react";
 
 
 import type { Usuario } from '../interfaces/Usuario';
@@ -10,9 +9,8 @@ import PacienteCard from "../components/PacienteCard";
 
 
 function ListagemClientesPage() {
-    const navigate = useNavigate();
     const { token, user } = useTokenStore();
-    const [usuario, setUsuario] = useState<Usuario>();
+    const [, setUsuario] = useState<Usuario>();
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
 
     useEffect(() => {

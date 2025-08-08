@@ -12,8 +12,7 @@ function LoginPage() {
   const [mensagem, setMensagem] = useState('')
   const [mensagemCor, setMensagemCor] = useState<"default" | "primary" | "secondary" | "success" | "warning" | "danger" | undefined>(undefined)
   const [hidePass, setHidePass] = useState(true);
-  const [isVisible, setIsVisible] = React.useState(false);
-  const toggleVisibility = () => setIsVisible(!isVisible);
+
 
   useEffect(() => {
     if (token && user) {
@@ -112,7 +111,7 @@ function LoginPage() {
         <Form onSubmit={onSubmit} className="space-y-4 flex flex-col justify-center items-center">
           <Input
             isRequired
-            variant="bordered" 
+            variant="bordered"
             errorMessage="Coloque um email válido"
             name="email"
             placeholder="Email"
@@ -121,7 +120,7 @@ function LoginPage() {
           />
           <Input
             isRequired
-           variant="bordered" 
+            variant="bordered"
             errorMessage="Esqueceu a senha"
             name="senha"
             placeholder="Senha"
@@ -151,7 +150,7 @@ function LoginPage() {
 
       <Modal className='bg-[#e5ded8]' isOpen={isOpen} size={'2xl'} onClose={onClose}>
         <ModalContent className='text-black'>
-          {(onClose) => (
+          {() => (
             <>
               <ModalHeader className="flex flex-col gap-1">Recuperação de senha</ModalHeader>
               <ModalBody className="flex h-full flex-col  items-center p-2">
