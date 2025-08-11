@@ -1,5 +1,13 @@
 import { useState, type MouseEventHandler } from 'react';
-
+import { useTokenStore } from '../hooks/useTokenStore';
+import { useNavigate } from 'react-router';
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  useDisclosure,
+} from '@heroui/react';
 
 interface OrcamentoProps {
   id_orcamento: number;
@@ -39,15 +47,32 @@ export function OrcamentoCard({
       setLoadingPdf(false);
     }
   };
+  const { token } = useTokenStore();
+  const navigate = useNavigate();
+
+  async function deletarOrc() {
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/orcamentos/${id_orcamento}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      }
+    );
+    if (res.ok) navigate("/home");
+  }
 
   const statusInfo: Record<string, { label: string; color: string }> = {
     'Aguardando pagamento': { label: 'Aguardando pagamento', color: 'bg-yellow-500' },
-    pago: { label: 'Pago', color: 'bg-green-500' }
+    Pago: { label: 'Pago', color: 'bg-green-500' }
   };
   const { label, color } = statusInfo[status] || { label: status, color: 'bg-gray-500' };
-
-
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  function handleClose() {
+    onClose();
+  }
 
 
   return (
@@ -78,9 +103,41 @@ export function OrcamentoCard({
             Atualizar
           </p>
         )}
+        <button
+          onClick={onOpen}
+          className="mt-2 sm:mt-0 self-end sm:self-auto text-sm underline bg-[#831b14] disabled:opacity-50"
+        >
+          Deletar
+        </button>
       </div>
 
-
+      <Modal className='bg-[#e5ded8]' isOpen={isOpen} size={'2xl'} onClose={handleClose}>
+        <ModalContent className='text-black max-h-[80vh] overflow-y-auto'>
+          {() => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Editar Orçamento</ModalHeader>
+              <ModalBody className="flex h-full flex-col text-center gap-10 items-center p-2">
+                <p className='text-xl'>Tem certeza que deseja deletar o orçamento {id_orcamento}</p>
+                <div className='flex w-full justify-center items-center gap-10'>
+                  <button
+                    onClick={deletarOrc}
+                    disabled={loadingPdf}
+                    className="mt-2 sm:mt-0 self-end sm:self-auto text-md  text-white bg-[#4d3c2d] disabled:opacity-50"
+                  >
+                    Sim
+                  </button>
+                  <button
+                    onClick={handleClose}
+                    className="mt-2 sm:mt-0 self-end sm:self-auto text-md  text-white bg-[#4d3c2d] disabled:opacity-50"
+                  >
+                   Não
+                  </button>
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
 
 

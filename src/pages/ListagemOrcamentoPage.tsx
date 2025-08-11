@@ -23,7 +23,6 @@ import { Controller, FormProvider, useForm } from 'react-hook-form';
 
 export type FormValues = Omit<Orcamento, 'id'>;
 
-// Tipo do formulário de edição do modal
 type EditFormValues = {
     id: number;
     status: string;
@@ -39,10 +38,8 @@ function ListagemOrcamentoPage() {
     const [idOrcamento, setIdOrcamento] = useState<number | undefined>();
     const [, setOrcamento] = useState<Orcamento | undefined>();
 
-    // estado local pra controlar a seleção do select (ajuda com comportamento assíncrono)
     const [selectedStatus, setSelectedStatus] = useState<string>('');
 
-    // formik para busca por nome
     const formik = useFormik({
         initialValues: {
             nome: '',
