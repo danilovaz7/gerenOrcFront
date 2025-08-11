@@ -34,6 +34,9 @@ type ProcedimentoForm = {
 type FormValues = {
     usuario_id: number;
     forma_pagamento: string;
+    validade: string;
+    valor_parcelado?: string;
+    num_parcelas?: number;
     valor_total: number;
     arquivo_pdf: string;
     procedimentos: ProcedimentoForm[];
@@ -113,6 +116,9 @@ function AddOrcamentosPage() {
             usuario_id: user?.id ?? 0,
             forma_pagamento: "",
             valor_total: 0,
+            num_parcelas: 1,
+            valor_parcelado: "",
+            validade: "",
             arquivo_pdf: "",
             procedimentos: []
         }
@@ -133,6 +139,29 @@ function AddOrcamentosPage() {
         control,
         name: "procedimentos"
     }) as ProcedimentoForm[];
+
+    const valorTotal = useWatch({ control, name: "valor_total" }) as number;
+    const numParcelas = useWatch({ control, name: "num_parcelas" }) as number | undefined;
+
+    function formatCurrency(value: number) {
+        return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+    }
+
+    useEffect(() => {
+        const total = Number(valorTotal) || 0;
+        const parcelas = Number(numParcelas) || 0;
+
+        if (!parcelas || parcelas <= 0 || total <= 0) {
+            setValue("valor_parcelado", "");
+            return;
+        }
+
+        // valor por parcela (simples, com duas casas)
+        const parcelaValor = Math.round((total / parcelas) * 100) / 100; // arredonda para centavos
+        const formatted = `${parcelas}x de ${formatCurrency(parcelaValor)}`;
+
+        setValue("valor_parcelado", formatted);
+    }, [valorTotal, numParcelas, setValue]);
 
 
     useEffect(() => {
@@ -238,6 +267,18 @@ function AddOrcamentosPage() {
                     </button>
 
                     <div className="flex w-full flex-col gap-4">
+                        <Controller name={`validade`} control={control} rules={{ required: "Obrigatório" }}
+                            render={({ field }) => (
+                                <DateInput
+                                    className="w-[45%] sm:w-[20%]"
+                                    value={field.value ? parseDate(field.value) : null}
+                                    onChange={v => field.onChange(v?.toString() ?? "")}
+                                    label="Data de validade"
+                                    isRequired
+                                />
+                            )}
+                        />
+
                         <Controller
                             name="forma_pagamento" control={control} rules={{ required: "Obrigatório" }}
                             render={({ field }) => (
@@ -266,6 +307,34 @@ function AddOrcamentosPage() {
                                 />
                             )}
                         />
+
+                        <div className="flex justify-start items-center w-full sm:w-[40%] gap-5">
+                            <Controller
+                                name="num_parcelas"
+                                control={control}
+                                render={({ field }) => (
+                                    <NumberInput
+                                        {...field}
+                                        className="w-[55%] sm:w-[35%]"
+                                        label="Número de parcelas"
+                                        min={1}
+                                        onChange={(v) => field.onChange(Number(v))}
+                                    />
+                                )}
+                            />
+
+                            <Controller name={`valor_parcelado`} control={control}
+                                render={({ field }) => (
+                                    <Input
+                                        {...field}
+                                        className="w-[60%] sm:w-[40%]"
+                                        label="Valor parcelado"
+                                        isDisabled
+                                    />
+                                )}
+                            />
+                        </div>
+
                     </div>
 
                     <Button size="lg" type="submit" className="bg-[#7F634B] text-white w-[10%] self-center">

@@ -32,9 +32,9 @@ export function ProcedimentoCard({
 }: Props) {
 
     const statusInfo: Record<string, { label: string; color: string }> = {
-        'aguardando procedimento': { label: 'Aguardando', color: 'bg-blue-500' },
-        finalizado: { label: 'Finalizado', color: 'bg-green-500' },
-        retorno: { label: 'Retorno', color: 'bg-yellow-500' },
+        'Aguardando procedimento': { label: 'Aguardando', color: 'bg-blue-500' },
+        Finalizado: { label: 'Finalizado', color: 'bg-green-500' },
+        Retorno: { label: 'Retorno', color: 'bg-yellow-500' },
     };
     const { label, color } = statusInfo[status] || { label: status, color: 'bg-gray-500' };
     const { isOpen, onOpen, onClose } = useDisclosure();

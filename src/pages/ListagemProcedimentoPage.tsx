@@ -47,7 +47,6 @@ function ListagemProcedimentoPage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [idProcedimento, setIdProcedimento] = useState<number>();
 
-  // Formik para pesquisa
   const formik = useFormik({
     initialValues: {
       parametro: usuario?.id_tipo_usuario === 1 ? 'nome' : 'status',
@@ -64,7 +63,6 @@ function ListagemProcedimentoPage() {
       })
       const data: Procedimento[] = await res.json()
 
-      // —> aqui replicamos o mesmo mapeamento de fetchFotoUrl
       const withUrls = await Promise.all(
         data.map(async p => {
           if (p.foto_antes) p.foto_antes = await fetchFotoUrl(p.id, 'antes')
@@ -88,7 +86,6 @@ function ListagemProcedimentoPage() {
     return url;
   }
 
-  // Busca usuário
   useEffect(() => {
     if (!user?.id) return;
     fetch(`${import.meta.env.VITE_API_URL}/usuarios/${user.id}`, {
@@ -99,7 +96,6 @@ function ListagemProcedimentoPage() {
       .catch(console.error);
   }, [token, user?.id]);
 
-  // Lista procedimentos iniciais
   const fetchProcedimentos = async () => {
     const url = new URL(`${import.meta.env.VITE_API_URL}/procedimentos`);
     if (usuarioId) url.searchParams.set('usuario_id', usuarioId);
@@ -121,7 +117,6 @@ function ListagemProcedimentoPage() {
     fetchProcedimentos();
   }, [token]);
 
-  // React-hook-form para edição
   const methods = useForm<FormValues>({
     defaultValues: {
       dt_realizacao: '',
