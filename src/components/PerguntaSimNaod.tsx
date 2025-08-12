@@ -9,7 +9,7 @@ interface Props {
   rules?: { required?: boolean | string };
 }
 
-export function PerguntaSIMNAO({ control, name, label, rules }: Props) {
+export function PerguntaSimNao({ control, name, label, rules }: Props) {
   const { field } = useController({ control, name, rules });
 
   const radioValue = field.value === true ? "true" : "false";
