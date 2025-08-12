@@ -28,14 +28,14 @@ function LoginPage() {
     try {
       const email = (data as any).email;
       const senha = (data as any).senha;
-console.log(import.meta.env.VITE_API_URL)
+      console.log(import.meta.env.VITE_API_URL)
       const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, senha }),
       });
 
-      
+
 
       if (!response.ok) {
         console.error('Erro no login:', await response.text());
