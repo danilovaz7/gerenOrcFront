@@ -4,7 +4,7 @@ import { Controller, type Control } from "react-hook-form";
 import { type FormValues } from "../pages/InfoCliente.tsx";
 import { Checkbox, Input, Radio, RadioGroup } from "@heroui/react";
 import CheckboxGroupCliente from "./CheckboxGroupCliente.tsx";
-import { PerguntaSimNao } from "./PerguntaSimNao.tsx";
+import { PerguntaSIMNAO } from "./PerguntaSimNao.tsx";
 import { PerguntaSimNaoObs } from "./PerguntaSimNaoObs.tsx";
 import type { Path } from "react-hook-form";
 
@@ -152,27 +152,27 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                     </div>
                 )}
             />
-            <PerguntaSimNao
+            <PerguntaSIMNAO
                 control={control}
                 name="anamnese.diab_familia"
                 label="Tem diabético na família?"
             />
-            <PerguntaSimNao
+            <PerguntaSIMNAO
                 control={control}
                 name="anamnese.emagreceu"
                 label="Emagreceu muito ultimamente?"
             />
-            <PerguntaSimNao
+            <PerguntaSIMNAO
                 control={control}
                 name="anamnese.come_muito"
                 label="Come muito?"
             />
-            <PerguntaSimNao
+            <PerguntaSIMNAO
                 control={control}
                 name="anamnese.urina_freq"
                 label="Urina com frequência?"
             />
-            <PerguntaSimNao
+            <PerguntaSIMNAO
                 control={control}
                 name="anamnese.muita_sede"
                 label="Tem muita sede?"
@@ -231,23 +231,23 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                     <Checkbox value="card_incha_pe">Pés incham com frequência</Checkbox>
                 </CheckboxGroupCliente>
             </div>
-            <PerguntaSimNao control={control} name="anamnese.prob_articulacoes" label="Tem problemas nas articulações?" />
-            <PerguntaSimNao control={control} name="anamnese.gravida" label="Está grávida?" />
-            <PerguntaSimNao control={control} name="anamnese.anticoncepcional" label="Usa anticoncepcional?" />
-            <PerguntaSimNao control={control} name="anamnese.sangra_facil" label="Sangra fácil?" />
-            <PerguntaSimNao control={control} name="anamnese.hemofilico" label="É hemofílico?" />
-            <PerguntaSimNao control={control} name="anamnese.sinusite" label="Tem sinusite?" />
-            <PerguntaSimNao control={control} name="anamnese.prob_estomago" label="Tem problemas de estômago?" />
-            <PerguntaSimNao control={control} name="anamnese.xerostomia" label="Tem xerostomia?" />
-            <PerguntaSimNao control={control} name="anamnese.dengue" label="Teve dengue?" />
-            <PerguntaSimNao control={control} name="anamnese.estressado" label="É estressado(a)?" />
-            <PerguntaSimNao control={control} name="anamnese.abriu_boca" label="Dificuldade para abrir a boca?" />
-            <PerguntaSimNao control={control} name="anamnese.autoimune" label="Doença autoimune?" />
-            <PerguntaSimNao control={control} name="anamnese.possui_HIV" label="Possui HIV?" />
-            <PerguntaSimNao control={control} name="anamnese.leucemia" label="Leucemia?" />
-            <PerguntaSimNao control={control} name="anamnese.epilepsia" label="Epilepsia?" />
-            <PerguntaSimNao control={control} name="anamnese.toma_anticoag" label="Toma anticoagulante?" />
-            <PerguntaSimNao control={control} name="anamnese.marca_passo" label="Portador de marca‑passo?" />
+            <PerguntaSIMNAO control={control} name="anamnese.prob_articulacoes" label="Tem problemas nas articulações?" />
+            <PerguntaSIMNAO control={control} name="anamnese.gravida" label="Está grávida?" />
+            <PerguntaSIMNAO control={control} name="anamnese.anticoncepcional" label="Usa anticoncepcional?" />
+            <PerguntaSIMNAO control={control} name="anamnese.sangra_facil" label="Sangra fácil?" />
+            <PerguntaSIMNAO control={control} name="anamnese.hemofilico" label="É hemofílico?" />
+            <PerguntaSIMNAO control={control} name="anamnese.sinusite" label="Tem sinusite?" />
+            <PerguntaSIMNAO control={control} name="anamnese.prob_estomago" label="Tem problemas de estômago?" />
+            <PerguntaSIMNAO control={control} name="anamnese.xerostomia" label="Tem xerostomia?" />
+            <PerguntaSIMNAO control={control} name="anamnese.dengue" label="Teve dengue?" />
+            <PerguntaSIMNAO control={control} name="anamnese.estressado" label="É estressado(a)?" />
+            <PerguntaSIMNAO control={control} name="anamnese.abriu_boca" label="Dificuldade para abrir a boca?" />
+            <PerguntaSIMNAO control={control} name="anamnese.autoimune" label="Doença autoimune?" />
+            <PerguntaSIMNAO control={control} name="anamnese.possui_HIV" label="Possui HIV?" />
+            <PerguntaSIMNAO control={control} name="anamnese.leucemia" label="Leucemia?" />
+            <PerguntaSIMNAO control={control} name="anamnese.epilepsia" label="Epilepsia?" />
+            <PerguntaSIMNAO control={control} name="anamnese.toma_anticoag" label="Toma anticoagulante?" />
+            <PerguntaSIMNAO control={control} name="anamnese.marca_passo" label="Portador de marca‑passo?" />
             <div className="flex justify-between w-full sm:w-[50%] items-center">
                 <p className="text-black text-md sm:text-lg">Tem anemia?</p>
                 <Controller
@@ -266,7 +266,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                     )}
                 />
             </div>
-            <PerguntaSimNao control={control} name="anamnese.vicio" label="Possui algum vício?" />
+            <PerguntaSIMNAO control={control} name="anamnese.vicio" label="Possui algum vício?" />
             <CheckboxGroupCliente control={control} array={vicioFields} >
                 <Checkbox value="fuma">Fuma</Checkbox>
                 <Checkbox value="bebe">Bebe</Checkbox>
@@ -280,7 +280,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 nameObs="anamnese.usa_drogas_obs"
                 label="Usa drogas?"
             />
-            <PerguntaSimNao
+            <PerguntaSIMNAO
                 control={control}
                 name="anamnese.gu_problema"
                 label="Possui problemas Gênito‑urinários?"
