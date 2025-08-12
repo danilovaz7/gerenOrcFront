@@ -152,27 +152,27 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                     </div>
                 )}
             />
-            <PerguntaSIMNAO
+            <PerguntaSimNao
                 control={control}
                 name="anamnese.diab_familia"
                 label="Tem diabético na família?"
             />
-            <PerguntaSIMNAO
+            <PerguntaSimNao
                 control={control}
                 name="anamnese.emagreceu"
                 label="Emagreceu muito ultimamente?"
             />
-            <PerguntaSIMNAO
+            <PerguntaSimNao
                 control={control}
                 name="anamnese.come_muito"
                 label="Come muito?"
             />
-            <PerguntaSIMNAO
+            <PerguntaSimNao
                 control={control}
                 name="anamnese.urina_freq"
                 label="Urina com frequência?"
             />
-            <PerguntaSIMNAO
+            <PerguntaSimNao
                 control={control}
                 name="anamnese.muita_sede"
                 label="Tem muita sede?"
