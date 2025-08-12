@@ -45,7 +45,11 @@ function LoginPage() {
       const { token: loginToken } = await response.json();
 
       const userResp = await fetch(`${import.meta.env.VITE_API_URL}/eu`, {
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${loginToken}` },
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${loginToken}`
+        },
       });
 
       if (!userResp.ok) {
