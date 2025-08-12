@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { useTokenStore } from '../hooks/useTokenStore';
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import logoPNG from '../assets/logo.png';
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -106,7 +107,7 @@ function LoginPage() {
     <div className="w-screen min-h-screen flex items-center justify-center ">
       <div className="w-[90%] md:w-[30%] bg-[#ece7e2] p-6 rounded-lg shadow-md">
         <div className="flex justify-center mb-6">
-          <img src="../src/assets/logo.PNG" alt="Logo" className="h-30 w-auto" />
+          <img src={logoPNG} alt="Logo" className="h-30 w-auto" />
         </div>
         <Form onSubmit={onSubmit} className="space-y-4 flex flex-col justify-center items-center">
           <Input
