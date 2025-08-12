@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import { useTokenStore } from "../hooks/useTokenStore";
 import { useEffect, useState } from "react";
 import type { Usuario } from "../interfaces/Usuario";
+import logoClaro from '../assets/logoClaro.png';
 
 function Navbar() {
     const navigate = useNavigate();
@@ -45,7 +46,7 @@ function Navbar() {
             <div className=" mx-auto flex items-end justify-between p-5">
 
                 <div className="flex-shrink-0">
-                    <img src="../src/assets/logoClaro.PNG" alt="Logo" className="h-20 w-auto md:h-32" />
+                    <img src={logoClaro} alt="Logo" className="h-20 w-auto md:h-32" />
                 </div>
 
                 <ul className="hidden md:flex items-center space-x-6 text-white">

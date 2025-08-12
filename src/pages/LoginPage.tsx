@@ -27,8 +27,7 @@ function LoginPage() {
 
     try {
       const email = (data as any).email;
-      const senha = (data as any).senha;
-      console.log(import.meta.env.VITE_API_URL)
+      const senha = (data as any).senha;    
       const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
