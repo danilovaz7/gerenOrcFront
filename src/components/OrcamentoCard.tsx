@@ -99,16 +99,20 @@ export function OrcamentoCard({
           {loadingPdf ? 'Carregando...' : 'Ver PDF'}
         </button>
         {usuario_id_tipo === 1 && onclick && (
-          <p onClick={onclick} className="underline cursor-pointer self-end text-right sm:col-end-7 bg-[#4d3c2d] p-2 rounded-lg">
-            Atualizar
-          </p>
+          <>
+            <p onClick={onclick} className="underline cursor-pointer self-end text-right sm:col-end-7 bg-[#4d3c2d] p-2 rounded-lg">
+              Atualizar
+            </p>
+
+            <button
+              onClick={onOpen}
+              className="mt-2 sm:mt-0 self-end sm:self-auto text-sm underline bg-[#831b14] disabled:opacity-50"
+            >
+              Deletar
+            </button>
+          </>
         )}
-        <button
-          onClick={onOpen}
-          className="mt-2 sm:mt-0 self-end sm:self-auto text-sm underline bg-[#831b14] disabled:opacity-50"
-        >
-          Deletar
-        </button>
+
       </div>
 
       <Modal className='bg-[#e5ded8]' isOpen={isOpen} size={'2xl'} onClose={handleClose}>
@@ -130,7 +134,7 @@ export function OrcamentoCard({
                     onClick={handleClose}
                     className="mt-2 sm:mt-0 self-end sm:self-auto text-md  text-white bg-[#4d3c2d] disabled:opacity-50"
                   >
-                   Não
+                    Não
                   </button>
                 </div>
               </ModalBody>
