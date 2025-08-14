@@ -100,7 +100,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 <Checkbox value="alerg_anestesico_loc">Anestesico local</Checkbox>
             </CheckboxGroupCliente>
             <div className="flex w-full flex-col gap-2">
-                <div className="flex justify-between w-full sm:w-[50%] items-center">
+                <div className="flex justify-between w-full flex-col sm:flex-row sm:w-[50%] items-center">
                     <p className="text-black text-md sm:text-lg">Sua pressão é:</p>
                     <Controller
                         name="anamnese.pressao_tipo"
@@ -138,7 +138,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 name="anamnese.diabetico"
                 control={control}
                 render={({ field }) => (
-                    <div className="flex justify-between w-full sm:w-[50%] items-center">
+                    <div className="flex justify-between w-full flex-col sm:flex-row sm:w-[50%] items-center">
                         <p className="text-black text-md sm:text-lg">É diabético?</p>
                         <RadioGroup
                             orientation="horizontal"
@@ -203,7 +203,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 </CheckboxGroupCliente>
             </div>
             <div className="flex w-full flex-col gap-2">
-                <div className="flex justify-between w-full sm:w-[50%] items-center">
+                <div className="flex justify-between w-full flex-col sm:flex-row  sm:w-[50%] items-center">
                     <p className="text-black text-md sm:text-lg">Tem problemas cardíacos?</p>
                     <Controller
                         name="anamnese.prob_cardiaco"
@@ -248,7 +248,8 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
             <PerguntaSimNao control={control} name="anamnese.epilepsia" label="Epilepsia?" />
             <PerguntaSimNao control={control} name="anamnese.toma_anticoag" label="Toma anticoagulante?" />
             <PerguntaSimNao control={control} name="anamnese.marca_passo" label="Portador de marca‑passo?" />
-            <div className="flex justify-between w-full sm:w-[50%] items-center">
+            
+            <div className="flex justify-between w-full flex-col sm:flex-row  sm:w-[50%] items-center">
                 <p className="text-black text-md sm:text-lg">Tem anemia?</p>
                 <Controller
                     name="anamnese.anemia"
