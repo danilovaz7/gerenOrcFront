@@ -221,7 +221,7 @@ function ListagemProcedimentoPage() {
 
           {formik.values.parametro === 'nome' && usuario?.id_tipo_usuario === 1 && (
             <Input
-              className="sm:flex-1 sm:w-[80%] max-w-xs"
+              className="sm:flex-1 sm:w-[80%] sm:max-w-none max-w-xs"
               label="Nome do paciente"
               placeholder="Digite o nome"
               {...formik.getFieldProps('valorBusca')}
