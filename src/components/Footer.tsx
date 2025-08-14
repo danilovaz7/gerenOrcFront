@@ -6,14 +6,14 @@ export default function Footer() {
         <footer className="w-screen bg-white text-gray-800">
             <div className=" px-2 py-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
 
-                <div className="flex w-[100%] flex-col gap-2 justify-center items-center">
+                <div className="flex w-full flex-col gap-2 justify-center items-center">
                     <h4 className="text-md font-medium">Contato</h4>
                         <a href="tel:PLACEHOLDER_PHONE" className="text-sm hover:underline">Telefone: <span className="font-medium">(13) 99806-6235</span></a>
                         <a href="mailto:jiamsdoam@gmail.com" className="text-sm hover:underline">E-mail: <span className="font-medium">clinicaleutz@outlook.com</span></a>
                         <address className="not-italic text-sm text-gray-600">Endereço: <span className="font-medium">Alameda Armênio Mendes, 66 - Sala 805</span></address>
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 w-full justify-center items-center">
                     <h4 className="text-sm font-medium">Siga-nos</h4>
                     <div className="flex items-center gap-3">
                         <a href="https://www.instagram.com/dracamillaleutz" aria-label="Instagram" target="_blank" rel="noreferrer" className="p-2 rounded-md hover:opacity-90 transition-shadow" style={{ background: 'rgba(127,99,75,0.08)' }}>
