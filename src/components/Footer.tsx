@@ -31,7 +31,7 @@ export default function Footer() {
             <div className="w-full border-t border-gray-200">
                 <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-2">
                     <div>© {year} Clínica <span className="font-medium">Leutz</span>. Todos os direitos reservados.</div>
-                    <div className="text-center md:text-right">Criação e suporte: <span className="font-medium">Instagram: @danilovaz.dev</span></div>
+                    <div className="text-center md:text-right">Criação e suporte: <a className="font-medium text-gray-500">@danilovaz.dev</a></div>
                 </div>
             </div>
         </footer>
