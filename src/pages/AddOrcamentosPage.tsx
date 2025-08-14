@@ -308,32 +308,31 @@ function AddOrcamentosPage() {
                             )}
                         />
 
-                        <div className="flex justify-start items-center w-full sm:w-[40%] gap-5">
-                            <Controller
-                                name="num_parcelas"
-                                control={control}
-                                render={({ field }) => (
-                                    <NumberInput
-                                        {...field}
-                                        className="w-[55%] sm:w-[35%]"
-                                        label="Número de parcelas"
-                                        min={1}
-                                        onChange={(v) => field.onChange(Number(v))}
-                                    />
-                                )}
-                            />
 
-                            <Controller name={`valor_parcelado`} control={control}
-                                render={({ field }) => (
-                                    <Input
-                                        {...field}
-                                        className="w-[60%] sm:w-[40%]"
-                                        label="Valor parcelado"
-                                        isDisabled
-                                    />
-                                )}
-                            />
-                        </div>
+                        <Controller
+                            name="num_parcelas"
+                            control={control}
+                            render={({ field }) => (
+                                <NumberInput
+                                    {...field}
+                                    className="w-[60%] sm:w-[20%]"
+                                    label="Número de parcelas"
+                                    min={1}
+                                    onChange={(v) => field.onChange(Number(v))}
+                                />
+                            )}
+                        />
+
+                        <Controller name={`valor_parcelado`} control={control}
+                            render={({ field }) => (
+                                <Input
+                                    {...field}
+                                    className="w-[60%] sm:w-[20%]"
+                                    label="Valor parcelado"
+                                    isDisabled
+                                />
+                            )}
+                        />
 
                     </div>
 

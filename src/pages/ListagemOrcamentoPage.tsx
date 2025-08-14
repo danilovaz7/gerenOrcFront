@@ -183,7 +183,7 @@ function ListagemOrcamentoPage() {
                         onSubmit={formik.handleSubmit}
                         onReset={formik.handleReset}
                     >
-                        <div className="w-full gap-12 flex justify-start items-center">
+                        <div className="w-full gap-6 sm:gap-12 flex flex-col sm:flex-row justify-start items-center">
                             <Input
                                 className="w-[90%]"
                                 errorMessage="Insira um nome válido"

@@ -77,7 +77,7 @@ function ListagemClientesPage() {
                 onSubmit={formik.handleSubmit}
                 onReset={formik.handleReset}
             >
-                <div className="w-full gap-12 flex justify-start items-center">
+                <div className="w-full gap-6 sm:gap-12 flex sm:flex-row flex-col justify-start items-center">
                     <Input
                         isRequired
                         className="w-[90%]"
