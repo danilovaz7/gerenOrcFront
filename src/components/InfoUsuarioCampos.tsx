@@ -47,7 +47,7 @@ export const InfoUsuarioCampos: React.FC<InfoUsuarioCamposProps> = ({
   const numericFields = ["filhos", "num_endereco"] as const;
 
 
-  const apenasLeitura = usuario_id_tipo === 2;
+  const apenasLeitura = usuario_id_tipo === 1;
   console.log("leitura apenas? ", apenasLeitura)
   return (
     <Controller

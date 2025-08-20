@@ -99,7 +99,7 @@ export default function InfoClientes() {
   } = methods;
 
   // derived only-read flag (no setState during render)
-  const apenasLeitura = usuario?.id_tipo_usuario === 2;
+  const apenasLeitura = usuario?.id_tipo_usuario === 1;
 
   useEffect(() => {
     async function fetchUsuario() {
