@@ -35,7 +35,7 @@ export type FormValues = Omit<Usuario, 'id'> & {
 export default function InfoClientes() {
   const { token } = useTokenStore();
   const { idUsuario } = useParams<{ idUsuario: string }>();
-  const [, setUsuario] = useState<Usuario | null>(null);
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
 
   function isValidCPF(cpf: string): boolean {
     cpf = cpf.replace(/\D/g, '');
@@ -61,7 +61,7 @@ export default function InfoClientes() {
   const navigate = useNavigate();
 
   const methods = useForm<FormValues>({
-    mode: 'onBlur',           // roda validação sempre que o usuário sai de um campo
+    mode: 'onBlur',
     reValidateMode: 'onChange',
     defaultValues: {
       nome: "",
@@ -100,7 +100,11 @@ export default function InfoClientes() {
     formState: { errors }
   } = methods;
 
+  const [apenasLeitura, setApenasLeitura] = useState(false)
 
+  if (usuario?.id_tipo_usuario === 2) {
+    setApenasLeitura(true)
+  }
 
   useEffect(() => {
     async function fetchUsuario() {
@@ -316,7 +320,7 @@ export default function InfoClientes() {
         >
 
           <section className="flex flex-wrap gap-2">
-            <InfoUsuarioCampos control={control} name={"nome"} label={"Nome completo"} className={"w-full"} errorMessage={errors.nome?.message} />
+            <InfoUsuarioCampos control={control} name={"nome"} label={"Nome completo"} className={"w-full"} errorMessage={errors.nome?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
             <Controller
               name="dt_nascimento"
               control={control}
@@ -327,9 +331,9 @@ export default function InfoClientes() {
                   onChange={v => field.onChange(v?.toString() ?? "")}
                   label="Data de nascimento"
                   endContent={<CalendarIcon />}
-                  isRequired
                   errorMessage={errors.dt_nascimento?.message}
                   className="w-full sm:w-[10%] "
+                  isReadOnly={apenasLeitura}
                 />
               )}
             />
@@ -345,10 +349,10 @@ export default function InfoClientes() {
                   {...field}
                   label="RG"
                   className="w-full sm:w-[20%]"
-                  isRequired
                   validationState={fieldState.error ? 'invalid' : 'valid'}
                   errorMessage={fieldState.error?.message}
                   onBlur={field.onBlur}
+                  isReadOnly={apenasLeitura}
                 />
               )}
             />
@@ -364,15 +368,14 @@ export default function InfoClientes() {
                   {...field}
                   label="CPF"
                   className="w-full sm:w-[20%]"
-                  isRequired
                   validationState={fieldState.error ? 'invalid' : 'valid'}
                   errorMessage={fieldState.error?.message}
-
+                  isReadOnly={apenasLeitura}
                   onBlur={field.onBlur}
                 />
               )}
             />
-            <InfoUsuarioCampos control={control} name={"estado_civil"} label={"Estado civil"} className={"w-full sm:w-[20%]"} errorMessage={errors.estado_civil?.message} />
+            <InfoUsuarioCampos control={control} name={"estado_civil"} label={"Estado civil"} className={"w-full sm:w-[20%]"} errorMessage={errors.estado_civil?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
             <Controller
               name="sexo"
               control={control}
@@ -381,7 +384,7 @@ export default function InfoClientes() {
                   selectedKeys={field.value ? new Set([field.value]) : new Set()}
                   onSelectionChange={keys => field.onChange(Array.from(keys)[0])}
                   label="Sexo"
-                  className="w-[48%] sm:w-[15%]"
+                  disabled={apenasLeitura}
                 >
                   <SelectItem className="text-black" key="masc">Masculino</SelectItem>
                   <SelectItem className="text-black" key="fem">Feminino</SelectItem>
@@ -399,7 +402,7 @@ export default function InfoClientes() {
                   <Input
                     type="number"
                     label="Filhos"
-                    isRequired
+                    isReadOnly={apenasLeitura}
                     errorMessage={errors.filhos?.message}
                     className="w-[48%] sm:w-[12%]"
                     name={name}
@@ -414,14 +417,14 @@ export default function InfoClientes() {
                 );
               }}
             />
-            <InfoUsuarioCampos control={control} name={"cep"} label={"CEP"} className={"w-full sm:w-[20%]"} errorMessage={errors.cep?.message} />
-            <InfoUsuarioCampos control={control} name={"endereco"} label={"Endereço"} className={"w-full sm:w-[62%]"} errorMessage={errors.endereco?.message} />
-            <InfoUsuarioCampos control={control} name={"num_endereco"} label={"N°"} className={"w-[48%] sm:w-[6%]"} errorMessage={errors.num_endereco?.message} />
-            <InfoUsuarioCampos control={control} name={"complemento"} label={"Complemento"} className={"w-[48%] sm:w-[10%]"} errorMessage={errors.complemento?.message} />
-            <InfoUsuarioCampos control={control} name={"cidade"} label={"Cidade"} className={"w-full sm:w-[20%]"} errorMessage={errors.cidade?.message} />
-            <InfoUsuarioCampos control={control} name={"bairro"} label={"Bairro"} className={"w-full sm:w-[20%]"} errorMessage={errors.bairro?.message} />
-            <InfoUsuarioCampos control={control} name={"nacionalidade"} label={"Nacionalidade"} className={"w-full sm:w-[20%]"} errorMessage={errors.nacionalidade?.message} />
-            <InfoUsuarioCampos control={control} name={"naturalidade"} label={"Naturalidade"} className={"w-full sm:w-[20%]"} errorMessage={errors.naturalidade?.message} />
+            <InfoUsuarioCampos control={control} name={"cep"} label={"CEP"} className={"w-full sm:w-[20%]"} errorMessage={errors.cep?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+            <InfoUsuarioCampos control={control} name={"endereco"} label={"Endereço"} className={"w-full sm:w-[62%]"} errorMessage={errors.endereco?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+            <InfoUsuarioCampos control={control} name={"num_endereco"} label={"N°"} className={"w-[48%] sm:w-[6%]"} errorMessage={errors.num_endereco?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+            <InfoUsuarioCampos control={control} name={"complemento"} label={"Complemento"} className={"w-[48%] sm:w-[10%]"} errorMessage={errors.complemento?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+            <InfoUsuarioCampos control={control} name={"cidade"} label={"Cidade"} className={"w-full sm:w-[20%]"} errorMessage={errors.cidade?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+            <InfoUsuarioCampos control={control} name={"bairro"} label={"Bairro"} className={"w-full sm:w-[20%]"} errorMessage={errors.bairro?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+            <InfoUsuarioCampos control={control} name={"nacionalidade"} label={"Nacionalidade"} className={"w-full sm:w-[20%]"} errorMessage={errors.nacionalidade?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+            <InfoUsuarioCampos control={control} name={"naturalidade"} label={"Naturalidade"} className={"w-full sm:w-[20%]"} errorMessage={errors.naturalidade?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
             <Controller
               name="raca"
               control={control}
@@ -430,6 +433,7 @@ export default function InfoClientes() {
                   selectedKeys={field.value ? new Set([field.value]) : new Set()}
                   onSelectionChange={keys => field.onChange(Array.from(keys)[0])}
                   label="Raça"
+                  disabled={apenasLeitura}
                   className="w-full sm:w-[17%]"
                 >
                   <SelectItem className="text-black" key="branca">Branca</SelectItem>
@@ -439,13 +443,13 @@ export default function InfoClientes() {
                 </Select>
               )}
             />
-            <InfoUsuarioCampos control={control} name={"telefone"} label={"Telefone residencial"} className={"w-full sm:w-[20%]"} errorMessage={errors.telefone?.message} />
-            <InfoUsuarioCampos control={control} name={"celular"} label={"Celular"} className={"w-full sm:w-[20%]"} errorMessage={errors.celular?.message} />
-            <InfoUsuarioCampos control={control} name={"profissao"} label={"Profissão"} className={"w-full sm:w-[20%]"} errorMessage={errors.profissao?.message} />
-            <InfoUsuarioCampos control={control} name={"local_trabalho"} label={"Local de trabalho"} className={"w-full sm:w-[38%]"} errorMessage={errors.local_trabalho?.message} />
-            <InfoUsuarioCampos control={control} name={"email"} label={"Email"} className={"w-full sm:w-[58%]"} errorMessage={errors.email?.message} />
-            <InfoUsuarioCampos control={control} name={"instagram"} label={"Instagram"} className={"w-full sm:w-[20%]"} errorMessage={errors.instagram?.message} />
-            <InfoUsuarioCampos control={control} name={"facebook"} label={"Facebook"} className={"w-full sm:w-[20%]"} errorMessage={errors.facebook?.message} />
+            <InfoUsuarioCampos control={control} name={"telefone"} label={"Telefone residencial"} className={"w-full sm:w-[20%]"} errorMessage={errors.telefone?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+            <InfoUsuarioCampos control={control} name={"celular"} label={"Celular"} className={"w-full sm:w-[20%]"} errorMessage={errors.celular?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+            <InfoUsuarioCampos control={control} name={"profissao"} label={"Profissão"} className={"w-full sm:w-[20%]"} errorMessage={errors.profissao?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+            <InfoUsuarioCampos control={control} name={"local_trabalho"} label={"Local de trabalho"} className={"w-full sm:w-[38%]"} errorMessage={errors.local_trabalho?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+            <InfoUsuarioCampos control={control} name={"email"} label={"Email"} className={"w-full sm:w-[58%]"} errorMessage={errors.email?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+            <InfoUsuarioCampos control={control} name={"instagram"} label={"Instagram"} className={"w-full sm:w-[20%]"} errorMessage={errors.instagram?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+            <InfoUsuarioCampos control={control} name={"facebook"} label={"Facebook"} className={"w-full sm:w-[20%]"} errorMessage={errors.facebook?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
             <Controller
               name="id_tipo_usuario"
               control={control}

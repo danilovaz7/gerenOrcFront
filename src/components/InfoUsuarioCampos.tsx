@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Controller, type Control } from "react-hook-form";
 import { Input } from "@heroui/react";
 import type { FormValues } from "../pages/InfoCliente.tsx";
@@ -6,31 +6,32 @@ import type { FormValues } from "../pages/InfoCliente.tsx";
 export interface InfoUsuarioCamposProps {
   control: Control<FormValues>;
   name:
-    | "nome"
-    | "email"
-    | "dt_nascimento"
-    | "rg"
-    | "cpf"
-    | "estado_civil"
-    | "sexo"
-    | "filhos"
-    | "cep"
-    | "endereco"
-    | "num_endereco"
-    | "complemento"
-    | "cidade"
-    | "bairro"
-    | "nacionalidade"
-    | "naturalidade"
-    | "raca"
-    | "telefone"
-    | "celular"
-    | "profissao"
-    | "local_trabalho"
-    | "instagram"
-    | "facebook";
+  | "nome"
+  | "email"
+  | "dt_nascimento"
+  | "rg"
+  | "cpf"
+  | "estado_civil"
+  | "sexo"
+  | "filhos"
+  | "cep"
+  | "endereco"
+  | "num_endereco"
+  | "complemento"
+  | "cidade"
+  | "bairro"
+  | "nacionalidade"
+  | "naturalidade"
+  | "raca"
+  | "telefone"
+  | "celular"
+  | "profissao"
+  | "local_trabalho"
+  | "instagram"
+  | "facebook";
   label: string;
   className: string;
+  usuario_id_tipo: number | undefined;
   errorMessage: string | undefined;
 }
 
@@ -38,10 +39,16 @@ export const InfoUsuarioCampos: React.FC<InfoUsuarioCamposProps> = ({
   control,
   errorMessage,
   label,
+  usuario_id_tipo,
   className,
   name,
 }) => {
   const numericFields = ["filhos", "num_endereco"] as const;
+  const [apenasLeitura, setApenasLeitura] = useState(false)
+
+  if(usuario_id_tipo === 2){
+    setApenasLeitura(true)
+  }
 
   return (
     <Controller
@@ -94,11 +101,11 @@ export const InfoUsuarioCampos: React.FC<InfoUsuarioCamposProps> = ({
             ref={ref}
             className={className}
             label={label}
-            isRequired
             errorMessage={errorMessage}
             value={value == null ? "" : String(value)}
             onBlur={onBlur}
             onChange={handleChange}
+            readOnly={apenasLeitura}
           />
         );
       }}
