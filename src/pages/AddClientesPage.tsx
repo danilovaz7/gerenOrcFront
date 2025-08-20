@@ -172,7 +172,7 @@ function AddClientesPage() {
                             name="rg"
                             control={control}
                             rules={{
-                                required: 'RG é obrigatório',
+                             
                                 validate: v => isValidRG(v) || 'RG inválido (7–9 dígitos numéricos)',
                             }}
                             render={({ field, fieldState }) => (
@@ -191,7 +191,7 @@ function AddClientesPage() {
                             name="cpf"
                             control={control}
                             rules={{
-                                required: 'CPF é obrigatório',
+                            
                                 validate: v => isValidCPF(v) || 'CPF inválido (11 dígitos e cálculo)',
                             }}
                             render={({ field, fieldState }) => (

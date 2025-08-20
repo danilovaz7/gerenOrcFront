@@ -53,7 +53,6 @@ export const InfoUsuarioCampos: React.FC<InfoUsuarioCamposProps> = ({
     <Controller
       name={name}
       control={control}
-      rules={{ required: "Obrigatório" }}
       render={({ field }) => {
         const { name: fieldName, ref, onBlur, onChange: fieldOnChange, value } =
           field;
