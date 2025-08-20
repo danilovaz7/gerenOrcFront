@@ -58,6 +58,13 @@ export default function InfoClientes() {
 
   const navigate = useNavigate();
 
+  const apenasLeitura = usuario?.id_tipo_usuario === 1;
+  
+  console.log("leitura apenas? ", apenasLeitura)
+  console.log('tipo do usuario ', usuario?.id_tipo_usuario)
+  console.log(typeof (usuario?.id_tipo_usuario))
+  
+
   const methods = useForm<FormValues>({
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -98,8 +105,7 @@ export default function InfoClientes() {
     formState: { errors }
   } = methods;
 
-  // derived only-read flag (no setState during render)
-  const apenasLeitura = usuario?.id_tipo_usuario === 1;
+ 
 
   useEffect(() => {
     async function fetchUsuario() {
@@ -309,9 +315,7 @@ export default function InfoClientes() {
     );
     if (res.ok) navigate('/home');
   };
-  console.log("leitura apenas? ", apenasLeitura)
-  console.log('tipo do usuario ', usuario?.id_tipo_usuario)
-  console.log(typeof (usuario?.id_tipo_usuario))
+
   return (
     <div className="flex h-full flex-col items-center p-2">
       <FormProvider {...methods}>
