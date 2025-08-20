@@ -62,9 +62,8 @@ export default function InfoClientes() {
   
   console.log("leitura apenas? ", apenasLeitura)
   console.log('tipo do usuario ', usuario?.id_tipo_usuario)
-  console.log(typeof (usuario?.id_tipo_usuario))
-  
 
+console.log("usuario",usuario)
   const methods = useForm<FormValues>({
     mode: 'onBlur',
     reValidateMode: 'onChange',
