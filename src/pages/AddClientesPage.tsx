@@ -162,7 +162,7 @@ function AddClientesPage() {
                                     onChange={v => field.onChange(v?.toString() ?? "")}
                                     label="Data de nascimento"
                                     endContent={<CalendarIcon />}
-                                    isRequired
+            
                                     errorMessage={errors.dt_nascimento?.message}
                                     className="w-full sm:w-[10%] "
                                 />
@@ -180,7 +180,7 @@ function AddClientesPage() {
                                     {...field}
                                     label="RG"
                                     className="w-full sm:w-[20%]"
-                                    isRequired
+            
                                     validationState={fieldState.error ? 'invalid' : 'valid'}
                                     errorMessage={fieldState.error?.message}
                                     onBlur={field.onBlur}
@@ -199,7 +199,7 @@ function AddClientesPage() {
                                     {...field}
                                     label="CPF"
                                     className="w-full sm:w-[20%]"
-                                    isRequired
+            
                                     validationState={fieldState.error ? 'invalid' : 'valid'}
                                     errorMessage={fieldState.error?.message}
 
@@ -233,7 +233,7 @@ function AddClientesPage() {
                                     <Input
                                         type="number"
                                         label="Filhos"
-                                        isRequired
+                
                                         errorMessage={errors.filhos?.message}
                                         className="w-[48%] sm:w-[12%]"
                                         name={name}

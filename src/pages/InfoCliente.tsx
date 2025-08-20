@@ -19,8 +19,6 @@ import type { Usuario } from '../interfaces/Usuario';
 import ExamesComplementares from "../components/ExamesComplementaresCliente";
 import AnamneseCliente from "../components/AnamneseCliente";
 
-
-
 export const CalendarIcon: React.FC<React.SVGProps<SVGSVGElement>> = props => (
   <svg aria-hidden="true" fill="none" height="1em" role="presentation" viewBox="0 0 24 24" width="1em" {...props}>
     <path d="M7.75 2.5a.75.75 0 0 0-1.5 0v1.58..." fill="currentColor" />
@@ -100,6 +98,7 @@ export default function InfoClientes() {
     formState: { errors }
   } = methods;
 
+  // derived only-read flag (no setState during render)
   const apenasLeitura = usuario?.id_tipo_usuario === 2;
 
   useEffect(() => {
@@ -111,6 +110,7 @@ export default function InfoClientes() {
       const data = await res.json() as Usuario;
       setUsuario(data);
 
+      // set form values including id_tipo_usuario so the form knows the type
       reset({
         nome: data.nome ?? '',
         email: data.email ?? '',
@@ -135,6 +135,7 @@ export default function InfoClientes() {
         local_trabalho: data.local_trabalho ?? '',
         instagram: data.instagram ?? '',
         facebook: data.facebook ?? '',
+        id_tipo_usuario: data.id_tipo_usuario ?? 2, // importante
         anamnese: {
           comp_trat_odon: data.anamnese?.comp_trat_odon ?? false,
           comp_trat_odon_obs: data.anamnese?.comp_trat_odon_obs ?? '',
@@ -293,6 +294,9 @@ export default function InfoClientes() {
   }, [cepValue, setValue]);
 
   const onSubmit = async (values: FormValues) => {
+    // proteção extra: não enviar se estiver em apenas leitura
+    if (apenasLeitura) return;
+
     const res = await fetch(
       `${import.meta.env.VITE_API_URL}/usuarios/${idUsuario}`,
       {
@@ -381,6 +385,8 @@ export default function InfoClientes() {
                   onSelectionChange={keys => field.onChange(Array.from(keys)[0])}
                   label="Sexo"
                   disabled={apenasLeitura}
+                  aria-disabled={apenasLeitura}
+                  tabIndex={apenasLeitura ? -1 : undefined}
                 >
                   <SelectItem className="text-black" key="masc">Masculino</SelectItem>
                   <SelectItem className="text-black" key="fem">Feminino</SelectItem>
@@ -430,6 +436,8 @@ export default function InfoClientes() {
                   onSelectionChange={keys => field.onChange(Array.from(keys)[0])}
                   label="Raça"
                   disabled={apenasLeitura}
+                  aria-disabled={apenasLeitura}
+                  tabIndex={apenasLeitura ? -1 : undefined}
                   className="w-full sm:w-[17%]"
                 >
                   <SelectItem className="text-black" key="branca">Branca</SelectItem>
@@ -460,7 +468,13 @@ export default function InfoClientes() {
           <ExamesComplementares control={control} />
 
           <div className="flex flex-wrap w-full sm:flex-nowrap gap-2 justify-center">
-            <Button size="lg" className="w-[15%] text-white bg-[#7F634B]" type="submit">
+            <Button
+              size="lg"
+              className="w-[15%] text-white bg-[#7F634B]"
+              type="submit"
+              disabled={apenasLeitura}
+              title={apenasLeitura ? "Somente leitura — não é possível salvar" : "Salvar"}
+            >
               Salvar
             </Button>
           </div>
