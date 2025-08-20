@@ -124,8 +124,10 @@ function AddClientesPage() {
         };
         fetchEndereco();
     }, [cepValue, setValue]);
+    
 
     const onSubmit = async (values: FormValues) => {
+        console.log(values)
         const resposta = await fetch(`${import.meta.env.VITE_API_URL}/usuarios`, {
             method: 'POST',
             headers: {
@@ -151,7 +153,7 @@ function AddClientesPage() {
                 >
 
                     <section className="flex flex-wrap gap-2">
-                        <InfoUsuarioCampos control={control} name={"nome"} label={"Nome completo"} className={"w-full"} errorMessage={errors.nome?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+                        <InfoUsuarioCampos required={true} control={control} name={"nome"} label={"Nome completo"} className={"w-full"} errorMessage={errors.nome?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
                         <Controller
                             name="dt_nascimento"
                             control={control}
@@ -191,7 +193,6 @@ function AddClientesPage() {
                             name="cpf"
                             control={control}
                             rules={{
-                            
                                 validate: v => isValidCPF(v) || 'CPF inválido (11 dígitos e cálculo)',
                             }}
                             render={({ field, fieldState }) => (
@@ -199,7 +200,6 @@ function AddClientesPage() {
                                     {...field}
                                     label="CPF"
                                     className="w-full sm:w-[20%]"
-            
                                     validationState={fieldState.error ? 'invalid' : 'valid'}
                                     errorMessage={fieldState.error?.message}
 
@@ -277,7 +277,7 @@ function AddClientesPage() {
                         <InfoUsuarioCampos control={control} name={"celular"} label={"Celular"} className={"w-full sm:w-[20%]"} errorMessage={errors.celular?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
                         <InfoUsuarioCampos control={control} name={"profissao"} label={"Profissão"} className={"w-full sm:w-[20%]"} errorMessage={errors.profissao?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
                         <InfoUsuarioCampos control={control} name={"local_trabalho"} label={"Local de trabalho"} className={"w-full sm:w-[38%]"} errorMessage={errors.local_trabalho?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
-                        <InfoUsuarioCampos control={control} name={"email"} label={"Email"} className={"w-full sm:w-[58%]"} errorMessage={errors.email?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
+                        <InfoUsuarioCampos control={control} required={true} name={"email"} label={"Email"} className={"w-full sm:w-[58%]"} errorMessage={errors.email?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
                         <InfoUsuarioCampos control={control} name={"instagram"} label={"Instagram"} className={"w-full sm:w-[20%]"} errorMessage={errors.instagram?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
                         <InfoUsuarioCampos control={control} name={"facebook"} label={"Facebook"} className={"w-full sm:w-[20%]"} errorMessage={errors.facebook?.message} usuario_id_tipo={usuario?.id_tipo_usuario} />
                         <Controller

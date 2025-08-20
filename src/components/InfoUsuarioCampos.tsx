@@ -33,6 +33,7 @@ export interface InfoUsuarioCamposProps {
   label: string;
   className: string;
   usuario_id_tipo: number | undefined;
+  required?: boolean;   // <-- nova prop
   errorMessage: string | undefined;
 }
 
@@ -43,6 +44,7 @@ export const InfoUsuarioCampos: React.FC<InfoUsuarioCamposProps> = ({
   usuario_id_tipo,
   className,
   name,
+  required = false,     // default false
 }) => {
   const numericFields = ["filhos", "num_endereco"] as const;
 
@@ -53,6 +55,7 @@ export const InfoUsuarioCampos: React.FC<InfoUsuarioCamposProps> = ({
     <Controller
       name={name}
       control={control}
+       rules={ required ? { required: "Obrigatório" } : undefined }
       render={({ field }) => {
         const { name: fieldName, ref, onBlur, onChange: fieldOnChange, value } =
           field;
