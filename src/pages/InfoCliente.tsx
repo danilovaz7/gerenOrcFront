@@ -36,22 +36,22 @@ export default function InfoClientes() {
   const [, setUsuario] = useState<Usuario | null>(null);
   const [usuarioNavbar, setUsuarioNavbar] = useState<Usuario | null>(null);
 
-   useEffect(() => {
-        async function pegaUsuarioNavbar() {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/${user?.id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
+  useEffect(() => {
+    async function pegaUsuarioNavbar() {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/${user?.id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
 
-            const usuarioAtual = await response.json();
-            setUsuarioNavbar(usuarioAtual);
+      const usuarioAtual = await response.json();
+      setUsuarioNavbar(usuarioAtual);
 
-        }
-        pegaUsuarioNavbar();
-    }, [user, token]);
+    }
+    pegaUsuarioNavbar();
+  }, [user, token]);
 
   function isValidCPF(cpf: string): boolean {
     cpf = cpf.replace(/\D/g, '');
@@ -398,20 +398,32 @@ export default function InfoClientes() {
             <Controller
               name="sexo"
               control={control}
-              render={({ field }) => (
-                <Select
-                  selectedKeys={field.value ? new Set([field.value]) : new Set()}
-                  onSelectionChange={keys => field.onChange(Array.from(keys)[0])}
-                  label="Sexo"
-                  disabled={apenasLeitura}
-                  aria-disabled={apenasLeitura}
-                  tabIndex={apenasLeitura ? -1 : undefined}
-                >
-                  <SelectItem className="text-black" key="masc">Masculino</SelectItem>
-                  <SelectItem className="text-black" key="fem">Feminino</SelectItem>
-                  <SelectItem className="text-black" key="outro">Outro</SelectItem>
-                </Select>
-              )}
+              render={({ field }) => {
+                const current = field.value;
+                const labelMap: Record<string, string> = { masc: 'Masculino', fem: 'Feminino', outro: 'Outro' };
+
+                if (apenasLeitura) {
+                  return (
+                    <div className="w-full sm:w-[15%] p-2 border rounded bg-white/50">
+                      <label className="block text-xs text-gray-600">Sexo</label>
+                      <div className="mt-1 text-sm">{labelMap[current] ?? '—'}</div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <Select
+                    selectedKeys={current ? new Set([current]) : new Set()}
+                    onSelectionChange={keys => field.onChange(Array.from(keys)[0])}
+                    label="Sexo"
+                    className="w-full sm:w-[15%]"
+                  >
+                    <SelectItem key="masc">Masculino</SelectItem>
+                    <SelectItem key="fem">Feminino</SelectItem>
+                    <SelectItem key="outro">Outro</SelectItem>
+                  </Select>
+                );
+              }}
             />
             <Controller
               name="filhos"
@@ -447,24 +459,35 @@ export default function InfoClientes() {
             <InfoUsuarioCampos control={control} name={"nacionalidade"} label={"Nacionalidade"} className={"w-full sm:w-[20%]"} errorMessage={errors.nacionalidade?.message} usuario_id_tipo={usuarioNavbar?.id_tipo_usuario} />
             <InfoUsuarioCampos control={control} name={"naturalidade"} label={"Naturalidade"} className={"w-full sm:w-[20%]"} errorMessage={errors.naturalidade?.message} usuario_id_tipo={usuarioNavbar?.id_tipo_usuario} />
             <Controller
-              name="raca"
+              name="sexo"
               control={control}
-              render={({ field }) => (
-                <Select
-                  selectedKeys={field.value ? new Set([field.value]) : new Set()}
-                  onSelectionChange={keys => field.onChange(Array.from(keys)[0])}
-                  label="Raça"
-                  disabled={apenasLeitura}
-                  aria-disabled={apenasLeitura}
-                  tabIndex={apenasLeitura ? -1 : undefined}
-                  className="w-full sm:w-[17%]"
-                >
-                  <SelectItem className="text-black" key="branca">Branca</SelectItem>
+              render={({ field }) => {
+                const current = field.value;
+                const labelMap: Record<string, string> = { masc: 'Masculino', fem: 'Feminino', outro: 'Outro' };
+
+                if (apenasLeitura) {
+                  return (
+                    <div className="w-full sm:w-[15%] p-2 border rounded bg-white/50">
+                      <label className="block text-xs text-gray-600">Raça</label>
+                      <div className="mt-1 text-sm">{labelMap[current] ?? '—'}</div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <Select
+                    selectedKeys={current ? new Set([current]) : new Set()}
+                    onSelectionChange={keys => field.onChange(Array.from(keys)[0])}
+                     label="Raça"
+                    className="w-full sm:w-[17%]"
+                  >
+                     <SelectItem className="text-black" key="branca">Branca</SelectItem>
                   <SelectItem className="text-black" key="amarela">Amarela</SelectItem>
                   <SelectItem className="text-black" key="negra">Negra</SelectItem>
                   <SelectItem className="text-black" key="outra">Outra</SelectItem>
-                </Select>
-              )}
+                  </Select>
+                );
+              }}
             />
             <InfoUsuarioCampos control={control} name={"telefone"} label={"Telefone residencial"} className={"w-full sm:w-[20%]"} errorMessage={errors.telefone?.message} usuario_id_tipo={usuarioNavbar?.id_tipo_usuario} />
             <InfoUsuarioCampos control={control} name={"celular"} label={"Celular"} className={"w-full sm:w-[20%]"} errorMessage={errors.celular?.message} usuario_id_tipo={usuarioNavbar?.id_tipo_usuario} />
