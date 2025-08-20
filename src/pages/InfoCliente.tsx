@@ -294,7 +294,6 @@ export default function InfoClientes() {
   }, [cepValue, setValue]);
 
   const onSubmit = async (values: FormValues) => {
-    // proteção extra: não enviar se estiver em apenas leitura
     if (apenasLeitura) return;
 
     const res = await fetch(
@@ -310,7 +309,9 @@ export default function InfoClientes() {
     );
     if (res.ok) navigate('/home');
   };
-
+  console.log("leitura apenas? ", apenasLeitura)
+  console.log('tipo do usuario ', usuario?.id_tipo_usuario)
+  console.log(typeof (usuario?.id_tipo_usuario))
   return (
     <div className="flex h-full flex-col items-center p-2">
       <FormProvider {...methods}>

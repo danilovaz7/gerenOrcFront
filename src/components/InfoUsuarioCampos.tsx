@@ -7,29 +7,29 @@ import type { FormValues } from "../pages/InfoCliente.tsx";
 export interface InfoUsuarioCamposProps {
   control: Control<FormValues>;
   name:
-    | "nome"
-    | "email"
-    | "dt_nascimento"
-    | "rg"
-    | "cpf"
-    | "estado_civil"
-    | "sexo"
-    | "filhos"
-    | "cep"
-    | "endereco"
-    | "num_endereco"
-    | "complemento"
-    | "cidade"
-    | "bairro"
-    | "nacionalidade"
-    | "naturalidade"
-    | "raca"
-    | "telefone"
-    | "celular"
-    | "profissao"
-    | "local_trabalho"
-    | "instagram"
-    | "facebook";
+  | "nome"
+  | "email"
+  | "dt_nascimento"
+  | "rg"
+  | "cpf"
+  | "estado_civil"
+  | "sexo"
+  | "filhos"
+  | "cep"
+  | "endereco"
+  | "num_endereco"
+  | "complemento"
+  | "cidade"
+  | "bairro"
+  | "nacionalidade"
+  | "naturalidade"
+  | "raca"
+  | "telefone"
+  | "celular"
+  | "profissao"
+  | "local_trabalho"
+  | "instagram"
+  | "facebook";
   label: string;
   className: string;
   usuario_id_tipo: number | undefined;
@@ -46,9 +46,9 @@ export const InfoUsuarioCampos: React.FC<InfoUsuarioCamposProps> = ({
 }) => {
   const numericFields = ["filhos", "num_endereco"] as const;
 
-  // derive apenasLeitura from prop (no setState)
-  const apenasLeitura = usuario_id_tipo === 2;
 
+  const apenasLeitura = usuario_id_tipo === 2;
+  console.log("leitura apenas? ", apenasLeitura)
   return (
     <Controller
       name={name}
@@ -104,7 +104,6 @@ export const InfoUsuarioCampos: React.FC<InfoUsuarioCamposProps> = ({
             value={value == null ? "" : String(value)}
             onBlur={onBlur}
             onChange={handleChange}
-            // pass both props to be compatible with different input APIs
             readOnly={apenasLeitura}
             isReadOnly={apenasLeitura}
             disabled={apenasLeitura}
