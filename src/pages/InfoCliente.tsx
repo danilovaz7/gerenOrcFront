@@ -100,11 +100,7 @@ export default function InfoClientes() {
     formState: { errors }
   } = methods;
 
-  const [apenasLeitura, setApenasLeitura] = useState(false)
-
-  if (usuario?.id_tipo_usuario === 2) {
-    setApenasLeitura(true)
-  }
+  const apenasLeitura = usuario?.id_tipo_usuario === 2;
 
   useEffect(() => {
     async function fetchUsuario() {

@@ -44,11 +44,8 @@ export const InfoUsuarioCampos: React.FC<InfoUsuarioCamposProps> = ({
   name,
 }) => {
   const numericFields = ["filhos", "num_endereco"] as const;
-  const [apenasLeitura, setApenasLeitura] = useState(false)
 
-  if(usuario_id_tipo === 2){
-    setApenasLeitura(true)
-  }
+  const apenasLeitura = usuario_id_tipo === 2;
 
   return (
     <Controller
