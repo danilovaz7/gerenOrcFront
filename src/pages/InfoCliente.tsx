@@ -33,7 +33,7 @@ export type FormValues = Omit<Usuario, 'id'> & {
 export default function InfoClientes() {
   const { token, user } = useTokenStore();
   const { idUsuario } = useParams<{ idUsuario: string }>();
-  const [usuario, setUsuario] = useState<Usuario | null>(null);
+  const [, setUsuario] = useState<Usuario | null>(null);
 
   function isValidCPF(cpf: string): boolean {
     cpf = cpf.replace(/\D/g, '');
@@ -58,12 +58,12 @@ export default function InfoClientes() {
 
   const navigate = useNavigate();
 
-  const apenasLeitura = user?.id_tipo_usuario === 1;
-  
+  const apenasLeitura = user?.id_tipo_usuario === 2;
+
   console.log("leitura apenas? ", apenasLeitura)
   console.log('tipo do usuario ', user?.id_tipo_usuario)
 
-console.log("usuario",usuario)
+  console.log("usuario", user)
   const methods = useForm<FormValues>({
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -104,7 +104,7 @@ console.log("usuario",usuario)
     formState: { errors }
   } = methods;
 
- 
+
 
   useEffect(() => {
     async function fetchUsuario() {
