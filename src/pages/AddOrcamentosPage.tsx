@@ -173,6 +173,7 @@ function AddOrcamentosPage() {
     }, [procedimentos, setValue]);
 
     const onSubmit = async (values: FormValues) => {
+        console.log(values)
         const res = await fetch(
             `${import.meta.env.VITE_API_URL}/orcamentos`,
             {

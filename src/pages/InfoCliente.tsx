@@ -418,9 +418,9 @@ export default function InfoClientes() {
                     label="Sexo"
                     className="w-full sm:w-[15%]"
                   >
-                    <SelectItem key="masc">Masculino</SelectItem>
-                    <SelectItem key="fem">Feminino</SelectItem>
-                    <SelectItem key="outro">Outro</SelectItem>
+                    <SelectItem className="text-black" key="masc">Masculino</SelectItem>
+                    <SelectItem className="text-black" key="fem">Feminino</SelectItem>
+                    <SelectItem className="text-black" key="outro">Outro</SelectItem>
                   </Select>
                 );
               }}
@@ -478,13 +478,13 @@ export default function InfoClientes() {
                   <Select
                     selectedKeys={current ? new Set([current]) : new Set()}
                     onSelectionChange={keys => field.onChange(Array.from(keys)[0])}
-                     label="Raça"
+                    label="Raça"
                     className="w-full sm:w-[17%]"
                   >
-                     <SelectItem className="text-black" key="branca">Branca</SelectItem>
-                  <SelectItem className="text-black" key="amarela">Amarela</SelectItem>
-                  <SelectItem className="text-black" key="negra">Negra</SelectItem>
-                  <SelectItem className="text-black" key="outra">Outra</SelectItem>
+                    <SelectItem className="text-black" key="branca">Branca</SelectItem>
+                    <SelectItem className="text-black" key="amarela">Amarela</SelectItem>
+                    <SelectItem className="text-black" key="negra">Negra</SelectItem>
+                    <SelectItem className="text-black" key="outra">Outra</SelectItem>
                   </Select>
                 );
               }}
