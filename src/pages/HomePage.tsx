@@ -109,7 +109,7 @@ function HomePage() {
       return '--/--';
     }
   }
- console.log(aniversariantes)
+  console.log(aniversariantes)
 
   if (!usuario) {
     return <p className="text-center mt-8">Carregando...</p>;
@@ -194,42 +194,47 @@ function HomePage() {
             >
               ADICIONAR ORÇAMENTO
             </button>
-
-            <div className="w-[100%] sm:w-[60%] flex flex-col">
-              <div className="w-full p-4 text-center bg-[#9B7F67] rounded-t-lg">
-                <p className="text-base sm:text-lg md:text-xl text-white font-semibold">Lista de aniversariantes do mês</p>
-              </div>
-              <div className="flex flex-col gap-5 p-5 justify-center bg-[rgba(155,127,103,0.26)] w-full">
-                {loadingAniversariantes ? (
-                  <div className='flex justify-center items-center py-6'>Carregando aniversariantes...</div>
-                ) : anivError ? (
-                  <div className='text-red-600'>{anivError}</div>
-                ) : aniversariantes.length === 0 ? (
-                  <div className='flex flex-col w-full justify-center items-center gap-5'>
-                    <h2 className="text-center text-3xl text-[#75614e]">Esse mês não tem aniversário</h2>
-                    <p>Nenhum cliente cadastrado faz aniversário neste mês</p>
-                  </div>
-                ) : (
-                  <ul className="flex flex-col gap-3 w-full">
-                    {aniversariantes.map(a => {
-                      const idade = getAgeFromDate(a.dt_nascimento);
-                      return (
-                        <li key={a.id} className="flex justify-between items-center p-3 bg-white/80 rounded shadow-sm">
-                          <div>
-                            <p className="text-lg font-medium text-[#4a3f35]">{a.nome}</p>
-                            <p className="text-sm text-[#6b5f57]">Aniversário: {formatDayMonth(a.dt_nascimento)} {idade !== null ? `· ${idade} anos` : ''}</p>
-                          </div>
-                          <div className="text-sm text-[#6b5f57]">
-                            {a.email ?? ''}
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </div>
-            </div>
           </>
+        )}
+
+        {usuario.id_tipo_usuario === 1 && (
+          <div className="w-[100%] sm:w-[60%] flex flex-col">
+            <div className="w-full p-4 text-center bg-[#9B7F67] rounded-t-lg">
+              <p className="text-base sm:text-lg md:text-xl text-white font-semibold">Lista de aniversariantes do mês</p>
+            </div>
+            <div className="flex flex-col gap-5 p-5 justify-center bg-[rgba(155,127,103,0.26)] w-full">
+              {loadingAniversariantes ? (
+                <div className='flex justify-center items-center py-6'>Carregando aniversariantes...</div>
+              ) : anivError ? (
+                <div className='text-red-600'>{anivError}</div>
+              ) : aniversariantes.length === 0 ? (
+                <div className='flex flex-col w-full justify-center items-center gap-5'>
+                  <h2 className="text-center text-3xl text-[#75614e]">Esse mês não tem aniversário</h2>
+                  <p>Nenhum cliente cadastrado faz aniversário neste mês</p>
+                </div>
+              ) : (
+                <ul className="flex flex-col gap-3 w-full">
+                  {aniversariantes.map(a => {
+                    const idade = getAgeFromDate(a.dt_nascimento);
+                    return (
+                      <li key={a.id} className="flex justify-between items-center p-3 bg-white/80 rounded shadow-sm">
+                        <div>
+                          <p className="text-lg font-medium text-[#4a3f35]">{a.nome}</p>
+                          <p className="text-sm text-[#6b5f57]">Aniversário: {formatDayMonth(a.dt_nascimento)} {idade !== null ? `· ${idade} anos` : ''}</p>
+                        </div>
+                        <div className="text-sm text-[#6b5f57]">
+                          {a.email ?? ''}
+                        </div>
+                        <div className="text-sm text-[#6b5f57]">
+                          {a.celular !== null ? `Telefone: ${a.celular}` : ''}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          </div>
         )}
 
       </div>
