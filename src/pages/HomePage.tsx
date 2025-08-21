@@ -63,7 +63,7 @@ function HomePage() {
       try {
         setLoadingAniversariantes(true);
         setAnivError(null);
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/aniversariantes`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/aniversariantes`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
@@ -109,7 +109,7 @@ function HomePage() {
       return '--/--';
     }
   }
-  // ------------------------------------------------------------------------------------
+ console.log(aniversariantes)
 
   if (!usuario) {
     return <p className="text-center mt-8">Carregando...</p>;
