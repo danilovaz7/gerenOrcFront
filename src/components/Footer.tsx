@@ -32,18 +32,21 @@ export default function Footer() {
                     </a>
                     <p>Avalie-nos</p>
                     <a
-                        href="https://www.google.com/search?client=opera&hs=DvU&sca_esv=1c2c48b035966a68&sxsrf=AE3TifMsTASr50ptcNh30-TkxcENOxNdGA:1755703795126&si=AMgyJEtREmoPL4P1I5IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-E7b9NKzHJXAemMvYU3vR0i_vWpjjjpSjYjxzniN0z4_-l2-PT_1DtAlcN9ducIPeo_yREqTR66BQGYb5Ud0lVqE9qSXXBfrsCiM981igh6aU9DP35Q%3D%3D&q=Clínica+Leutz+Comentários&sa=X&ved=2ahUKEwje_aeo2pmPAxVOqpUCHfQeOtwQ0bkNegQIIhAD&biw=2073&bih=1060&dpr=0.9"           /* troque para a URL externa se for Google/Trustpilot, ex: "https://g.page/..." */
-                        aria-label="Avaliações"
+                        href="https://g.page/seu-local-ou-avaliacoes" // coloque sua URL real aqui
+                        aria-label="Avaliações da clínica (abre em nova aba)"
                         title="Avaliações"
-                        className="p-2 rounded-md hover:opacity-90 transition-shadow"
-                        style={{ background: 'rgba(127,99,75,0.08)' }}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 p-2 rounded-md transition-shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7F634B] bg-[rgba(127,99,75,0.08)] text-[#4a3f35] hover:shadow-sm"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M12 17.3l-5.6 3.1 1.1-6.4L2 9.7l6.4-.9L12 3l3.6 5.8 6.4.9-4.5 4.3 1.1 6.4z"></path>
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"></path>
+                        {/* ícone (estrela + balão) */}
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <path d="M12 17.3l-5.6 3.1 1.1-6.4L2 9.7l6.4-.9L12 3l3.6 5.8 6.4.9-4.5 4.3 1.1 6.4z" />
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z" />
                         </svg>
+
+                        {/* texto visível em telas maiores, oculto em mobile (acessível via aria-label) */}
+                        <span className="hidden sm:inline-block font-medium">Avaliações</span>
                     </a>
                 </div>
 
