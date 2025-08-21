@@ -32,22 +32,23 @@ export default function Footer() {
                     </a>
                     <p>Avalie-nos</p>
                     <a
-                        href="https://g.page/seu-local-ou-avaliacoes" // coloque sua URL real aqui
-                        aria-label="Avaliações da clínica (abre em nova aba)"
-                        title="Avaliações"
+                        href="https://g.page/seu-local-ou-avaliacoes" // troque pela URL real do Google/Trustpilot
+                        aria-label="Avaliações da clínica no Google — nota 4.8 de 124 avaliações (abre em nova aba)"
+                        title="Avaliações — 4.8 (124 avaliações)"
                         target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 p-2 rounded-md transition-shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7F634B] bg-[rgba(127,99,75,0.08)] text-[#4a3f35] hover:shadow-sm"
+                        rel="noreferrer"
+                        className="p-2 rounded-md hover:opacity-90 transition-shadow inline-flex items-center gap-2"
+                        style={{ background: 'rgba(127,99,75,0.08)' }}
+                        data-rating="4.8"      /* opcional: você pode atualizar dinamicamente */
+                        data-reviews="124"     /* opcional: você pode atualizar dinamicamente */
                     >
-                        {/* ícone (estrela + balão) */}
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        {/* ícone */}
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
                             <path d="M12 17.3l-5.6 3.1 1.1-6.4L2 9.7l6.4-.9L12 3l3.6 5.8 6.4.9-4.5 4.3 1.1 6.4z" />
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z" />
                         </svg>
-
-                        {/* texto visível em telas maiores, oculto em mobile (acessível via aria-label) */}
-                        <span className="hidden sm:inline-block font-medium">Avaliações</span>
                     </a>
+
                 </div>
 
             </div>
