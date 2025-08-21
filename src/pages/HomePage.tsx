@@ -218,7 +218,7 @@ function HomePage() {
                 {aniversariantes.map(a => {
                   const idade = getAgeFromDate(a.dt_nascimento);
                   return (
-                    <li key={a.id} className="flex justify-between items-center p-3 bg-white/80 rounded shadow-sm">
+                    <li key={a.id} className="flex flex-col sm:flex-row justify-between items-center p-3 bg-white/80 rounded shadow-sm">
                       <div>
                         <p className="text-lg font-medium text-[#4a3f35]">{a.nome}</p>
                         <p className="text-sm text-[#6b5f57]">Aniversário: {formatDayMonth(a.dt_nascimento)} {idade !== null ? `· ${idade} anos` : ''}</p>
