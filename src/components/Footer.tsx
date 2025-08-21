@@ -14,7 +14,7 @@ export default function Footer() {
                 </div>
 
                 <div className="flex items-center gap-3">
-     
+
                     <a
                         href="https://www.instagram.com/dracamillaleutz"
                         aria-label="Instagram"
@@ -24,6 +24,7 @@ export default function Footer() {
                         style={{ background: 'rgba(127,99,75,0.08)' }}
                         title="Instagram"
                     >
+                        Siga-nos
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
                             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -40,6 +41,7 @@ export default function Footer() {
                         target="_blank"
                         rel="noreferrer"
                     >
+                        Avalie-nos
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M12 17.3l-5.6 3.1 1.1-6.4L2 9.7l6.4-.9L12 3l3.6 5.8 6.4.9-4.5 4.3 1.1 6.4z"></path>
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"></path>
