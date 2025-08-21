@@ -124,7 +124,7 @@ function AddClientesPage() {
         };
         fetchEndereco();
     }, [cepValue, setValue]);
-    
+
 
     const onSubmit = async (values: FormValues) => {
         console.log(values)
@@ -157,14 +157,14 @@ function AddClientesPage() {
                         <Controller
                             name="dt_nascimento"
                             control={control}
-                            rules={{ required: "Obrigatório" }}
+
                             render={({ field }) => (
                                 <DateInput
                                     value={field.value ? parseDate(field.value) : null}
                                     onChange={v => field.onChange(v?.toString() ?? "")}
                                     label="Data de nascimento"
                                     endContent={<CalendarIcon />}
-            
+
                                     errorMessage={errors.dt_nascimento?.message}
                                     className="w-full sm:w-[10%] "
                                 />
@@ -174,15 +174,16 @@ function AddClientesPage() {
                             name="rg"
                             control={control}
                             rules={{
-                             
-                                validate: v => isValidRG(v) || 'RG inválido (7–9 dígitos numéricos)',
+                                validate: v => {
+                                    if (v == null || v === '') return true; // permitir vazio
+                                    return isValidRG(v) || 'RG inválido (7–9 dígitos numéricos)';
+                                }
                             }}
                             render={({ field, fieldState }) => (
                                 <Input
                                     {...field}
                                     label="RG"
                                     className="w-full sm:w-[20%]"
-            
                                     validationState={fieldState.error ? 'invalid' : 'valid'}
                                     errorMessage={fieldState.error?.message}
                                     onBlur={field.onBlur}
@@ -193,7 +194,10 @@ function AddClientesPage() {
                             name="cpf"
                             control={control}
                             rules={{
-                                validate: v => isValidCPF(v) || 'CPF inválido (11 dígitos e cálculo)',
+                                validate: v => {
+                                    if (v == null || v === '') return true; // permitir vazio
+                                    return isValidCPF(v) || 'CPF inválido (11 dígitos e cálculo)';
+                                }
                             }}
                             render={({ field, fieldState }) => (
                                 <Input
@@ -202,7 +206,6 @@ function AddClientesPage() {
                                     className="w-full sm:w-[20%]"
                                     validationState={fieldState.error ? 'invalid' : 'valid'}
                                     errorMessage={fieldState.error?.message}
-
                                     onBlur={field.onBlur}
                                 />
                             )}
@@ -233,7 +236,7 @@ function AddClientesPage() {
                                     <Input
                                         type="number"
                                         label="Filhos"
-                
+
                                         errorMessage={errors.filhos?.message}
                                         className="w-[48%] sm:w-[12%]"
                                         name={name}
@@ -241,7 +244,7 @@ function AddClientesPage() {
                                         value={value === undefined || value === null ? '' : String(value)}
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                             const v = e.target.value;
-                                            onChange(v === '' ? undefined : Number(v)); 
+                                            onChange(v === '' ? undefined : Number(v));
                                         }}
                                         onBlur={onBlur}
                                     />
