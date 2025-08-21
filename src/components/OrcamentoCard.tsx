@@ -34,19 +34,45 @@ export function OrcamentoCard({
   const formatDate = new Date(dt_criacao).toLocaleDateString('pt-BR');
 
   const handleVerPdf = async () => {
-    try {
+    // tenta abrir a aba em branco SÍNCRONAmente
+    const newWin = window.open('', '_blank');
+
+    // se abriu a aba, marca loading imediatamente para evitar múltiplos cliques
+    if (newWin) {
       setLoadingPdf(true);
+    } else {
+      // se não abriu, ainda vamos buscar a URL e oferecer um fallback
+      setLoadingPdf(true);
+    }
+
+    try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/orcamento/${id_orcamento}/pdf`);
       if (!res.ok) throw new Error('Erro ao obter PDF');
       const { url } = await res.json();
-      window.open(url, '_blank');
+
+      if (newWin) {
+        // redireciona a aba aberta para o PDF
+        newWin.location.href = url;
+      } else {
+        // fallback: copia para clipboard e mostra prompt com o link para o usuário abrir manualmente
+        try {
+          await navigator.clipboard.writeText(url);
+          alert('O navegador bloqueou abertura automática. O link foi copiado para a área de transferência. Cole no Safari para abrir.');
+        } catch (e) {
+          // se clipboard falhar, mostra prompt com a URL
+          // eslint-disable-next-line no-alert
+          window.prompt('Abra este link no navegador (copie e cole):', url);
+        }
+      }
     } catch (err) {
-      console.error(err);
+      console.error('Erro ao carregar PDF:', err);
+      try { newWin?.close(); } catch (e) { /* ignore */ }
       alert('Não foi possível carregar o PDF.');
     } finally {
       setLoadingPdf(false);
     }
   };
+
   const { token } = useTokenStore();
   const navigate = useNavigate();
 
