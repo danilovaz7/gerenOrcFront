@@ -38,7 +38,7 @@ function Navbar() {
         { label: 'Home', path: '/home' },
         { label: 'Procedimentos', path: usuario?.id_tipo_usuario === 2 ? `/listagem-procedimentos?usuario_id=${usuario.id}` : '/listagem-procedimentos' },
         { label: 'Orçamentos', path: usuario?.id_tipo_usuario === 2 ? `/listagem-orcamentos?usuario_id=${usuario.id}` : '/listagem-orcamentos' },
-        { label: usuario?.id_tipo_usuario === 1 ? 'Clientes' : 'Meus Dados', path: usuario?.id_tipo_usuario === 1 ? '/listagem-clientes' : `/listagem-clientes/${usuario?.id}` }
+        { label: usuario?.id_tipo_usuario === 1 ? 'Pacientes' : 'Meus Dados', path: usuario?.id_tipo_usuario === 1 ? '/listagem-clientes' : `/listagem-clientes/${usuario?.id}` }
     ];
 
     return (

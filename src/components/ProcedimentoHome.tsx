@@ -1,11 +1,11 @@
 interface Props {
-    cliente: string
+    paciente: string
     procedimento_nome: string
     dt_retorno: string
     num_retorno: number
 }
 
-export function ProcedimentoHome({ cliente, procedimento_nome, dt_retorno, num_retorno }: Props) {
+export function ProcedimentoHome({ paciente, procedimento_nome, dt_retorno, num_retorno }: Props) {
     function formatDateOnly(dateStr: string) {
         const [y, m, d] = dateStr.split('-');
         return `${d}/${m}/${y}`;
@@ -30,7 +30,7 @@ export function ProcedimentoHome({ cliente, procedimento_nome, dt_retorno, num_r
     transition-colors duration-150
   "
         >
-            <p>Cliente : {cliente}</p>
+            <p>Paciente : {paciente}</p>
             <p>Procedimento: {procedimento_nome}</p>
             <p>Data de retorno: {formatDateOnly(dt_retorno)}</p>
             <p>Numero do retorno: {num_retorno}</p>

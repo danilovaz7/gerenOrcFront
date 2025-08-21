@@ -267,7 +267,7 @@ function ListagemProcedimentoPage() {
               .map((p, i) => (
                 <ProcedimentoCard
                   key={i}
-                  nome_cliente={p.orcamento.usuario.nome}
+                  nome_paciente={p.orcamento.usuario.nome}
                   procedimento_nome={p.nome_procedimento}
                   dt_realizacao={p.dt_realizacao}
                   status={p.status_retorno}

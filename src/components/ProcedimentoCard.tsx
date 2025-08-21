@@ -3,7 +3,7 @@ import type { MouseEventHandler } from "react";
 
 
 interface Props {
-    nome_cliente: string;
+    nome_paciente: string;
     procedimento_nome: string;
     dt_realizacao: string;
     status: string;
@@ -20,7 +20,7 @@ function formatDateOnly(dateStr: string) {
 }
 
 export function ProcedimentoCard({
-    nome_cliente,
+    nome_paciente,
     procedimento_nome,
     dt_realizacao,
     num_retorno,
@@ -46,7 +46,7 @@ export function ProcedimentoCard({
         <>
             <div className={`grid grid-cols-1 ${gridCols} gap-4 w-full text-white border border-[#9B7F67] items-center bg-[#9B7F67] p-3 rounded-md hover:bg-[#E3DCD4] hover:text-black transition-colors duration-150`}>
                 {usuario_id_tipo === 1 && (
-                    <p className="truncate">Nome: {nome_cliente}</p>
+                    <p className="truncate">Nome: {nome_paciente}</p>
                 )}
                 <p className="truncate">Procedimento: {procedimento_nome}</p>
 

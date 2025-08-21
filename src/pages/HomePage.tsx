@@ -70,7 +70,7 @@ function HomePage() {
               .map((procedimento, idx) => (
                 <ProcedimentoHome
                   key={idx}
-                  cliente={procedimento.orcamento!.usuario!.nome}
+                  paciente={procedimento.orcamento!.usuario!.nome}
                   procedimento_nome={procedimento.nome_procedimento}
                   dt_retorno={procedimento.dt_realizacao}
                   num_retorno={procedimento.num_retorno}
@@ -116,13 +116,13 @@ function HomePage() {
               onClick={() => navigate('/listagem-clientes')}
               className="w-full sm:w-1/2 md:w-1/3 py-3 rounded-lg bg-[#9B7F67] text-white font-medium"
             >
-              VER CLIENTES
+              VER PACIENTES
             </button>
             <button
               onClick={() => navigate('/add-cliente')}
               className="w-full sm:w-1/2 md:w-1/3 py-3 rounded-lg bg-[#9B7F67] text-white font-medium"
             >
-              ADICIONAR CLIENTE
+              ADICIONAR PACIENTE
             </button>
             <button
               onClick={() => navigate('/add-orcamento')}
