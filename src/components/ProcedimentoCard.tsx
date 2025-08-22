@@ -69,6 +69,7 @@ export function ProcedimentoCard({
     const current = localFotos[index];
 
     const { user } = useTokenStore();
+    console.log(user)
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [replaceTargetId, setReplaceTargetId] = useState<number | null>(null);
     const [actionLocked, setActionLocked] = useState(false);
