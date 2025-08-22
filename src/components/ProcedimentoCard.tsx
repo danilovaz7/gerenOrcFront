@@ -204,7 +204,7 @@ export function ProcedimentoCard({
                                 <div className="w-full flex flex-col items-center gap-4">
                                     <div className="w-full flex items-center justify-center gap-4">
                                         <Button type="button" onClick={goPrev} className="px-3 py-2">◀</Button>
-                                        <div className="w-full max-w-[680px] max-h-[480px] bg-black flex items-center justify-center overflow-hidden rounded-md">
+                                        <div className="w-full max-w-[1020px] max-h-[720px] bg-black flex items-center justify-center overflow-hidden rounded-md">
                                             {current ? (
                                                 <img src={current.url} alt={`foto-${current.id}`} className="max-w-full max-h-full object-contain" />
                                             ) : (
