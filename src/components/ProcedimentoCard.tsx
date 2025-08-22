@@ -203,18 +203,18 @@ export function ProcedimentoCard({
                         <>
                             <ModalHeader className="flex flex-col gap-1">Galeria de fotos</ModalHeader>
                             <ModalBody className="flex h-full flex-col items-center p-2">
-                                <div className="w-full flex flex-col items-center gap-4">
+                                <div className="w-full h-full flex flex-col items-center gap-4">
                                     <div className="w-full flex items-center justify-center gap-4">
                                         <Button type="button" onClick={goPrev} className="px-3 py-2">◀</Button>
-                                        <div className="w-full flex items-center justify-center overflow-hidden rounded-md bg-black">
+                                        <div className="flex-1 w-full flex items-center justify-center overflow-hidden rounded-md bg-black">
                                             {current ? (
                                                 <img
                                                     src={current.url}
                                                     alt={`foto-${current.id}`}
-                                                    className="w-full h-auto max-h-[80vh] object-contain"
+                                                    className="w-full h-full object-contain"
                                                 />
                                             ) : (
-                                                <div className="w-full h-96 bg-gray-800 flex items-center justify-center text-white">Sem fotos</div>
+                                                <div className="w-full h-full bg-gray-800 flex items-center justify-center text-white">Sem fotos</div>
                                             )}
                                         </div>
                                         <Button type="button" onClick={goNext} className="px-3 py-2">▶</Button>
