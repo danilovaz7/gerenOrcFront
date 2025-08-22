@@ -1,6 +1,7 @@
 import React, { type MouseEventHandler, useEffect, useMemo, useRef, useState } from "react";
 import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, Button } from "@heroui/react";
 import { useTokenStore } from "../hooks/useTokenStore";
+import type { Usuario } from "../interfaces/Usuario";
 
 export type Foto = {
     id: number;
@@ -68,8 +69,21 @@ export function ProcedimentoCard({
     const [index, setIndex] = useState(0);
     const current = localFotos[index];
 
-    const { user } = useTokenStore();
-    console.log(user)
+    const { user,token } = useTokenStore();
+    const [usuario, setUsuario] = useState<Usuario | null>(null);
+      useEffect(() => {
+        if (!user?.id) return;
+        fetch(`${import.meta.env.VITE_API_URL}/usuarios/${user.id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        })
+          .then(r => r.json())
+          .then((data: Usuario) => setUsuario(data))
+          .catch(console.error);
+      }, [token, user?.id]);
+
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [replaceTargetId, setReplaceTargetId] = useState<number | null>(null);
     const [actionLocked, setActionLocked] = useState(false);
@@ -217,7 +231,7 @@ export function ProcedimentoCard({
                                                     </button>
 
                                                     {
-                                                        user?.id_tipo_usuario === 1 ?
+                                                        usuario?.id_tipo_usuario === 1 ?
                                                             <div className="flex gap-1 mt-1">
                                                                 <Button size="sm" disabled={!onReplaceFoto || actionLocked} onClick={() => triggerReplace(f.id)}>
                                                                     Substituir
