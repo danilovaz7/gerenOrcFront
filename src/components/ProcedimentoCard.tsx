@@ -203,7 +203,7 @@ export function ProcedimentoCard({
                         <>
                             <ModalHeader className="flex flex-col gap-1">Galeria de fotos</ModalHeader>
                             <ModalBody className="flex h-full flex-col items-center p-2">
-                                <div className="w-full h-full flex flex-col items-center gap-4 bg-red-600">
+                                <div className="w-full h-full flex flex-col items-center gap-4 ">
                                     <div className="w-full flex flex-col items-center gap-2">
                                         {/* Foto */}
                                         <div className="w-full flex items-center justify-center overflow-hidden rounded-md bg-black">
