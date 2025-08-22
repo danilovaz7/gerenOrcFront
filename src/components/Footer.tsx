@@ -36,28 +36,19 @@ export default function Footer() {
                         aria-label="Avaliações da clínica (abre em nova aba)"
                         title="Avaliações"
                         target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 rounded-md hover:opacity-90 transition-shadow inline-flex items-center gap-2"
-                        style={{ background: 'rgba(127,99,75,0.08)' }}
+                        rel="noreferrer"
+                        className="p-2 rounded-md hover:opacity-90 transition-shadow inline-flex items-center justify-center"
+                        style={{ background: 'rgba(127,99,75,0.08)', color: '#4a3f35' }}
                     >
-                        {/* SVG: balão (contorno) + estrela centrada (preenchida) */}
+                        {/* estrela simples (preenchida) */}
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 block"
+                            className="h-5 w-5"
                             viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.4"
+                            fill="currentColor"
                             aria-hidden="true"
                         >
-                            {/* balão - só contorno */}
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z" fill="none" />
-                            {/* estrela central, menor e preenchida */}
-                            <path
-                                d="M12 8.5l1.54 3.12 3.44.5-2.49 2.43.59 3.43L12 16.8l-3.08 1.62.59-3.43L7.02 12.12l3.44-.5L12 8.5z"
-                                fill="currentColor"
-                                stroke="none"
-                            />
+                            <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.401 8.169L12 18.897l-7.335 3.866 1.401-8.169L.132 9.21l8.2-1.192z" />
                         </svg>
                     </a>
 
