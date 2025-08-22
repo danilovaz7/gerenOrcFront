@@ -32,15 +32,15 @@ export default function Footer() {
                     </a>
                     <p>Avalie-nos</p>
                     <a
-                        href="https://g.page/seu-local-ou-avaliacoes" // troque pela sua URL real
+                        href="https://www.google.com/search?client=opera&hs=Ele&sca_esv=704d9b9f92b567db&sxsrf=AE3TifMdqwZQuSnpWmN9XfIgFcyRlzfx6Q:1755821056212&si=AMgyJEtREmoPL4P1I5IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-E7b9NKzHJXAemMvYU3vR0i_vWpjjjpSjYjxzniN0z4_-l2-PT_1DtAlcN9ducIPeo_yREqTR66BQGYb5Ud0lVqE9qSXXBfrsCiM981igh6aU9DP35Q%3D%3D&q=Clínica+Leutz+Comentários&sa=X&ved=2ahUKEwin2-CSj52PAxWupJUCHcLOL8cQ0bkNegQIJBAD&biw=2073&bih=1060&dpr=0.9" // troque pela sua URL real
                         aria-label="Avaliações da clínica (abre em nova aba)"
                         title="Avaliações"
                         target="_blank"
                         rel="noreferrer"
-                        className="p-2 rounded-md hover:opacity-90 transition-shadow inline-flex items-center justify-center"
-                        style={{ background: 'rgba(127,99,75,0.08)', color: '#4a3f35' }}
+                        className="p-2 rounded-md hover:opacity-90 transition-shadow inline-flex items-center justify-center hover:text-yellow-400"
+                        style={{ background: 'rgba(127,99,75,0.08)' }}
                     >
-                        {/* estrela simples (preenchida) */}
+                       
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="h-5 w-5"
