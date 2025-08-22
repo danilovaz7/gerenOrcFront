@@ -115,6 +115,8 @@ export function ProcedimentoCard({
         fileInputRef.current?.click();
     }
 
+    const isMobile = window.innerWidth < 640; // simples checagem
+
     async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
         if (!file || replaceTargetId == null) {
@@ -195,7 +197,7 @@ export function ProcedimentoCard({
                 )}
             </div>
 
-            <Modal className="bg-[#e5ded8]" isOpen={isOpen} size={"3xl"} onClose={onClose}>
+            <Modal className="bg-[#e5ded8]" isOpen={isOpen} size={isMobile ? "full" : "3xl"} onClose={onClose}>
                 <ModalContent className="text-black max-h-[80vh] overflow-y-auto">
                     {() => (
                         <>
