@@ -69,20 +69,20 @@ export function ProcedimentoCard({
     const [index, setIndex] = useState(0);
     const current = localFotos[index];
 
-    const { user,token } = useTokenStore();
+    const { user, token } = useTokenStore();
     const [usuario, setUsuario] = useState<Usuario | null>(null);
-      useEffect(() => {
+    useEffect(() => {
         if (!user?.id) return;
         fetch(`${import.meta.env.VITE_API_URL}/usuarios/${user.id}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
         })
-          .then(r => r.json())
-          .then((data: Usuario) => setUsuario(data))
-          .catch(console.error);
-      }, [token, user?.id]);
+            .then(r => r.json())
+            .then((data: Usuario) => setUsuario(data))
+            .catch(console.error);
+    }, [token, user?.id]);
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [replaceTargetId, setReplaceTargetId] = useState<number | null>(null);
@@ -204,9 +204,13 @@ export function ProcedimentoCard({
                                 <div className="w-full flex flex-col items-center gap-4">
                                     <div className="w-full flex items-center justify-center gap-4">
                                         <Button type="button" onClick={goPrev} className="px-3 py-2">◀</Button>
-                                        <div className="w-full max-w-[900px] max-h-[635px] bg-black flex items-center justify-center overflow-hidden rounded-md">
+                                        <div className="w-full flex items-center justify-center overflow-hidden rounded-md bg-black">
                                             {current ? (
-                                                <img src={current.url} alt={`foto-${current.id}`} className="max-w-full max-h-full object-contain" />
+                                                <img
+                                                    src={current.url}
+                                                    alt={`foto-${current.id}`}
+                                                    className="w-full h-auto max-h-[80vh] object-contain"
+                                                />
                                             ) : (
                                                 <div className="w-full h-96 bg-gray-800 flex items-center justify-center text-white">Sem fotos</div>
                                             )}
