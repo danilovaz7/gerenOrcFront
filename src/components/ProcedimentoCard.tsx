@@ -220,7 +220,7 @@ export function ProcedimentoCard({
                                             )}
                                         </div>
 
-                                        {/* Botões abaixo da foto */}
+                                       
                                         <div className="flex gap-4 mt-2">
                                             <Button type="button" onClick={goPrev} className="px-4 py-2 bg-[#9B7F67]">
                                                 ◀
@@ -246,20 +246,6 @@ export function ProcedimentoCard({
                                                     >
                                                         <img src={f.url} alt={`thumb-${i}`} className="w-full h-full object-cover" />
                                                     </button>
-
-                                                    {
-                                                        usuario?.id_tipo_usuario === 1 ?
-                                                            <div className="flex gap-1 mt-1">
-                                                                <Button size="sm" disabled={!onReplaceFoto || actionLocked} onClick={() => triggerReplace(f.id)}>
-                                                                    Substituir
-                                                                </Button>
-                                                                <Button size="sm" disabled={!onDeleteFoto || actionLocked} onClick={() => handleDelete(f.id)}>
-                                                                    Excluir
-                                                                </Button>
-                                                            </div>
-                                                            : null
-                                                    }
-
                                                 </div>
                                             ))}
                                         </div>

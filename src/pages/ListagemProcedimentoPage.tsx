@@ -206,16 +206,15 @@ function ListagemProcedimentoPage() {
     }
   };
 
-  // Delete a photo (assumption: backend exposes DELETE /procedimento/foto/:id)
-  const handleDeleteFoto = async (fotoId: number) => {
+  const handleDeleteFoto = async (fotoId: number,) => {
     if (!confirm('Remover essa foto?')) return;
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/foto/${fotoId}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/foto/${fotoId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) console.warn('delete foto response', res.status);
-      // refresh
+      
       if (idProcedimento) {
         const fotos = await fetchFotoUrlsAll(idProcedimento);
         setProcedimento((prev) => (prev ? { ...prev, fotos } : prev));
