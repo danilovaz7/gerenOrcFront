@@ -1,4 +1,4 @@
-import React, { type MouseEventHandler, useMemo, useRef, useState } from "react";
+import React, { type MouseEventHandler, useEffect, useMemo, useRef, useState } from "react";
 import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, Button } from "@heroui/react";
 
 export type Foto = {
@@ -16,9 +16,11 @@ interface Props {
   fotos: Foto[]; // agora obrigatório (ou ao menos passar [] vazio)
   num_retorno?: number;
   usuario_id_tipo?: number;
-  // optional callbacks — se você implementar endpoints, passe as funções aqui
+  // optional callbacks
   onDeleteFoto?: (fotoId: number) => Promise<void> | void;
   onReplaceFoto?: (fotoId: number, file: File) => Promise<void> | void;
+  // NOVO: função que, quando chamada, retorna fotos atualizadas (útil pra signed URLs)
+  onRequestFotos?: () => Promise<Foto[]>;
   onclick?: MouseEventHandler<HTMLParagraphElement>; // manter 'Atualizar'
 }
 
@@ -40,6 +42,7 @@ export function ProcedimentoCard({
   usuario_id_tipo,
   onDeleteFoto,
   onReplaceFoto,
+  onRequestFotos,
   onclick,
 }: Props) {
   const statusInfo: Record<string, { label: string; color: string }> = {
@@ -53,21 +56,28 @@ export function ProcedimentoCard({
   const gridCols =
     usuario_id_tipo === 1 ? "sm:grid-cols-[1fr_2fr_1fr_1fr_auto]" : "sm:grid-cols-[2fr_1fr_1fr_1fr_auto]";
 
-  // ordena fotos por 'ordem' se tiver
-  const normalizedFotos = useMemo(() => {
+  // normalized fotos a partir das props (ordenadas)
+  const sortedFromProps = useMemo(() => {
     if (!Array.isArray(fotos)) return [] as Foto[];
     return fotos.slice().sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0));
   }, [fotos]);
 
+  // estado local de fotos (inicializa com as props)
+  const [localFotos, setLocalFotos] = useState<Foto[]>(sortedFromProps);
+  // reflita mudanças nas props
+  useEffect(() => {
+    setLocalFotos(sortedFromProps);
+  }, [sortedFromProps]);
+
   const [index, setIndex] = useState(0);
-  const current = normalizedFotos[index];
+  const current = localFotos[index];
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [replaceTargetId, setReplaceTargetId] = useState<number | null>(null);
   const [actionLocked, setActionLocked] = useState(false);
 
-  const goPrev = () => setIndex((i) => (normalizedFotos.length ? (i - 1 + normalizedFotos.length) % normalizedFotos.length : 0));
-  const goNext = () => setIndex((i) => (normalizedFotos.length ? (i + 1) % normalizedFotos.length : 0));
+  const goPrev = () => setIndex((i) => (localFotos.length ? (i - 1 + localFotos.length) % localFotos.length : 0));
+  const goNext = () => setIndex((i) => (localFotos.length ? (i + 1) % localFotos.length : 0));
 
   async function handleDelete(fotoId: number) {
     if (!onDeleteFoto) return;
@@ -75,6 +85,12 @@ export function ProcedimentoCard({
     try {
       setActionLocked(true);
       await onDeleteFoto(fotoId);
+      // opcional: atualizar visual imediatamente chamando onRequestFotos se disponível
+      if (onRequestFotos) {
+        const fresh = await onRequestFotos();
+        setLocalFotos((fresh ?? []).slice().sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0)));
+        setIndex(0);
+      }
     } catch (err) {
       console.error("delete foto", err);
     } finally {
@@ -98,6 +114,12 @@ export function ProcedimentoCard({
     try {
       setActionLocked(true);
       await onReplaceFoto?.(replaceTargetId, file);
+      // depois de substituir, pegar fotos atualizadas se possível
+      if (onRequestFotos) {
+        const fresh = await onRequestFotos();
+        setLocalFotos((fresh ?? []).slice().sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0)));
+        setIndex(0);
+      }
     } catch (err) {
       console.error("replace foto", err);
     } finally {
@@ -106,6 +128,25 @@ export function ProcedimentoCard({
       setReplaceTargetId(null);
     }
   }
+
+  // função que abre modal e re-fetch fotos se for fornecida a callback
+  async function openAndMaybeRefresh() {
+    if (onRequestFotos) {
+      try {
+        const fresh = await onRequestFotos();
+        setLocalFotos((fresh ?? []).slice().sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0)));
+        setIndex(0);
+      } catch (err) {
+        console.error("onRequestFotos error", err);
+      }
+    }
+    onOpen();
+  }
+
+  useEffect(() => {
+    // se localFotos ficou menor do que index, ajusta
+    if (index >= localFotos.length && localFotos.length > 0) setIndex(0);
+  }, [localFotos, index]);
 
   return (
     <>
@@ -125,15 +166,15 @@ export function ProcedimentoCard({
         <p className="truncate whitespace-nowrap">Data: {formatDateOnly(dt_realizacao)}</p>
         <p className="truncate">N° retorno: {num_retorno == null || num_retorno === 0 ? "N/A" : num_retorno}</p>
 
-        <div onClick={() => { setIndex(0); onOpen(); }} className="flex items-center gap-2 cursor-pointer">
+        <div onClick={() => { setIndex(0); void openAndMaybeRefresh(); }} className="flex items-center gap-2 cursor-pointer">
           <div className="w-10 h-10 bg-black overflow-hidden rounded-sm">
-            {normalizedFotos[0] ? (
-              <img src={normalizedFotos[0].url} alt="thumb" className="w-full h-full object-cover" />
+            {localFotos[0] ? (
+              <img src={localFotos[0].url} alt="thumb" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full bg-gray-700" />
             )}
           </div>
-          <span className="text-sm truncate">Fotos ({normalizedFotos.length})</span>
+          <span className="text-sm truncate">Fotos ({localFotos.length})</span>
         </div>
 
         {usuario_id_tipo === 1 && onclick && (
@@ -163,12 +204,12 @@ export function ProcedimentoCard({
                   </div>
 
                   <div className="text-sm text-gray-700">
-                    {normalizedFotos.length > 0 ? `Foto ${index + 1} de ${normalizedFotos.length}` : "Nenhuma foto disponível"}
+                    {localFotos.length > 0 ? `Foto ${index + 1} de ${localFotos.length}` : "Nenhuma foto disponível"}
                   </div>
 
                   <div className="w-full overflow-x-auto py-2">
                     <div className="flex gap-2 items-center">
-                      {normalizedFotos.map((f, i) => (
+                      {localFotos.map((f, i) => (
                         <div key={f.id ?? i} className="flex flex-col items-center gap-1">
                           <button
                             onClick={() => setIndex(i)}

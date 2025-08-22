@@ -305,7 +305,14 @@ function ListagemProcedimentoPage() {
                     if (usuario?.id_tipo_usuario === 2) return;
                     setIdProcedimento(p.id);
                     onOpen();
-                  } } fotos={[]} />
+                  }}
+                  fotos={p.fotos ?? []}
+                  onRequestFotos={async () => {
+                    // fetchFotoUrlsAll já existe no seu componente — reutilize
+                    const fresh = await fetchFotoUrlsAll(p.id);
+                    return fresh;
+                  }}
+                />
               ))
           )}
         </div>
@@ -403,9 +410,10 @@ function ListagemProcedimentoPage() {
                     {/* Gallery area */}
                     <div className="w-full flex flex-col gap-4">
                       <div className="flex gap-2 flex-wrap">
-                        {procedimento?.fotos && procedimento.fotos.length ? (
-                          procedimento.fotos
-                            .sort((a, b) => a.ordem - b.ordem)
+                        {(procedimento?.fotos ?? []).length ? (
+                          (procedimento?.fotos ?? [])
+                            .slice() // evita mutação do array original
+                            .sort((a, b) => (a.ordem ?? Number.POSITIVE_INFINITY) - (b.ordem ?? Number.POSITIVE_INFINITY))
                             .map((f) => (
                               <div key={f.id} className="w-[200px] flex flex-col gap-1 items-center">
                                 <img src={f.url} alt={`foto-${f.id}`} className="w-[200px] h-[140px] object-cover rounded-md" />
@@ -426,6 +434,7 @@ function ListagemProcedimentoPage() {
                         </Button>
                       </div>
                     </div>
+
 
                     <div className="flex flex-wrap w-full sm:flex-nowrap gap-2 justify-center">
                       <Button size="lg" type="submit" className="w-[15%] text-white bg-[#7F634B]">
