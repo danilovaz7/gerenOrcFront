@@ -109,7 +109,7 @@ function HomePage() {
       return '--/--';
     }
   }
-  console.log(aniversariantes)
+  
 
   if (!usuario) {
     return <p className="text-center mt-8">Carregando...</p>;

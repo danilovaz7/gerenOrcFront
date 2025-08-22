@@ -127,7 +127,7 @@ function AddClientesPage() {
 
 
     const onSubmit = async (values: FormValues) => {
-        console.log(values)
+      
         const resposta = await fetch(`${import.meta.env.VITE_API_URL}/usuarios`, {
             method: 'POST',
             headers: {

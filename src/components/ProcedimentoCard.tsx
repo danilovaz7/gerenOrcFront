@@ -1,5 +1,6 @@
 import React, { type MouseEventHandler, useEffect, useMemo, useRef, useState } from "react";
 import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, Button } from "@heroui/react";
+import { useTokenStore } from "../hooks/useTokenStore";
 
 export type Foto = {
     id: number;
@@ -13,15 +14,13 @@ interface Props {
     procedimento_nome: string;
     dt_realizacao?: string;
     status: string;
-    fotos: Foto[]; // agora obrigatório (ou ao menos passar [] vazio)
+    fotos: Foto[];
     num_retorno?: number;
     usuario_id_tipo?: number;
-    // optional callbacks
     onDeleteFoto?: (fotoId: number) => Promise<void> | void;
     onReplaceFoto?: (fotoId: number, file: File) => Promise<void> | void;
-    // NOVO: função que, quando chamada, retorna fotos atualizadas (útil pra signed URLs)
     onRequestFotos?: () => Promise<Foto[]>;
-    onclick?: MouseEventHandler<HTMLParagraphElement>; // manter 'Atualizar'
+    onclick?: MouseEventHandler<HTMLParagraphElement>;
 }
 
 function formatDateOnly(dateStr?: string) {
@@ -56,15 +55,12 @@ export function ProcedimentoCard({
     const gridCols =
         usuario_id_tipo === 1 ? "sm:grid-cols-[1fr_2fr_1fr_1fr_auto]" : "sm:grid-cols-[2fr_1fr_1fr_1fr_auto]";
 
-    // normalized fotos a partir das props (ordenadas)
     const sortedFromProps = useMemo(() => {
         if (!Array.isArray(fotos)) return [] as Foto[];
         return fotos.slice().sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0));
     }, [fotos]);
 
-    // estado local de fotos (inicializa com as props)
     const [localFotos, setLocalFotos] = useState<Foto[]>(sortedFromProps);
-    // reflita mudanças nas props
     useEffect(() => {
         setLocalFotos(sortedFromProps);
     }, [sortedFromProps]);
@@ -72,6 +68,7 @@ export function ProcedimentoCard({
     const [index, setIndex] = useState(0);
     const current = localFotos[index];
 
+    const { user } = useTokenStore();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [replaceTargetId, setReplaceTargetId] = useState<number | null>(null);
     const [actionLocked, setActionLocked] = useState(false);
@@ -85,7 +82,6 @@ export function ProcedimentoCard({
         try {
             setActionLocked(true);
             await onDeleteFoto(fotoId);
-            // opcional: atualizar visual imediatamente chamando onRequestFotos se disponível
             if (onRequestFotos) {
                 const fresh = await onRequestFotos();
                 setLocalFotos((fresh ?? []).slice().sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0)));
@@ -114,7 +110,6 @@ export function ProcedimentoCard({
         try {
             setActionLocked(true);
             await onReplaceFoto?.(replaceTargetId, file);
-            // depois de substituir, pegar fotos atualizadas se possível
             if (onRequestFotos) {
                 const fresh = await onRequestFotos();
                 setLocalFotos((fresh ?? []).slice().sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0)));
@@ -128,8 +123,6 @@ export function ProcedimentoCard({
             setReplaceTargetId(null);
         }
     }
-
-    // função que abre modal e re-fetch fotos se for fornecida a callback
     async function openAndMaybeRefresh() {
         if (onRequestFotos) {
             try {
@@ -144,7 +137,6 @@ export function ProcedimentoCard({
     }
 
     useEffect(() => {
-        // se localFotos ficou menor do que index, ajusta
         if (index >= localFotos.length && localFotos.length > 0) setIndex(0);
     }, [localFotos, index]);
 
@@ -223,14 +215,19 @@ export function ProcedimentoCard({
                                                         <img src={f.url} alt={`thumb-${i}`} className="w-full h-full object-cover" />
                                                     </button>
 
-                                                    <div className="flex gap-1 mt-1">
-                                                        <Button size="sm" disabled={!onReplaceFoto || actionLocked} onClick={() => triggerReplace(f.id)}>
-                                                            Substituir
-                                                        </Button>
-                                                        <Button size="sm" disabled={!onDeleteFoto || actionLocked} onClick={() => handleDelete(f.id)}>
-                                                            Excluir
-                                                        </Button>
-                                                    </div>
+                                                    {
+                                                        user?.id_tipo_usuario === 1 ?
+                                                            <div className="flex gap-1 mt-1">
+                                                                <Button size="sm" disabled={!onReplaceFoto || actionLocked} onClick={() => triggerReplace(f.id)}>
+                                                                    Substituir
+                                                                </Button>
+                                                                <Button size="sm" disabled={!onDeleteFoto || actionLocked} onClick={() => handleDelete(f.id)}>
+                                                                    Excluir
+                                                                </Button>
+                                                            </div>
+                                                            : null
+                                                    }
+
                                                 </div>
                                             ))}
                                         </div>

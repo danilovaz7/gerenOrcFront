@@ -27,11 +27,9 @@ export default function RedefinirSenhaPage() {
 
    
     const validatePassword = (values: FormValues) => {
-        console.log('to aqui')
         const errors: { senha?: string; confirmarSenha?: string } = {};
         const passwordRegex =
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-        console.log(passwordRegex.test(values.senha))
         setErroSenha("");
         setErroConfirmSenha("");
 
@@ -39,16 +37,13 @@ export default function RedefinirSenhaPage() {
             errors.senha =
                 "A senha deve ter no mínimo 8 caracteres, incluindo pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial.";
             setErroSenha(errors.senha);
-            console.log(errors.senha)
+          
         }
-
-        console.log(values.senha !== values.confirmarSenha)
         if (values.senha !== values.confirmarSenha) {
             errors.confirmarSenha = "As senhas devem coincidir.";
             setErroConfirmSenha(errors.confirmarSenha);
-            console.log(errors.confirmarSenha)
+
         }
-        console.log('errors', errors)
         return errors;
     };
 
@@ -66,10 +61,10 @@ export default function RedefinirSenhaPage() {
     } = methods;
 
     const onSubmit = async (values: FormValues) => {
-        console.log(values)
+    
         const errors = validatePassword(values);
         if (Object.keys(errors).length > 0) {
-            console.log('tem erros me pae')
+           
             return;
         }
         const res = await fetch(

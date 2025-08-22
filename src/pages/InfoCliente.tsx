@@ -78,10 +78,6 @@ export default function InfoClientes() {
 
   const apenasLeitura = usuarioNavbar?.id_tipo_usuario === 2;
 
-  console.log("leitura apenas? ", apenasLeitura)
-  console.log('tipo do usuario ', usuarioNavbar?.id_tipo_usuario)
-
-  console.log("usuario navbar", usuarioNavbar)
   const methods = useForm<FormValues>({
     mode: 'onBlur',
     reValidateMode: 'onChange',

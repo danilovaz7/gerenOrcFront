@@ -63,7 +63,6 @@ function ListagemClientesPage() {
 
 
             const usuariosResponse = await response.json()
-            console.log('usuariosResponse', usuariosResponse)
             setUsuarios(usuariosResponse)
         }
     });
