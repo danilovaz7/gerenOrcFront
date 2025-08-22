@@ -204,8 +204,13 @@ export function ProcedimentoCard({
                             <ModalHeader className="flex flex-col gap-1">Galeria de fotos</ModalHeader>
                             <ModalBody className="flex h-full flex-col items-center p-2">
                                 <div className="w-full h-full flex flex-col items-center gap-4 bg-red-600">
-                                    <div className="w-full h-full flex items-center justify-center gap-4">
-                                        <Button type="button" onClick={goPrev} className="px-3 py-2">◀</Button>
+                                    <div className="w-full h-full flex flex-col sm:flex-row items-center justify-center gap-4">
+                                        {/* Botão de voltar */}
+                                        <Button type="button" onClick={goPrev} className="px-3 py-2">
+                                            ◀
+                                        </Button>
+
+                                        {/* Container da foto */}
                                         <div className="flex-1 w-full flex items-center justify-center overflow-hidden rounded-md bg-black">
                                             {current ? (
                                                 <img
@@ -214,10 +219,16 @@ export function ProcedimentoCard({
                                                     className="w-full h-full object-contain"
                                                 />
                                             ) : (
-                                                <div className="w-full h-full bg-gray-800 flex items-center justify-center text-white">Sem fotos</div>
+                                                <div className="w-full h-full bg-gray-800 flex items-center justify-center text-white">
+                                                    Sem fotos
+                                                </div>
                                             )}
                                         </div>
-                                        <Button type="button" onClick={goNext} className="px-3 py-2">▶</Button>
+
+                                        {/* Botão de avançar */}
+                                        <Button type="button" onClick={goNext} className="px-3 py-2">
+                                            ▶
+                                        </Button>
                                     </div>
 
                                     <div className="text-sm text-gray-700">
