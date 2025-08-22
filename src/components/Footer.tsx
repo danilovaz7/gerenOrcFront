@@ -32,20 +32,32 @@ export default function Footer() {
                     </a>
                     <p>Avalie-nos</p>
                     <a
-                        href="https://g.page/seu-local-ou-avaliacoes" // troque pela URL real do Google/Trustpilot
-                        aria-label="Avaliações da clínica no Google — nota 4.8 de 124 avaliações (abre em nova aba)"
-                        title="Avaliações — 4.8 (124 avaliações)"
+                        href="https://g.page/seu-local-ou-avaliacoes" // troque pela sua URL real
+                        aria-label="Avaliações da clínica (abre em nova aba)"
+                        title="Avaliações"
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="p-2 rounded-md hover:opacity-90 transition-shadow inline-flex items-center gap-2"
                         style={{ background: 'rgba(127,99,75,0.08)' }}
-                        data-rating="4.8"      /* opcional: você pode atualizar dinamicamente */
-                        data-reviews="124"     /* opcional: você pode atualizar dinamicamente */
                     >
-                        {/* ícone */}
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
-                            <path d="M12 17.3l-5.6 3.1 1.1-6.4L2 9.7l6.4-.9L12 3l3.6 5.8 6.4.9-4.5 4.3 1.1 6.4z" />
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z" />
+                        {/* SVG: balão (contorno) + estrela centrada (preenchida) */}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 block"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.4"
+                            aria-hidden="true"
+                        >
+                            {/* balão - só contorno */}
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z" fill="none" />
+                            {/* estrela central, menor e preenchida */}
+                            <path
+                                d="M12 8.5l1.54 3.12 3.44.5-2.49 2.43.59 3.43L12 16.8l-3.08 1.62.59-3.43L7.02 12.12l3.44-.5L12 8.5z"
+                                fill="currentColor"
+                                stroke="none"
+                            />
                         </svg>
                     </a>
 
