@@ -33,17 +33,24 @@ export const CalendarIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => 
   </svg>
 );
 
+type Foto = {
+  id: number;
+  key: string;
+  url: string;
+  ordem: number;
+};
+
 function ListagemProcedimentoPage() {
   const { token, user } = useTokenStore();
   const [searchParams] = useSearchParams();
   const usuarioId = searchParams.get('usuario_id');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState<'antes' | 'depois' | null>(null);
+  const [uploading, setUploading] = useState<boolean>(false);
 
   const [procedimentos, setProcedimentos] = useState<Procedimento[]>([]);
   const [usuario, setUsuario] = useState<Usuario>();
-  const [procedimento, setProcedimento] = useState<Procedimento>();
+  const [procedimento, setProcedimento] = useState<Procedimento & { fotos?: Foto[] }>();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [idProcedimento, setIdProcedimento] = useState<number>();
 
@@ -54,36 +61,39 @@ function ListagemProcedimentoPage() {
     },
     enableReinitialize: true,
     onSubmit: async ({ parametro, valorBusca }) => {
-      const url = new URL(`${import.meta.env.VITE_API_URL}/procedimentos`)
-      if (usuarioId) url.searchParams.set('usuario_id', usuarioId)
-      if (valorBusca) url.searchParams.set(parametro, valorBusca)
+      const url = new URL(`${import.meta.env.VITE_API_URL}/procedimentos`);
+      if (usuarioId) url.searchParams.set('usuario_id', usuarioId);
+      if (valorBusca) url.searchParams.set(parametro, valorBusca);
 
       const res = await fetch(url.toString(), {
         headers: { Authorization: `Bearer ${token}` },
-      })
-      const data: Procedimento[] = await res.json()
+      });
+      const data: Procedimento[] = await res.json();
 
-      const withUrls = await Promise.all(
-        data.map(async p => {
-          if (p.foto_antes) p.foto_antes = await fetchFotoUrl(p.id, 'antes')
-          if (p.foto_depois) p.foto_depois = await fetchFotoUrl(p.id, 'depois')
-          return p
+      const withFotos = await Promise.all(
+        data.map(async (p) => {
+          const fotos = await fetchFotoUrlsAll(p.id);
+          // attach fotos array to procedimento object
+          return { ...p, fotos };
         })
-      )
-      setProcedimentos(withUrls)
+      );
+      setProcedimentos(withFotos);
     },
   });
 
-  async function fetchFotoUrl(
-    idProcedimento: number,
-    tipo: 'antes' | 'depois'
-  ): Promise<string> {
-    const resp = await fetch(
-      `${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}/url/${tipo}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    const { url } = await resp.json();
-    return url;
+  async function fetchFotoUrlsAll(idProcedimento: number): Promise<Foto[]> {
+    try {
+      const resp = await fetch(
+        `${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}/url`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const body = await resp.json();
+      // backend returns { fotos: [...] }
+      return body?.fotos ?? [];
+    } catch (err) {
+      console.error('fetchFotoUrlsAll error', err);
+      return [];
+    }
   }
 
   useEffect(() => {
@@ -103,14 +113,10 @@ function ListagemProcedimentoPage() {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data: Procedimento[] = await res.json();
-    const withUrls = await Promise.all(
-      data.map(async (p) => {
-        if (p.foto_antes) p.foto_antes = await fetchFotoUrl(p.id, 'antes');
-        if (p.foto_depois) p.foto_depois = await fetchFotoUrl(p.id, 'depois');
-        return p;
-      })
+    const withFotos = await Promise.all(
+      data.map(async (p) => ({ ...p, fotos: await fetchFotoUrlsAll(p.id) }))
     );
-    setProcedimentos(withUrls);
+    setProcedimentos(withFotos);
   };
 
   useEffect(() => {
@@ -129,28 +135,27 @@ function ListagemProcedimentoPage() {
   const { reset, handleSubmit, control, formState: { errors } } = methods;
 
   useEffect(() => {
-    if (!idProcedimento) return
+    if (!idProcedimento) return;
     (async () => {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}`,
         { headers: { Authorization: `Bearer ${token}` } }
-      )
-      const data: Procedimento = await res.json()
+      );
+      const data: Procedimento = await res.json();
 
-      if (data.foto_antes) data.foto_antes = await fetchFotoUrl(data.id, 'antes')
-      if (data.foto_depois) data.foto_depois = await fetchFotoUrl(data.id, 'depois')
+      const fotos = await fetchFotoUrlsAll(data.id);
 
-      setProcedimento(data)
+      setProcedimento({ ...data, fotos });
       reset({
         dt_realizacao: data.dt_realizacao || '',
         dt_ultimo_retorno: data.dt_ultimo_retorno || '',
         obs_procedimento: data.obs_procedimento || '',
         num_retorno: data.num_retorno ?? 0,
         status_retorno: data.status_retorno || '',
-      })
-      onOpen()
-    })().catch(console.error)
-  }, [idProcedimento, token, reset, onOpen])
+      });
+      onOpen();
+    })().catch(console.error);
+  }, [idProcedimento, token, reset, onOpen]);
 
   const onEditSubmit = async (values: FormValues) => {
     if (!idProcedimento) return;
@@ -168,34 +173,57 @@ function ListagemProcedimentoPage() {
     }
   };
 
-  const handleFileChange = () => {
-    if (!fileInputRef.current?.files?.length || !uploading || !idProcedimento) return;
-    const file = fileInputRef.current.files[0];
+  // NEW: upload multiple files to new route
+  const handleFileChange = async () => {
+    const files = fileInputRef.current?.files;
+    if (!files || !files.length || !idProcedimento) return;
+
     const formData = new FormData();
-    formData.append('file', file);
-    fetch(
-      `${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}/upload/${uploading}`,
-      { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: formData }
-    )
-      .then(async (res) => {
-        const body = await res.json();
-        if (!res.ok) {
-          console.error('Upload falhou:', res.status, body);
-          return null;
-        }
-        return body;
-      })
-      .then((body) => {
-        if (!body) return;
-        const { url } = body;
-        setProcedimento(prev => prev ? { ...prev, [uploading === 'antes' ? 'foto_antes' : 'foto_depois']: url } : prev);
+    // backend expects field name 'files' (array)
+    Array.from(files).forEach((f) => formData.append('files', f));
+
+    try {
+      setUploading(true);
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}/upload`,
+        { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: formData }
+      );
+
+      const body = await res.json();
+      if (!res.ok) {
+        console.error('Upload falhou:', res.status, body);
+      } else {
+        // backend returns fotosCriadas array, but we will simply refresh the list
+        const fotos = await fetchFotoUrlsAll(idProcedimento);
+        setProcedimento((prev) => (prev ? { ...prev, fotos } : prev));
         fetchProcedimentos();
-      })
-      .catch(console.error)
-      .finally(() => {
-        setUploading(null);
-        if (fileInputRef.current) fileInputRef.current.value = '';
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  // Delete a photo (assumption: backend exposes DELETE /procedimento/foto/:id)
+  const handleDeleteFoto = async (fotoId: number) => {
+    if (!confirm('Remover essa foto?')) return;
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/foto/${fotoId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
       });
+      if (!res.ok) console.warn('delete foto response', res.status);
+      // refresh
+      if (idProcedimento) {
+        const fotos = await fetchFotoUrlsAll(idProcedimento);
+        setProcedimento((prev) => (prev ? { ...prev, fotos } : prev));
+        fetchProcedimentos();
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -271,22 +299,19 @@ function ListagemProcedimentoPage() {
                   procedimento_nome={p.nome_procedimento}
                   dt_realizacao={p.dt_realizacao}
                   status={p.status_retorno}
-                  foto_antes={p.foto_antes || ''}
-                  foto_depois={p.foto_depois || ''}
                   num_retorno={p.num_retorno}
                   usuario_id_tipo={usuario?.id_tipo_usuario ?? 0}
                   onclick={() => {
                     if (usuario?.id_tipo_usuario === 2) return;
                     setIdProcedimento(p.id);
                     onOpen();
-                  }}
-                />
+                  } } fotos={[]} />
               ))
           )}
         </div>
       </div>
 
-      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" multiple onChange={handleFileChange} />
 
       <Modal className='bg-[#e5ded8]' isOpen={isOpen} size={'3xl'} onClose={onClose}>
         <ModalContent className='text-black max-h-[80vh] overflow-y-auto'>
@@ -374,33 +399,34 @@ function ListagemProcedimentoPage() {
                         )}
                       />
                     </section>
-                    <div className="w-full flex flex-col sm:flex-row gap-5 p-2">
-                      {(['antes', 'depois'] as const).map((type) => (
-                        <div key={type} className="w-full sm:w-[50%] flex flex-col justify-center items-center rounded-md bg-[#9B7F67] gap-2 p-2">
-                          {procedimento?.[type === 'antes' ? 'foto_antes' : 'foto_depois'] ? (
-                            <img
-                              src={procedimento[type === 'antes' ? 'foto_antes' : 'foto_depois']!}
-                              alt={type}
-                              className="w-full h-auto object-contain rounded-md"
-                            />
-                          ) : (
-                            <div className="w-full h-96 bg-black" />
-                          )}
-                          <p className="capitalize text-white text-lg">{type}</p>
-                          <Button
-                            type="button"
-                            className="text-white bg-[#7F634B] px-4 py-2 rounded"
-                            onClick={() => {
-                              setUploading(type);
-                              fileInputRef.current?.click();
-                            }}
-                            disabled={!idProcedimento || uploading !== null}
-                          >
-                            {uploading === type ? 'Enviando…' : 'Carregar imagem'}
-                          </Button>
-                        </div>
-                      ))}
+
+                    {/* Gallery area */}
+                    <div className="w-full flex flex-col gap-4">
+                      <div className="flex gap-2 flex-wrap">
+                        {procedimento?.fotos && procedimento.fotos.length ? (
+                          procedimento.fotos
+                            .sort((a, b) => a.ordem - b.ordem)
+                            .map((f) => (
+                              <div key={f.id} className="w-[200px] flex flex-col gap-1 items-center">
+                                <img src={f.url} alt={`foto-${f.id}`} className="w-[200px] h-[140px] object-cover rounded-md" />
+                                <div className="flex gap-2">
+                                  <Button size="sm" type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}>Substituir</Button>
+                                  <Button size="sm" type="button" onClick={() => handleDeleteFoto(f.id)} disabled={uploading}>Excluir</Button>
+                                </div>
+                              </div>
+                            ))
+                        ) : (
+                          <div className="w-full h-48 bg-black flex items-center justify-center text-white">Sem fotos</div>
+                        )}
+                      </div>
+
+                      <div className="flex justify-center">
+                        <Button type="button" onClick={() => fileInputRef.current?.click()} disabled={!idProcedimento || uploading} className="text-white bg-[#7F634B]">
+                          {uploading ? 'Enviando…' : 'Carregar imagens'}
+                        </Button>
+                      </div>
                     </div>
+
                     <div className="flex flex-wrap w-full sm:flex-nowrap gap-2 justify-center">
                       <Button size="lg" type="submit" className="w-[15%] text-white bg-[#7F634B]">
                         Salvar
