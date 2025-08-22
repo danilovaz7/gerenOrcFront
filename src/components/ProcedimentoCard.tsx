@@ -222,10 +222,10 @@ export function ProcedimentoCard({
 
                                         {/* Botões abaixo da foto */}
                                         <div className="flex gap-4 mt-2">
-                                            <Button type="button" onClick={goPrev} className="px-4 py-2">
+                                            <Button type="button" onClick={goPrev} className="px-4 py-2 bg-[#9B7F67]">
                                                 ◀
                                             </Button>
-                                            <Button type="button" onClick={goNext} className="px-4 py-2">
+                                            <Button type="button" onClick={goNext} className="px-4 py-2 bg-[#9B7F67]">
                                                 ▶
                                             </Button>
                                         </div>
