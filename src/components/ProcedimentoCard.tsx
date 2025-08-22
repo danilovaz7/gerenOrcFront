@@ -204,7 +204,7 @@ export function ProcedimentoCard({
                             <ModalHeader className="flex flex-col gap-1">Galeria de fotos</ModalHeader>
                             <ModalBody className="flex h-full flex-col items-center p-2">
                                 <div className="w-full h-full flex flex-col items-center gap-4 bg-red-600">
-                                    <div className="w-full flex items-center justify-center gap-4">
+                                    <div className="w-full h-full flex items-center justify-center gap-4">
                                         <Button type="button" onClick={goPrev} className="px-3 py-2">◀</Button>
                                         <div className="flex-1 w-full flex items-center justify-center overflow-hidden rounded-md bg-black">
                                             {current ? (
