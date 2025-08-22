@@ -45,14 +45,19 @@ function ListagemProcedimentoPage() {
   const [searchParams] = useSearchParams();
   const usuarioId = searchParams.get('usuario_id');
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null); // para upload múltiplo
+  const fileReplaceRef = useRef<HTMLInputElement | null>(null); // para substituir única foto
   const [uploading, setUploading] = useState<boolean>(false);
 
   const [procedimentos, setProcedimentos] = useState<Procedimento[]>([]);
   const [usuario, setUsuario] = useState<Usuario>();
   const [procedimento, setProcedimento] = useState<Procedimento & { fotos?: Foto[] }>();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [idProcedimento, setIdProcedimento] = useState<number>();
+  const [idProcedimento, setIdProcedimento] = useState<number | undefined>();
+  const [replaceTargetId, setReplaceTargetId] = useState<number | null>(null);
+
+  // ---- auth headers helper (evita passar string | undefined) ----
+  const authHeaders = token ? ({ Authorization: `Bearer ${token}` } as Record<string, string>) : {};
 
   const formik = useFormik({
     initialValues: {
@@ -66,7 +71,7 @@ function ListagemProcedimentoPage() {
       if (valorBusca) url.searchParams.set(parametro, valorBusca);
 
       const res = await fetch(url.toString(), {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { ...authHeaders },
       });
       const data: Procedimento[] = await res.json();
 
@@ -85,7 +90,7 @@ function ListagemProcedimentoPage() {
     try {
       const resp = await fetch(
         `${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}/url`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { ...authHeaders } }
       );
       const body = await resp.json();
       // backend returns { fotos: [...] }
@@ -99,18 +104,18 @@ function ListagemProcedimentoPage() {
   useEffect(() => {
     if (!user?.id) return;
     fetch(`${import.meta.env.VITE_API_URL}/usuarios/${user.id}`, {
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json', ...authHeaders },
     })
       .then((res) => res.json())
       .then(setUsuario)
       .catch(console.error);
-  }, [token, user?.id]);
+  }, [token, user?.id]); // authHeaders depends on token, but token is in deps
 
   const fetchProcedimentos = async () => {
     const url = new URL(`${import.meta.env.VITE_API_URL}/procedimentos`);
     if (usuarioId) url.searchParams.set('usuario_id', usuarioId);
     const res = await fetch(url.toString(), {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { ...authHeaders },
     });
     const data: Procedimento[] = await res.json();
     const withFotos = await Promise.all(
@@ -139,7 +144,7 @@ function ListagemProcedimentoPage() {
     (async () => {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { ...authHeaders } }
       );
       const data: Procedimento = await res.json();
 
@@ -163,7 +168,7 @@ function ListagemProcedimentoPage() {
       `${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}`,
       {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
         body: JSON.stringify(values),
       }
     );
@@ -173,20 +178,34 @@ function ListagemProcedimentoPage() {
     }
   };
 
-  // NEW: upload multiple files to new route
+  // now apiReplaceFoto uses token from closure via authHeaders
+  async function apiReplaceFoto(procId: number, fotoId: number, file: File) {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/${procId}/foto/${fotoId}/replace`, {
+      method: 'PUT',
+      headers: { ...authHeaders }, // multer/formdata: no Content-Type
+      body: fd,
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || 'Falha ao substituir foto');
+    }
+    return res.json();
+  }
+
+  // Upload múltiplo (manter)
   const handleFileChange = async () => {
     const files = fileInputRef.current?.files;
     if (!files || !files.length || !idProcedimento) return;
-
     const formData = new FormData();
-    // backend expects field name 'files' (array)
     Array.from(files).forEach((f) => formData.append('files', f));
 
     try {
       setUploading(true);
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}/upload`,
-        { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: formData }
+        { method: 'POST', headers: { ...authHeaders }, body: formData }
       );
 
       const body = await res.json();
@@ -209,12 +228,12 @@ function ListagemProcedimentoPage() {
   const handleDeleteFoto = async (fotoId: number,) => {
     if (!confirm('Remover essa foto?')) return;
     try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/foto/${fotoId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/foto/${fotoId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { ...authHeaders },
       });
       if (!res.ok) console.warn('delete foto response', res.status);
-      
+
       if (idProcedimento) {
         const fotos = await fetchFotoUrlsAll(idProcedimento);
         setProcedimento((prev) => (prev ? { ...prev, fotos } : prev));
@@ -224,6 +243,41 @@ function ListagemProcedimentoPage() {
       console.error(err);
     }
   };
+
+  // ----- NOVO: substituição (trigger + handler) -----
+  function triggerReplace(fotoId: number) {
+    setReplaceTargetId(fotoId);
+    fileReplaceRef.current?.click();
+  }
+
+  async function handleReplaceFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    const targetId = replaceTargetId;
+    e.currentTarget.value = "";
+
+    if (!file || !targetId || !idProcedimento) {
+      setReplaceTargetId(null);
+      return;
+    }
+
+    try {
+      setUploading(true);
+      // removed unused 'result' variable — we don't need it here
+      await apiReplaceFoto(idProcedimento, targetId, file);
+
+      // Atualiza fotos do procedimento com dados do servidor (mais seguro)
+      const fotos = await fetchFotoUrlsAll(idProcedimento);
+      setProcedimento((prev) => (prev ? { ...prev, fotos } : prev));
+      fetchProcedimentos();
+    } catch (err) {
+      console.error('Erro ao substituir foto', err);
+      alert('Falha ao substituir foto. Tente novamente.');
+    } finally {
+      setUploading(false);
+      setReplaceTargetId(null);
+    }
+  }
+  // ----- fim substituição -----
 
   return (
     <div className="flex flex-col gap-4 items-center w-screen">
@@ -307,7 +361,6 @@ function ListagemProcedimentoPage() {
                   }}
                   fotos={p.fotos ?? []}
                   onRequestFotos={async () => {
-                   
                     const fresh = await fetchFotoUrlsAll(p.id);
                     return fresh;
                   }}
@@ -317,7 +370,10 @@ function ListagemProcedimentoPage() {
         </div>
       </div>
 
+      {/* input para upload múltiplo */}
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" multiple onChange={handleFileChange} />
+      {/* input para substituir UMA foto (oculto) */}
+      <input ref={fileReplaceRef} type="file" accept="image/*" className="hidden" onChange={handleReplaceFileChange} />
 
       <Modal className='bg-[#e5ded8]' isOpen={isOpen} size={'3xl'} onClose={onClose}>
         <ModalContent className='text-black max-h-[80vh] overflow-y-auto'>
@@ -406,18 +462,18 @@ function ListagemProcedimentoPage() {
                       />
                     </section>
 
-              
+
                     <div className="w-full flex flex-col gap-4">
                       <div className="flex gap-2 flex-wrap">
                         {(procedimento?.fotos ?? []).length ? (
                           (procedimento?.fotos ?? [])
-                            .slice() 
+                            .slice()
                             .sort((a, b) => (a.ordem ?? Number.POSITIVE_INFINITY) - (b.ordem ?? Number.POSITIVE_INFINITY))
                             .map((f) => (
                               <div key={f.id} className="w-[200px] flex flex-col gap-1 items-center">
                                 <img src={f.url} alt={`foto-${f.id}`} className="w-[200px] h-[140px] object-cover rounded-md" />
                                 <div className="flex gap-2">
-                                  <Button size="sm" type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}>Substituir</Button>
+                                  <Button size="sm" type="button" onClick={() => triggerReplace(f.id)} disabled={uploading}>Substituir</Button>
                                   <Button size="sm" type="button" onClick={() => handleDeleteFoto(f.id)} disabled={uploading}>Excluir</Button>
                                 </div>
                               </div>

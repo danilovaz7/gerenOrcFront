@@ -1,7 +1,6 @@
 import React, { type MouseEventHandler, useEffect, useMemo, useRef, useState } from "react";
 import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, Button } from "@heroui/react";
-import { useTokenStore } from "../hooks/useTokenStore";
-import type { Usuario } from "../interfaces/Usuario";
+
 
 export type Foto = {
     id: number;
@@ -40,7 +39,6 @@ export function ProcedimentoCard({
     fotos,
     status,
     usuario_id_tipo,
-    onDeleteFoto,
     onReplaceFoto,
     onRequestFotos,
     onclick,
@@ -69,52 +67,16 @@ export function ProcedimentoCard({
     const [index, setIndex] = useState(0);
     const current = localFotos[index];
 
-    const { user, token } = useTokenStore();
-    const [usuario, setUsuario] = useState<Usuario | null>(null);
-    useEffect(() => {
-        if (!user?.id) return;
-        fetch(`${import.meta.env.VITE_API_URL}/usuarios/${user.id}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            },
-        })
-            .then(r => r.json())
-            .then((data: Usuario) => setUsuario(data))
-            .catch(console.error);
-    }, [token, user?.id]);
-
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [replaceTargetId, setReplaceTargetId] = useState<number | null>(null);
-    const [actionLocked, setActionLocked] = useState(false);
+    const [, setActionLocked] = useState(false);
 
     const goPrev = () => setIndex((i) => (localFotos.length ? (i - 1 + localFotos.length) % localFotos.length : 0));
     const goNext = () => setIndex((i) => (localFotos.length ? (i + 1) % localFotos.length : 0));
 
-    async function handleDelete(fotoId: number) {
-        if (!onDeleteFoto) return;
-        if (!confirm("Deseja remover esta foto?")) return;
-        try {
-            setActionLocked(true);
-            await onDeleteFoto(fotoId);
-            if (onRequestFotos) {
-                const fresh = await onRequestFotos();
-                setLocalFotos((fresh ?? []).slice().sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0)));
-                setIndex(0);
-            }
-        } catch (err) {
-            console.error("delete foto", err);
-        } finally {
-            setActionLocked(false);
-        }
-    }
+    
 
-    function triggerReplace(fotoId: number) {
-        if (!onReplaceFoto) return;
-        setReplaceTargetId(fotoId);
-        fileInputRef.current?.click();
-    }
-
+    
     const isMobile = window.innerWidth < 640; // simples checagem
 
     async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
