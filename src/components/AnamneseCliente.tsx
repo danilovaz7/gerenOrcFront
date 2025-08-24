@@ -296,7 +296,6 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 <Controller
                     name="anamnese.hepa"
                     control={control}
-                    rules={{ required: "Obrigatório" }}
                     render={({ field, fieldState }) => (
                         <>
                             <div className="flex justify-between w-full sm:w-[50%] items-center">
@@ -315,7 +314,6 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                                 <Controller
                                     name="anamnese.hepa_obs"
                                     control={control}
-                                    rules={{ required: "Qual hepatite?" }}
                                     render={({ field, fieldState }) => {
                                         const { name, ref, onBlur, onChange, value } = field;
                                         return (

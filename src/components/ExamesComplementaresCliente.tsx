@@ -18,7 +18,6 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
           name="examesComplementares.peso"
           control={control}
           rules={{
-            required: "Peso é obrigatório",
             min: { value: 0, message: "Peso deve ser positivo" }
           }}
           render={({ field, fieldState }) => {
@@ -59,7 +58,6 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
         <Controller
           name="examesComplementares.data_peso"
           control={control}
-          rules={{ required: "Data de medição é obrigatória" }}
           render={({ field, fieldState }) => (
             <DateInput
               value={field.value ? parseDate(field.value) : null}
@@ -78,7 +76,6 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
         <Controller
           name="examesComplementares.tipo_sanguineo"
           control={control}
-          rules={{ required: "Tipo sanguíneo é obrigatório" }}
           render={({ field, fieldState }) => {
             const { name, ref, onBlur, onChange, value } = field;
             return (
@@ -105,7 +102,6 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
         <Controller
           name="examesComplementares.pressao"
           control={control}
-          rules={{ required: "Pressão é obrigatória" }}
           render={({ field, fieldState }) => {
             const { name, ref, onBlur, onChange: fieldOnChange, value } = field;
 
@@ -132,7 +128,6 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
         <Controller
           name="examesComplementares.data_pressao"
           control={control}
-          rules={{ required: "Data de medição é obrigatória" }}
           render={({ field, fieldState }) => (
             <DateInput
               value={field.value ? parseDate(field.value) : null}

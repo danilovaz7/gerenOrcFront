@@ -51,7 +51,7 @@ function UsuarioAutocomplete({
     name: string;
     usuarios: Usuario[];
 }) {
-    const { field, fieldState } = useController({ control, name, rules: { required: "Obrigatório" } });
+    const { field, fieldState } = useController({ control, name });
     const [query, setQuery] = useState(usuarios.find(u => u.id === field.value)?.nome || "");
     const [filtered, setFiltered] = useState<Usuario[]>([]);
 
@@ -67,7 +67,6 @@ function UsuarioAutocomplete({
             <Input
                 value={query}
                 label="Pesquisar paciênte..."
-                isRequired
                 errorMessage={fieldState.error?.message}
                 onChange={(e) => {
                     setQuery(e.target.value);
@@ -208,34 +207,34 @@ function AddOrcamentosPage() {
                             key={item.id}
                             className="w-full bg-[rgba(155,127,103,0.5)] p-2 rounded flex flex-wrap gap-3"
                         >
-                            <Controller name={`procedimentos.${index}.nome_procedimento`} control={control} rules={{ required: "Obrigatório" }}
+                            <Controller name={`procedimentos.${index}.nome_procedimento`} control={control} 
                                 render={({ field }) => (
                                     <Input
                                         {...field}
                                         className="w-full sm:w-[73%]"
                                         label="Nome do procedimento"
-                                        isRequired
+                                        
                                     />
                                 )}
                             />
-                            <Controller name={`procedimentos.${index}.valor_procedimento`} control={control} rules={{ required: "Obrigatório" }}
+                            <Controller name={`procedimentos.${index}.valor_procedimento`} control={control} 
                                 render={({ field }) => (
                                     <NumberInput
                                         {...field}
                                         className="w-[50%] sm:w-[10%]"
                                         label="Valor"
-                                        isRequired
+                                      
                                     />
                                 )}
                             />
-                            <Controller name={`procedimentos.${index}.dt_realizacao`} control={control} rules={{ required: "Obrigatório" }}
+                            <Controller name={`procedimentos.${index}.dt_realizacao`} control={control}
                                 render={({ field }) => (
                                     <DateInput
                                         className="w-[45%] sm:w-[15%]"
                                         value={field.value ? parseDate(field.value) : null}
                                         onChange={v => field.onChange(v?.toString() ?? "")}
                                         label="Data de realização"
-                                        isRequired
+                                       
                                     />
                                 )}
                             />
@@ -268,26 +267,26 @@ function AddOrcamentosPage() {
                     </button>
 
                     <div className="flex w-full flex-col gap-4">
-                        <Controller name={`validade`} control={control} rules={{ required: "Obrigatório" }}
+                        <Controller name={`validade`} control={control} 
                             render={({ field }) => (
                                 <DateInput
                                     className="w-[45%] sm:w-[20%]"
                                     value={field.value ? parseDate(field.value) : null}
                                     onChange={v => field.onChange(v?.toString() ?? "")}
                                     label="Data de validade"
-                                    isRequired
+                                   
                                 />
                             )}
                         />
 
                         <Controller
-                            name="forma_pagamento" control={control} rules={{ required: "Obrigatório" }}
+                            name="forma_pagamento" control={control} 
                             render={({ field }) => (
                                 <Select
                                     {...field}
                                     className="w-[60%] sm:w-[20%]"
                                     label="Forma de pagamento"
-                                    isRequired
+                                    
                                 >
                                     <SelectItem key="boleto" className="text-black">Boleto</SelectItem>
                                     <SelectItem key="cartão" className="text-black">Cartão</SelectItem>
