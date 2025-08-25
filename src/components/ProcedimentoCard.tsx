@@ -1,12 +1,20 @@
 import React, { type MouseEventHandler, useEffect, useMemo, useRef, useState } from "react";
 import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, Button } from "@heroui/react";
 
-
 export type Foto = {
     id: number;
     key?: string;
     url: string;
     ordem?: number;
+};
+
+export type RetornoView = {
+    id: number;
+    num_retorno?: number | null;
+    descricao?: string | null;
+    dt_retorno?: string | null;
+    createdAt?: string | null;
+    updatedAt?: string | null;
 };
 
 interface Props {
@@ -20,15 +28,18 @@ interface Props {
     onDeleteFoto?: (fotoId: number) => Promise<void> | void;
     onReplaceFoto?: (fotoId: number, file: File) => Promise<void> | void;
     onRequestFotos?: () => Promise<Foto[]>;
+    onRequestRetornos?: () => Promise<RetornoView[]>; // <-- nova prop opcional
     onclick?: MouseEventHandler<HTMLParagraphElement>;
 }
 
 function formatDateOnly(dateStr?: string) {
     if (!dateStr) return "N/A";
-    const parts = dateStr.split("-");
+    // aceita ISO (YYYY-MM-DD ou YYYY-MM-DDTHH:MM:SSZ)
+    const d = dateStr.split("T")[0];
+    const parts = d.split("-");
     if (parts.length < 3) return dateStr;
-    const [y, m, d] = parts;
-    return `${d}/${m}/${y}`;
+    const [y, m, day] = parts;
+    return `${day}/${m}/${y}`;
 }
 
 export function ProcedimentoCard({
@@ -41,6 +52,7 @@ export function ProcedimentoCard({
     usuario_id_tipo,
     onReplaceFoto,
     onRequestFotos,
+    onRequestRetornos,
     onclick,
 }: Props) {
     const statusInfo: Record<string, { label: string; color: string }> = {
@@ -74,10 +86,13 @@ export function ProcedimentoCard({
     const goPrev = () => setIndex((i) => (localFotos.length ? (i - 1 + localFotos.length) % localFotos.length : 0));
     const goNext = () => setIndex((i) => (localFotos.length ? (i + 1) % localFotos.length : 0));
 
-    
+    // simples checagem (mantive sua lógica)
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
 
-    
-    const isMobile = window.innerWidth < 640; // simples checagem
+    // estados para versionamento (read-only)
+    const [retornos, setRetornos] = useState<RetornoView[] | null>(null);
+    const [retornosLoading, setRetornosLoading] = useState(false);
+    const [retornosError, setRetornosError] = useState<string | null>(null);
 
     async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
@@ -102,6 +117,8 @@ export function ProcedimentoCard({
             setReplaceTargetId(null);
         }
     }
+
+    // abre modal e recarrega fotos + retornos (se as functions existirem)
     async function openAndMaybeRefresh() {
         if (onRequestFotos) {
             try {
@@ -112,6 +129,31 @@ export function ProcedimentoCard({
                 console.error("onRequestFotos error", err);
             }
         }
+
+        // buscar retornos (read-only)
+        if (onRequestRetornos) {
+            setRetornosLoading(true);
+            setRetornosError(null);
+            try {
+                const r = await onRequestRetornos();
+                // normalizar ordem por num_retorno asc (se existir)
+                const sorted = (r ?? []).slice().sort((a, b) => {
+                    const na = a.num_retorno ?? Number.POSITIVE_INFINITY;
+                    const nb = b.num_retorno ?? Number.POSITIVE_INFINITY;
+                    return na - nb;
+                });
+                setRetornos(sorted);
+            } catch (err: any) {
+                console.error("onRequestRetornos error", err);
+                setRetornosError(err?.message ?? "Erro ao carregar versionamento");
+                setRetornos(null);
+            } finally {
+                setRetornosLoading(false);
+            }
+        } else {
+            setRetornos(null); // sem prop -> sem dados
+        }
+
         onOpen();
     }
 
@@ -138,7 +180,10 @@ export function ProcedimentoCard({
                 <p className="truncate">N° retorno: {num_retorno == null || num_retorno === 0 ? "N/A" : num_retorno}</p>
 
                 <div
-                    onClick={() => { setIndex(0); void openAndMaybeRefresh(); }}
+                    onClick={() => {
+                        setIndex(0);
+                        void openAndMaybeRefresh();
+                    }}
                     className="flex items-center gap-2 cursor-pointer"
                     role="button"
                     aria-label={`Abrir galeria de fotos (${localFotos.length})`}
@@ -166,30 +211,45 @@ export function ProcedimentoCard({
                             <ModalHeader className="flex flex-col gap-1">Galeria de fotos</ModalHeader>
                             <ModalBody className="flex h-full flex-col items-center p-2">
                                 <div className="w-full h-full flex flex-col items-center gap-4 ">
+
+                                    <div className="w-full mt-4 p-4 bg-white rounded-md shadow-sm">
+                                        <h3 className="text-lg font-medium mb-2">Versionamento de retornos</h3>
+                                        {retornosLoading ? (
+                                            <div className="text-sm text-gray-600">Carregando versionamento…</div>
+                                        ) : retornosError ? (
+                                            <div className="text-sm text-red-600">Erro: {retornosError}</div>
+                                        ) : !retornos || retornos.length === 0 ? (
+                                            <div className="text-sm text-gray-600">Nenhuma versão registrada para este procedimento.</div>
+                                        ) : (
+                                            <div className="flex flex-col gap-2">
+                                                {retornos.map((r) => (
+                                                    <div key={r.id} className="w-full border rounded p-3 bg-[rgba(155,127,103,0.04)]">
+                                                        <div className="flex justify-between items-start gap-4 flex-wrap">
+                                                            <div>
+                                                                <div className="text-sm font-semibold">N° retorno: {r.num_retorno == null ? "N/A" : r.num_retorno}</div>
+                                                                <div className="text-sm text-gray-700 mt-1">{r.descricao ?? "—"}</div>
+                                                            </div>
+                                                            <div className="text-sm text-gray-600 whitespace-nowrap">{formatDateOnly(r.dt_retorno ?? r.createdAt ?? undefined)}</div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+
                                     <div className="w-full flex flex-col items-center gap-2">
                                         {/* Foto */}
                                         <div className="w-full flex items-center justify-center overflow-hidden rounded-md bg-black">
                                             {current ? (
-                                                <img
-                                                    src={current.url}
-                                                    alt={`foto-${current.id}`}
-                                                    className="w-full h-auto max-h-[80vh] object-contain"
-                                                />
+                                                <img src={current.url} alt={`foto-${current.id}`} className="w-full h-auto max-h-[80vh] object-contain" />
                                             ) : (
-                                                <div className="w-full h-96 bg-gray-800 flex items-center justify-center text-white">
-                                                    Sem fotos
-                                                </div>
+                                                <div className="w-full h-96 bg-gray-800 flex items-center justify-center text-white">Sem fotos</div>
                                             )}
                                         </div>
 
-                                       
                                         <div className="flex gap-4 mt-2">
-                                            <Button type="button" onClick={goPrev} className="px-4 py-2 bg-[#9B7F67]">
-                                                ◀
-                                            </Button>
-                                            <Button type="button" onClick={goNext} className="px-4 py-2 bg-[#9B7F67]">
-                                                ▶
-                                            </Button>
+                                            <Button type="button" onClick={goPrev} className="px-4 py-2 bg-[#9B7F67]">◀</Button>
+                                            <Button type="button" onClick={goNext} className="px-4 py-2 bg-[#9B7F67]">▶</Button>
                                         </div>
                                     </div>
 

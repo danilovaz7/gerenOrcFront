@@ -527,14 +527,12 @@ function ListagemProcedimentoPage() {
                       <Controller
                         name="dt_realizacao"
                         control={control}
-                        rules={{ required: 'Obrigatório' }}
                         render={({ field }) => (
                           <DateInput
                             value={field.value ? parseDate(field.value) : null}
                             onChange={(v) => field.onChange(v?.toString() ?? '')}
                             endContent={<CalendarIcon />}
                             label="Data"
-                            isRequired
                             errorMessage={errors.dt_realizacao?.message}
                             className="w-[48%]"
                           />
@@ -551,7 +549,6 @@ function ListagemProcedimentoPage() {
                               ref={ref}
                               type="number"
                               label="N° retorno"
-                              isRequired
                               errorMessage={errors.num_retorno?.message}
                               className="w-[50%]"
                               value={value === undefined || value === null ? '' : String(value)}
@@ -578,7 +575,6 @@ function ListagemProcedimentoPage() {
                           <Input
                             {...field}
                             label="Observações extras"
-                            isRequired
                             errorMessage={errors.obs_procedimento?.message}
                             className="w-[100%]"
                           />
