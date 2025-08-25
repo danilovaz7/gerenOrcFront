@@ -19,10 +19,19 @@ import { parseDate } from '@internationalized/date';
 import { ProcedimentoCard } from '../components/ProcedimentoCard';
 import type { Procedimento } from '../interfaces/Procedimento';
 import type { Usuario } from '../interfaces/Usuario';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm, useFieldArray } from 'react-hook-form';
 import { useSearchParams } from 'react-router';
 
-export type FormValues = Omit<Procedimento, 'id'>;
+type RetornoForm = {
+  dbId?: number; // id no banco (se existir)
+  num_retorno?: number | null;
+  descricao?: string;
+  dt_retorno?: string;
+};
+
+export type FormValues = Omit<Procedimento, 'id'> & {
+  retornos?: RetornoForm[];
+};
 
 export const CalendarIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg aria-hidden="true" fill="none" height="1em" role="presentation" viewBox="0 0 24 24" width="1em" {...props}>
@@ -135,9 +144,21 @@ function ListagemProcedimentoPage() {
       obs_procedimento: '',
       num_retorno: 0,
       status_retorno: '',
+      retornos: [], // adiciona retornos
     },
   });
-  const { reset, handleSubmit, control, formState: { errors } } = methods;
+  const { reset, handleSubmit, control, getValues, formState: { errors } } = methods;
+
+  // fieldArray para 'retornos'
+  const {
+    fields: retornoFields,
+    append: appendRetorno,
+    remove: removeRetornoField,
+    replace: replaceRetornos,
+  } = useFieldArray({
+    control,
+    name: 'retornos',
+  });
 
   useEffect(() => {
     if (!idProcedimento) return;
@@ -157,25 +178,92 @@ function ListagemProcedimentoPage() {
         obs_procedimento: data.obs_procedimento || '',
         num_retorno: data.num_retorno ?? 0,
         status_retorno: data.status_retorno || '',
+        retornos: [], // será substituído abaixo
       });
       onOpen();
+
+      // carregar retornos/versionamento do backend
+      try {
+        const resp = await fetch(
+          `${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}/retornos`,
+          { headers: { 'Content-Type': 'application/json', ...authHeaders } }
+        );
+        if (!resp.ok) {
+          console.warn('Não foi possível buscar versões:', resp.status);
+          replaceRetornos([]);
+          return;
+        }
+        const dataRet = await resp.json(); // espera array de versões
+        const normalized = (dataRet || []).map((r: any) => ({
+          dbId: r.id,
+          num_retorno: r.num_retorno ?? 0,
+          descricao: r.descricao ?? '',
+          dt_retorno: r.dt_retorno ?? '',
+        }));
+        replaceRetornos(normalized);
+      } catch (err) {
+        console.error('erro ao buscar retornos', err);
+        replaceRetornos([]);
+      }
     })().catch(console.error);
   }, [idProcedimento, token, reset, onOpen]);
 
   const onEditSubmit = async (values: FormValues) => {
     if (!idProcedimento) return;
-    const res = await fetch(
-      `${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}`,
-      {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders },
-        body: JSON.stringify(values),
-      }
-    );
-    if (res.ok) {
-      onClose();
-      fetchProcedimentos();
+
+    // separa retornos do restante do procedimento
+    const { retornos = [], ...procValues } = values as any;
+
+    // atualiza procedimento
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...authHeaders },
+      body: JSON.stringify(procValues),
+    });
+
+    if (!res.ok) {
+      console.error('Falha ao atualizar procedimento', res.status);
+      return;
     }
+
+    // processar retornos: novos => POST, existentes (dbId) => PUT
+    await Promise.all(
+      (retornos || []).map(async (r: RetornoForm) => {
+        try {
+          if (r.dbId) {
+            // atualizar existente - endpoint presumido
+            const up = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/retornos/${r.dbId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', ...authHeaders },
+              body: JSON.stringify({
+                num_retorno: r.num_retorno,
+                descricao: r.descricao,
+                dt_retorno: r.dt_retorno,
+              }),
+            });
+            if (!up.ok) console.warn('PUT retorno falhou', up.status);
+          } else {
+            // novo retorno -> POST para /procedimento/:idProcedimento/retornos
+            const post = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}/retornos`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', ...authHeaders },
+              body: JSON.stringify({
+                num_retorno: r.num_retorno,
+                descricao: r.descricao,
+                dt_retorno: r.dt_retorno,
+              }),
+            });
+            if (!post.ok) console.warn('POST retorno falhou', post.status);
+          }
+        } catch (err) {
+          console.error('erro ao salvar retorno', err);
+        }
+      })
+    );
+
+    // fechar modal e atualizar listagem
+    onClose();
+    fetchProcedimentos();
   };
 
   // now apiReplaceFoto uses token from closure via authHeaders
@@ -262,7 +350,6 @@ function ListagemProcedimentoPage() {
 
     try {
       setUploading(true);
-      // removed unused 'result' variable — we don't need it here
       await apiReplaceFoto(idProcedimento, targetId, file);
 
       // Atualiza fotos do procedimento com dados do servidor (mais seguro)
@@ -462,6 +549,112 @@ function ListagemProcedimentoPage() {
                       />
                     </section>
 
+                    {/* ---------- Versionamento de retornos (campo adicionado) ---------- */}
+                    <section className="flex flex-wrap gap-2 w-full">
+                      <div className="w-full bg-[rgba(155,127,103,0.06)] p-3 rounded flex flex-col gap-3">
+                        <div className="flex justify-between items-center">
+                          <h3 className="text-lg font-medium">Versionamento de retornos</h3>
+                          <Button
+                            type="button"
+                            onClick={() =>
+                              appendRetorno({
+                                // novo retorno em branco
+                                num_retorno: 0,
+                                descricao: '',
+                                dt_retorno: '',
+                              })
+                            }
+                            className="text-white bg-[#7F634B]"
+                            size="sm"
+                          >
+                            + Adicionar retorno
+                          </Button>
+                        </div>
+
+                        {retornoFields.length === 0 ? (
+                          <div className="text-sm text-[#75614e]">Nenhum retorno registrado para este procedimento.</div>
+                        ) : (
+                          retornoFields.map((f, idx) => (
+                            <div key={f.id} className="w-full bg-white p-3 rounded shadow-sm flex flex-wrap gap-3 items-end">
+                              <div className="flex flex-col w-[15%]">
+                                <label className="text-sm">Nº retorno</label>
+                                <Controller
+                                  name={`retornos.${idx}.num_retorno`}
+                                  control={control}
+                                  render={({ field }) => (
+                                    <Input
+                                      {...field}
+                                      type="number"
+                                      value={field.value === undefined || field.value === null ? '' : String(field.value)}
+                                      onChange={(e) => {
+                                        const v = e.target.value;
+                                        if (v === '') field.onChange(undefined);
+                                        else {
+                                          const n = Number(v);
+                                          if (!Number.isNaN(n)) field.onChange(n);
+                                        }
+                                      }}
+                                      className="w-full"
+                                    />
+                                  )}
+                                />
+                              </div>
+
+                              <div className="flex flex-col w-[50%]">
+                                <label className="text-sm">Descrição</label>
+                                <Controller
+                                  name={`retornos.${idx}.descricao`}
+                                  control={control}
+                                  render={({ field }) => <Input {...field} className="w-full" />}
+                                />
+                              </div>
+
+                              <div className="flex flex-col w-[25%]">
+                                <label className="text-sm">Data retorno</label>
+                                <Controller
+                                  name={`retornos.${idx}.dt_retorno`}
+                                  control={control}
+                                  render={({ field }) => (
+                                    <DateInput
+                                      value={field.value ? parseDate(field.value) : null}
+                                      onChange={(d) => field.onChange(d?.toString() ?? '')}
+                                      className="w-full"
+                                    />
+                                  )}
+                                />
+                              </div>
+
+                              <div className="flex gap-2">
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  onClick={async () => {
+                                    const dbId = (retornoFields[idx] as any).dbId as number | undefined;
+                                    if (dbId) {
+                                      if (!confirm('Remover esse retorno do banco?')) return;
+                                      try {
+                                        const del = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/retornos/${dbId}`, {
+                                          method: 'DELETE',
+                                          headers: { ...authHeaders },
+                                        });
+                                        if (!del.ok) console.warn('DELETE retorno falhou', del.status);
+                                      } catch (err) {
+                                        console.error('erro delete retorno', err);
+                                      }
+                                    }
+                                    removeRetornoField(idx);
+                                  }}
+                                  className="bg-red-500 text-white"
+                                >
+                                  Remover
+                                </Button>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </section>
+                    {/* ---------- fim versionamento ---------- */}
 
                     <div className="w-full flex flex-col gap-4">
                       <div className="flex gap-2 flex-wrap">
@@ -489,7 +682,6 @@ function ListagemProcedimentoPage() {
                         </Button>
                       </div>
                     </div>
-
 
                     <div className="flex flex-wrap w-full sm:flex-nowrap gap-2 justify-center">
                       <Button size="lg" type="submit" className="w-[15%] text-white bg-[#7F634B]">
