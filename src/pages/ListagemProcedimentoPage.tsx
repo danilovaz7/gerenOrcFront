@@ -147,7 +147,7 @@ function ListagemProcedimentoPage() {
       retornos: [], // adiciona retornos
     },
   });
-  const { reset, handleSubmit, control, getValues, formState: { errors } } = methods;
+  const { reset, handleSubmit, control, formState: { errors } } = methods;
 
   // fieldArray para 'retornos'
   const {
