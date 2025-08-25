@@ -612,7 +612,7 @@ function ListagemProcedimentoPage() {
                           <div className="text-sm text-[#75614e]">Nenhum retorno registrado para este procedimento.</div>
                         ) : (
                           retornoFields.map((f, idx) => (
-                            <div key={f.id} className="w-full bg-white p-3 rounded shadow-sm flex flex-wrap gap-3 items-end">
+                            <div key={f.id} className="w-full bg-white p-3 rounded shadow-sm flex flex-col sm:flex-row flex-wrap gap-3 items-end">
                               <div className="flex flex-col w-[15%]">
                                 <label className="text-sm">Nº retorno</label>
                                 <Controller
