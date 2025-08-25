@@ -488,6 +488,11 @@ function ListagemProcedimentoPage() {
                     const fresh = await fetchFotoUrlsAll(p.id);
                     return fresh;
                   }}
+                  onRequestRetornos={async () => {
+                    const r = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/${p.id}/retornos`, { headers: { 'Content-Type': 'application/json', ...authHeaders } });
+                    if (!r.ok) return [];
+                    return await r.json();
+                  }}
                 />
               ))
           )}
