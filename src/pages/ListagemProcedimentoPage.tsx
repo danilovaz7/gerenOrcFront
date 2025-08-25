@@ -612,8 +612,8 @@ function ListagemProcedimentoPage() {
                           <div className="text-sm text-[#75614e]">Nenhum retorno registrado para este procedimento.</div>
                         ) : (
                           retornoFields.map((f, idx) => (
-                            <div key={f.id} className="w-full bg-white p-3 rounded shadow-sm flex flex-col sm:flex-row flex-wrap gap-3 items-end">
-                              <div className="flex flex-col w-[15%]">
+                            <div key={f.id} className="w-full bg-white p-3 rounded shadow-sm flex flex-col sm:flex-row sm:flex-wrap gap-3 items-start justify-center sm:items-end">
+                              <div className="flex flex-col w-[60%] sm:w-[15%]">
                                 <label className="text-sm">Nº retorno</label>
                                 <Controller
                                   name={`retornos.${idx}.num_retorno`}
@@ -637,7 +637,7 @@ function ListagemProcedimentoPage() {
                                 />
                               </div>
 
-                              <div className="flex flex-col w-[50%]">
+                              <div className="flex flex-col w-full sm:w-[50%]">
                                 <label className="text-sm">Descrição</label>
                                 <Controller
                                   name={`retornos.${idx}.descricao`}
@@ -646,7 +646,7 @@ function ListagemProcedimentoPage() {
                                 />
                               </div>
 
-                              <div className="flex flex-col w-[25%]">
+                              <div className="flex flex-col w-[70%] sm:w-[25%]">
                                 <label className="text-sm">Data retorno</label>
                                 <Controller
                                   name={`retornos.${idx}.dt_retorno`}
