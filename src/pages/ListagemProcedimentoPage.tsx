@@ -1,3 +1,4 @@
+// src/pages/ListagemProcedimentoPage.tsx
 import { useTokenStore } from '../hooks/useTokenStore';
 import { useEffect, useRef, useState } from 'react';
 import { useFormik } from 'formik';
@@ -57,6 +58,7 @@ function ListagemProcedimentoPage() {
   const fileInputRef = useRef<HTMLInputElement>(null); // para upload múltiplo
   const fileReplaceRef = useRef<HTMLInputElement | null>(null); // para substituir única foto
   const [uploading, setUploading] = useState<boolean>(false);
+  const [saving, setSaving] = useState<boolean>(false);
 
   const [procedimentos, setProcedimentos] = useState<Procedimento[]>([]);
   const [usuario, setUsuario] = useState<Usuario>();
@@ -118,7 +120,7 @@ function ListagemProcedimentoPage() {
       .then((res) => res.json())
       .then(setUsuario)
       .catch(console.error);
-  }, [token, user?.id]); // authHeaders depends on token, but token is in deps
+  }, [token, user?.id]);
 
   const fetchProcedimentos = async () => {
     const url = new URL(`${import.meta.env.VITE_API_URL}/procedimentos`);
@@ -144,21 +146,47 @@ function ListagemProcedimentoPage() {
       obs_procedimento: '',
       num_retorno: 0,
       status_retorno: '',
-      retornos: [], // adiciona retornos
+      retornos: [],
     },
   });
   const { reset, handleSubmit, control, formState: { errors } } = methods;
 
-  // fieldArray para 'retornos'
+
   const {
     fields: retornoFields,
     append: appendRetorno,
-    remove: removeRetornoField,
     replace: replaceRetornos,
   } = useFieldArray({
     control,
     name: 'retornos',
   });
+
+  // helper para buscar retornos do servidor e normalizar
+  async function fetchRetornosFromServer(id: number) {
+    try {
+      const resp = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/${id}/retornos`, {
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
+      });
+      if (resp.status === 404) {
+        return [];
+      }
+      if (!resp.ok) {
+        console.warn('fetchRetornosFromServer não ok', resp.status);
+        return [];
+      }
+      const dataRet = await resp.json();
+      const normalized = (dataRet || []).map((r: any) => ({
+        dbId: r.id,
+        num_retorno: r.num_retorno ?? 0,
+        descricao: r.descricao ?? '',
+        dt_retorno: r.dt_retorno ?? '',
+      }));
+      return normalized as RetornoForm[];
+    } catch (err) {
+      console.error('erro ao buscar retornos', err);
+      return [];
+    }
+  }
 
   useEffect(() => {
     if (!idProcedimento) return;
@@ -182,56 +210,42 @@ function ListagemProcedimentoPage() {
       });
       onOpen();
 
-      // carregar retornos/versionamento do backend
-      try {
-        const resp = await fetch(
-          `${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}/retornos`,
-          { headers: { 'Content-Type': 'application/json', ...authHeaders } }
-        );
-        if (!resp.ok) {
-          console.warn('Não foi possível buscar versões:', resp.status);
-          replaceRetornos([]);
-          return;
-        }
-        const dataRet = await resp.json(); // espera array de versões
-        const normalized = (dataRet || []).map((r: any) => ({
-          dbId: r.id,
-          num_retorno: r.num_retorno ?? 0,
-          descricao: r.descricao ?? '',
-          dt_retorno: r.dt_retorno ?? '',
-        }));
-        replaceRetornos(normalized);
-      } catch (err) {
-        console.error('erro ao buscar retornos', err);
-        replaceRetornos([]);
-      }
+      // carregar retornos/versionamento do backend usando helper
+      const normalized = await fetchRetornosFromServer(idProcedimento);
+      replaceRetornos(normalized);
     })().catch(console.error);
   }, [idProcedimento, token, reset, onOpen]);
 
+  // onEditSubmit: atualiza procedimento e sincroniza retornos (POST/PUT) e recarrega do servidor
   const onEditSubmit = async (values: FormValues) => {
     if (!idProcedimento) return;
+    setSaving(true);
 
     // separa retornos do restante do procedimento
     const { retornos = [], ...procValues } = values as any;
 
-    // atualiza procedimento
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', ...authHeaders },
-      body: JSON.stringify(procValues),
-    });
+    try {
+      // 1) atualiza procedimento
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        body: JSON.stringify(procValues),
+      });
 
-    if (!res.ok) {
-      console.error('Falha ao atualizar procedimento', res.status);
-      return;
-    }
+      if (!res.ok) {
+        console.error('Falha ao atualizar procedimento', res.status);
+        alert('Falha ao atualizar procedimento');
+        setSaving(false);
+        return;
+      }
 
-    // processar retornos: novos => POST, existentes (dbId) => PUT
-    await Promise.all(
-      (retornos || []).map(async (r: RetornoForm) => {
+      // 2) salvar retornos (sequencial para coletar responses e ids)
+      const savedServerRetornos: any[] = [];
+
+      for (const r of retornos || []) {
         try {
           if (r.dbId) {
-            // atualizar existente - endpoint presumido
+            // atualizar existente (endpoint que usa id da versão)
             const up = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/retornos/${r.dbId}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json', ...authHeaders },
@@ -241,7 +255,15 @@ function ListagemProcedimentoPage() {
                 dt_retorno: r.dt_retorno,
               }),
             });
-            if (!up.ok) console.warn('PUT retorno falhou', up.status);
+            if (!up.ok) {
+              console.warn('PUT retorno falhou', up.status);
+              // tentar ler body de erro por debug
+              const errBody = await up.text().catch(() => '');
+              console.warn('PUT erro body:', errBody);
+            } else {
+              const saved = await up.json();
+              savedServerRetornos.push(saved);
+            }
           } else {
             // novo retorno -> POST para /procedimento/:idProcedimento/retornos
             const post = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/${idProcedimento}/retornos`, {
@@ -253,17 +275,33 @@ function ListagemProcedimentoPage() {
                 dt_retorno: r.dt_retorno,
               }),
             });
-            if (!post.ok) console.warn('POST retorno falhou', post.status);
+            if (!post.ok) {
+              console.warn('POST retorno falhou', post.status);
+              const errBody = await post.text().catch(() => '');
+              console.warn('POST erro body:', errBody);
+            } else {
+              const saved = await post.json();
+              savedServerRetornos.push(saved);
+            }
           }
         } catch (err) {
           console.error('erro ao salvar retorno', err);
         }
-      })
-    );
+      }
 
-    // fechar modal e atualizar listagem
-    onClose();
-    fetchProcedimentos();
+      // 3) Recarregar retornos do backend (garante dbId e dados consistentes)
+      const normalized = await fetchRetornosFromServer(idProcedimento);
+      replaceRetornos(normalized);
+
+      // 4) atualiza lista principal e fecha modal
+      fetchProcedimentos();
+      onClose();
+    } catch (err) {
+      console.error('Erro no onEditSubmit:', err);
+      alert('Erro ao salvar. Veja console.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   // now apiReplaceFoto uses token from closure via authHeaders
@@ -296,11 +334,10 @@ function ListagemProcedimentoPage() {
         { method: 'POST', headers: { ...authHeaders }, body: formData }
       );
 
-      const body = await res.json();
+      const body = await res.json().catch(() => ({}));
       if (!res.ok) {
         console.error('Upload falhou:', res.status, body);
       } else {
-        // backend returns fotosCriadas array, but we will simply refresh the list
         const fotos = await fetchFotoUrlsAll(idProcedimento);
         setProcedimento((prev) => (prev ? { ...prev, fotos } : prev));
         fetchProcedimentos();
@@ -558,7 +595,6 @@ function ListagemProcedimentoPage() {
                             type="button"
                             onClick={() =>
                               appendRetorno({
-                                // novo retorno em branco
                                 num_retorno: 0,
                                 descricao: '',
                                 dt_retorno: '',
@@ -623,32 +659,6 @@ function ListagemProcedimentoPage() {
                                   )}
                                 />
                               </div>
-
-                              <div className="flex gap-2">
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  onClick={async () => {
-                                    const dbId = (retornoFields[idx] as any).dbId as number | undefined;
-                                    if (dbId) {
-                                      if (!confirm('Remover esse retorno do banco?')) return;
-                                      try {
-                                        const del = await fetch(`${import.meta.env.VITE_API_URL}/procedimento/retornos/${dbId}`, {
-                                          method: 'DELETE',
-                                          headers: { ...authHeaders },
-                                        });
-                                        if (!del.ok) console.warn('DELETE retorno falhou', del.status);
-                                      } catch (err) {
-                                        console.error('erro delete retorno', err);
-                                      }
-                                    }
-                                    removeRetornoField(idx);
-                                  }}
-                                  className="bg-red-500 text-white"
-                                >
-                                  Remover
-                                </Button>
-                              </div>
                             </div>
                           ))
                         )}
@@ -684,8 +694,8 @@ function ListagemProcedimentoPage() {
                     </div>
 
                     <div className="flex flex-wrap w-full sm:flex-nowrap gap-2 justify-center">
-                      <Button size="lg" type="submit" className="w-[15%] text-white bg-[#7F634B]">
-                        Salvar
+                      <Button size="lg" type="submit" className="w-[15%] text-white bg-[#7F634B]" disabled={saving}>
+                        {saving ? 'Salvando…' : 'Salvar'}
                       </Button>
                     </div>
                   </HForm>

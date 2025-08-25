@@ -312,17 +312,27 @@ export default function InfoClientes() {
   const onSubmit = async (values: FormValues) => {
     if (apenasLeitura) return;
 
-    const res = await fetch(
-      `${import.meta.env.VITE_API_URL}/usuarios/${idUsuario}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(values)
-      }
-    );
+    // sanitize examesComplementares
+    const ec = values.examesComplementares || {};
+    const examesSan = {
+      ...ec,
+      peso: ec.peso == null ? null : Number(ec.peso),
+      data_peso: ec.data_peso && ec.data_peso !== '' ? ec.data_peso : null,
+      tipo_sanguineo: ec.tipo_sanguineo && ec.tipo_sanguineo !== '' ? ec.tipo_sanguineo : null,
+      pressao: ec.pressao && ec.pressao !== '' ? ec.pressao : null,
+      data_pressao: ec.data_pressao && ec.data_pressao !== '' ? ec.data_pressao : null,
+    };
+
+    const payload = { ...values, examesComplementares: examesSan };
+
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/${idUsuario}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
     if (res.ok) navigate('/home');
   };
 
