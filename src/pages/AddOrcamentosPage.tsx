@@ -71,11 +71,10 @@ function UsuarioAutocomplete({
     <div className="relative w-full sm:w-[40%]">
       <Input
         value={query}
-        label="Pesquisar paciênte..."
+        label="Pesquisar paciente..."
         errorMessage={fieldState.error?.message}
         onChange={(e) => {
           setQuery(e.target.value);
-          // evita enviar 0 como usuario_id ao digitar — usa null
           field.onChange(null);
         }}
       />
