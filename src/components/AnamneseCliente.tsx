@@ -94,10 +94,10 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 label="Tem alergia a algum medicamento?"
             />
             <CheckboxGroupCliente control={control} array={alergFields} >
-                <Checkbox value="alerg_penincilina">Penincelina</Checkbox>
+                <Checkbox value="alerg_penincilina">Penincilina</Checkbox>
                 <Checkbox value="alerg_sulfa">Sulfa</Checkbox>
-                <Checkbox value="alerg_ass">ASS - Ácido Acetil Salicítico</Checkbox>
-                <Checkbox value="alerg_anestesico_loc">Anestesico local</Checkbox>
+                <Checkbox value="alerg_ass">ASS - Ácido Acetil Salicílico</Checkbox>
+                <Checkbox value="alerg_anestesico_loc">Anestésico local</Checkbox>
             </CheckboxGroupCliente>
             <div className="flex w-full flex-col gap-2">
                 <div className="flex justify-between w-full flex-col sm:flex-row sm:w-[50%] items-center">
@@ -125,12 +125,12 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 <CheckboxGroupCliente control={control} array={sintFields} >
                     <Checkbox value="sint_dor_cabeca">Dor de cabeça</Checkbox>
                     <Checkbox value="sint_tontura">Tontura</Checkbox>
-                    <Checkbox value="sint_nauseas">Nauseas</Checkbox>
+                    <Checkbox value="sint_nauseas">Náuseas</Checkbox>
                     <Checkbox value="sint_dor_nuca">Dor na nuca</Checkbox>
                     <Checkbox value="sint_palpitacoes">Palpitações</Checkbox>
                     <Checkbox value="sint_zumbidos">Zumbidos</Checkbox>
                     <Checkbox value="sint_perda_memoria">Perda de memória</Checkbox>
-                    <Checkbox value="sint_perda_equilibrio">Perda de equilibrio</Checkbox>
+                    <Checkbox value="sint_perda_equilibrio">Perda de equilíbrio</Checkbox>
                 </CheckboxGroupCliente>
             </div>
 
@@ -198,7 +198,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 <CheckboxGroupCliente control={control} array={respFields} >
                     <Checkbox value="resp_asma">Asma</Checkbox>
                     <Checkbox value="resp_bronquite">Bronquite</Checkbox>
-                    <Checkbox value="resp_tosse">Tosse frequênte</Checkbox>
+                    <Checkbox value="resp_tosse">Tosse frequente</Checkbox>
                     <Checkbox value="resp_tb">Tuberculose</Checkbox>
                 </CheckboxGroupCliente>
             </div>
@@ -224,8 +224,8 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 <CheckboxGroupCliente control={control} array={cardFields} >
                     <Checkbox value="card_dor_peito">Dor no peito</Checkbox>
                     <Checkbox value="card_dor_costas">Dor nas costas</Checkbox>
-                    <Checkbox value="card_cansa">Cnsa com facilidade</Checkbox>
-                    <Checkbox value="card_arritmia">Arritimia</Checkbox>
+                    <Checkbox value="card_cansa">Cansa com facilidade</Checkbox>
+                    <Checkbox value="card_arritmia">Arritmia</Checkbox>
                     <Checkbox value="card_sopro">Sopro</Checkbox>
                     <Checkbox value="card_dorme_altura">Dorme com a cabeça alta</Checkbox>
                     <Checkbox value="card_incha_pe">Pés incham com frequência</Checkbox>
@@ -289,7 +289,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
             <CheckboxGroupCliente control={control} array={guFields} >
                 <Checkbox value="gu_insuficiencia">Insuficiência</Checkbox>
                 <Checkbox value="gu_calculo">Cálculo renal</Checkbox>
-                <Checkbox value="gu_infeccao">Infecções urinarias</Checkbox>
+                <Checkbox value="gu_infeccao">Infecções urinárias</Checkbox>
                 <Checkbox value="gu_doenca_venerea">Doença venérea</Checkbox>
             </CheckboxGroupCliente>
             <div className="flex flex-col gap-2">
@@ -363,7 +363,7 @@ export const ExamesComplementares: React.FC<ExamesComplementaresProps> = ({ cont
                 />
                 <CheckboxGroupCliente control={control} array={doencasFields} >
                     <Checkbox value="diarreia_cronica">Diarreia crônica</Checkbox>
-                    <Checkbox value="febre_const">Frebre constante</Checkbox>
+                    <Checkbox value="febre_const">Febre constante</Checkbox>
                     <Checkbox value="sudorese">Sudorese</Checkbox>
                     <Checkbox value="cancer_pele">Câncer de pele</Checkbox>
                     <Checkbox value="diabetes_desc">Diabetes descompensada</Checkbox>
