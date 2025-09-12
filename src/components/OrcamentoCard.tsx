@@ -110,7 +110,7 @@ export function OrcamentoCard({
   return (
     <>
       {/* Linha única, texto um pouco maior, nome do paciente com largura limitada */}
-      <div className="flex flex-row flex-nowrap items-center gap-4 bg-[#9B7F67] text-base p-4 rounded-md border border-[#9B7F67] hover:bg-[#E3DCD4] hover:text-black transition-colors overflow-x-auto">
+      <div className="flex flex-row flex-nowrap justify-between items-center gap-4 bg-[#9B7F67] text-base p-4 rounded-md border border-[#9B7F67] hover:bg-[#E3DCD4] hover:text-black transition-colors overflow-x-auto">
         {/* ID: não encolhe */}
         <span className="flex-shrink-0 text-base min-w-[70px]">
           <strong>ID:</strong> {id_orcamento}
