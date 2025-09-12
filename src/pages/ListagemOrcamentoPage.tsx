@@ -223,8 +223,9 @@ function ListagemOrcamentoPage() {
                             onclick={() => {
                                 setIdOrcamento(orcamentoItem.id);
                             } }
-                            metodo_pag={orcamentoItem.forma_pagamento} 
-                            usuario_id_tipo={usuario?.id} />
+                            metodo_pag={orcamentoItem.forma_pagamento}
+                            usuario_id_tipo={usuario?.id} 
+                            id_paciente={orcamentoItem.usuario_id} />
                         ))
                     )}
                 </div>

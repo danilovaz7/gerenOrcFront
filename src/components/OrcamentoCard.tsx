@@ -1,4 +1,4 @@
-import { useState, type MouseEventHandler } from 'react';
+import { useEffect, useState, type MouseEventHandler } from 'react';
 import { useTokenStore } from '../hooks/useTokenStore';
 import { useNavigate } from 'react-router';
 import {
@@ -8,11 +8,16 @@ import {
   ModalHeader,
   useDisclosure,
 } from '@heroui/react';
+import type { Usuario } from '../interfaces/Usuario';
+
+ const [usuario, setUsuario] = useState<Usuario | undefined>();
+  const { token, user } = useTokenStore();
 
 interface OrcamentoProps {
   id_orcamento: number;
   qtd_procedimentos: number;
   dt_criacao: string;
+  id_paciente: number;
   valor_total: number;
   status: string;
   metodo_pag: string;
@@ -22,6 +27,7 @@ interface OrcamentoProps {
 
 export function OrcamentoCard({
   id_orcamento,
+  id_paciente,
   qtd_procedimentos,
   dt_criacao,
   status,
@@ -66,7 +72,27 @@ export function OrcamentoCard({
     }
   };
 
-  const { token } = useTokenStore();
+    useEffect(() => {
+          async function pegaUsuario() {
+              try {
+                  const response = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/${id_paciente}`, {
+                      method: 'GET',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          Authorization: `Bearer ${token}`,
+                      },
+                  });
+                  if (!response.ok) throw new Error('Erro ao buscar usuário');
+                  const usuarioAtual = await response.json();
+                  setUsuario(usuarioAtual);
+              } catch (err) {
+                  console.error(err);
+              }
+          }
+          pegaUsuario();
+      }, [token, user?.id]);
+
+ 
   const navigate = useNavigate();
 
   async function deletarOrc() {
@@ -98,6 +124,9 @@ export function OrcamentoCard({
     <>
       <div className="flex flex-col gap-2 sm:flex-row items-start sm:items-center bg-[#9B7F67] text-white p-4 rounded-md border border-[#9B7F67] hover:bg-[#E3DCD4] hover:text-black transition-colors">
         <span className="flex-1 text-sm sm:text-base">ID: {id_orcamento}</span>
+        <span className="flex-1 text-sm sm:text-base">
+          Paciente: {usuario?.nome}
+        </span>
         <div className="flex sm:flex-1 items-center gap-3">
           <span className={`inline-block w-3 h-3 rounded-full ${color}`} />
           <span className="text-sm whitespace-nowrap">{label}</span>

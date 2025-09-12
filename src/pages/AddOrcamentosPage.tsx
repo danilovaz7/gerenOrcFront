@@ -30,9 +30,7 @@ import type { Usuario } from "../interfaces/Usuario";
 type ProcedimentoForm = {
   nome_procedimento: string;
   valor_procedimento: number | null;
-  dt_realizacao: string | null;
   obs_procedimento?: string | null;
-  num_retorno: number | null;
   status_retorno: string;
 };
 
@@ -179,9 +177,7 @@ function AddOrcamentosPage() {
     const procedimentosSanitizados = (values.procedimentos || []).map((p) => ({
       nome_procedimento: p.nome_procedimento || "",
       valor_procedimento: p.valor_procedimento == null ? null : Number(p.valor_procedimento),
-      dt_realizacao: p.dt_realizacao ? p.dt_realizacao : null,
       obs_procedimento: p.obs_procedimento ? p.obs_procedimento : null,
-      num_retorno: p.num_retorno == null ? null : Number(p.num_retorno),
       status_retorno: p.status_retorno || ""
     }));
 
@@ -298,18 +294,6 @@ function AddOrcamentosPage() {
                 )}
               />
 
-              {/* DateInput: armazenamos string | null */}
-              <Controller name={`procedimentos.${index}.dt_realizacao`} control={control}
-                render={({ field }) => (
-                  <DateInput
-                    className="w-[45%] sm:w-[15%]"
-                    value={field.value ? parseDate(field.value) : null}
-                    onChange={v => field.onChange(v?.toString() ?? null)}
-                    label="Data de realização"
-                  />
-                )}
-              />
-
               {/* Observação: passar string '' quando null */}
               <Controller name={`procedimentos.${index}.obs_procedimento`} control={control}
                 render={({ field }) => (
@@ -322,38 +306,6 @@ function AddOrcamentosPage() {
                 )}
               />
 
-              {/* num_retorno: number | null */}
-              <Controller name={`procedimentos.${index}.num_retorno`} control={control}
-                render={({ field }) => (
-                  <NumberInput
-                    className="w-[40%] sm:w-[12%]"
-                    label="N° retorno"
-                    value={(field.value ?? undefined) as any}
-                    onChange={(v: any) => {
-                      if (v == null) {
-                        field.onChange(null);
-                        return;
-                      }
-                      if (typeof v === 'number') {
-                        field.onChange(Number.isNaN(v) ? null : v);
-                        return;
-                      }
-                      if (typeof v === 'string') {
-                        const s = v.trim();
-                        if (s === '') {
-                          field.onChange(null);
-                          return;
-                        }
-                        const n = Number(s);
-                        field.onChange(Number.isNaN(n) ? null : n);
-                        return;
-                      }
-                      const n = Number(v);
-                      field.onChange(Number.isNaN(n) ? null : n);
-                    }}
-                  />
-                )}
-              />
 
               <button type="button" onClick={() => remove(index)} className="w-[40%] sm:w-[12%] bg-[#7F634B] text-white rounded">
                 Remover
@@ -366,9 +318,7 @@ function AddOrcamentosPage() {
             onClick={() => append({
               nome_procedimento: "",
               valor_procedimento: null,
-              dt_realizacao: null,
               obs_procedimento: "",
-              num_retorno: null,
               status_retorno: "aguardando procedimento"
             })}
             className="bg-[#7F634B] text-white px-4 py-2 rounded self-start"
@@ -396,7 +346,7 @@ function AddOrcamentosPage() {
                   className="w-[60%] sm:w-[20%]"
                   label="Forma de pagamento"
                 >
-                  <SelectItem key="boleto" className="text-black">Boleto</SelectItem>
+                  <SelectItem key="dinheiro" className="text-black">Dinheiro</SelectItem>
                   <SelectItem key="cartão" className="text-black">Cartão</SelectItem>
                   <SelectItem key="pix" className="text-black">PIX</SelectItem>
                 </Select>
