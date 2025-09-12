@@ -109,63 +109,63 @@ export function OrcamentoCard({
 
   return (
     <>
-      {/* Container: FORÇA uma linha só (flex-nowrap). overflow-x-auto permite rolagem horizontal se necessário */}
-      <div className="flex flex-row flex-nowrap items-center gap-6 bg-[#9B7F67] text-white p-4 rounded-md border border-[#9B7F67] hover:bg-[#E3DCD4] hover:text-black transition-colors overflow-x-auto">
+      {/* Linha única, texto um pouco maior, nome do paciente com largura limitada */}
+      <div className="flex flex-row flex-nowrap items-center gap-4 bg-[#9B7F67] text-base p-4 rounded-md border border-[#9B7F67] hover:bg-[#E3DCD4] hover:text-black transition-colors overflow-x-auto">
         {/* ID: não encolhe */}
-        <span className="flex-shrink-0 text-sm min-w-[60px]">
+        <span className="flex-shrink-0 text-base min-w-[70px]">
           <strong>ID:</strong> {id_orcamento}
         </span>
 
-        {/* Paciente: ocupa o máximo possível, mas trunca se necessário */}
-        <span className="flex-1 min-w-0 text-sm truncate">
+        {/* Paciente: largura limitada (não ocupa tanto) e trunca */}
+        <span className="flex-shrink-0 text-base min-w-[140px] max-w-[240px] truncate">
           <strong>Paciente:</strong> <span className="truncate">{usuario?.nome ?? '—'}</span>
         </span>
 
         {/* Status: não encolhe, ícone + label */}
-        <div className="flex-shrink-0 flex items-center gap-2 text-sm whitespace-nowrap">
+        <div className="flex-shrink-0 flex items-center gap-2 text-base whitespace-nowrap">
           <span className={`inline-block w-3 h-3 rounded-full ${color}`} />
           <span className="truncate">{label}</span>
         </div>
 
         {/* Qtd procedimentos */}
-        <span className="flex-shrink-0 text-sm whitespace-nowrap">
+        <span className="flex-shrink-0 text-base whitespace-nowrap">
           <strong>Qtd:</strong> ({qtd_procedimentos})
         </span>
 
         {/* Data */}
-        <span className="flex-shrink-0 text-sm whitespace-nowrap">
+        <span className="flex-shrink-0 text-base whitespace-nowrap">
           <strong>Data:</strong> {formatDate}
         </span>
 
         {/* Valor */}
-        <span className="flex-shrink-0 text-sm whitespace-nowrap">
+        <span className="flex-shrink-0 text-base whitespace-nowrap">
           <strong>Valor:</strong> R${valor_total.toFixed(2)}
         </span>
 
         {/* Método */}
-        <span className="flex-shrink-0 text-sm whitespace-nowrap">
+        <span className="flex-shrink-0 text-base whitespace-nowrap">
           <strong>Método:</strong> {metodo_pag}
         </span>
 
-        {/* Botões (sempre à direita, não encolhem) */}
+        {/* Botões (à direita, não encolhem) */}
         <div className="flex-shrink-0 flex items-center gap-2">
           <button
             onClick={handleVerPdf}
             disabled={loadingPdf}
-            className="text-sm underline bg-[#4d3c2d] disabled:opacity-50 px-2 py-1 rounded"
+            className="text-base underline bg-[#4d3c2d] disabled:opacity-50 px-3 py-1 rounded"
           >
             {loadingPdf ? 'Carregando...' : 'Ver PDF'}
           </button>
 
           {usuario_id_tipo === 1 && onclick && (
             <>
-              <p onClick={onclick} className="underline cursor-pointer text-sm bg-[#4d3c2d] p-2 rounded-lg whitespace-nowrap">
+              <p onClick={onclick} className="underline cursor-pointer text-base bg-[#4d3c2d] p-2 rounded-lg whitespace-nowrap">
                 Atualizar
               </p>
 
               <button
                 onClick={onOpen}
-                className="text-sm underline bg-[#831b14] disabled:opacity-50 px-2 py-1 rounded"
+                className="text-base underline bg-[#831b14] disabled:opacity-50 px-3 py-1 rounded"
               >
                 Deletar
               </button>
