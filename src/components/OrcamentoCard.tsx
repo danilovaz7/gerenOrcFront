@@ -38,26 +38,22 @@ export function OrcamentoCard({
 
   const handleVerPdf = async () => {
     const newWin = window.open('', '_blank');
-
     setLoadingPdf(true);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/orcamento/${id_orcamento}/pdf`);
       if (!res.ok) throw new Error('Erro ao obter PDF');
       const { url } = await res.json();
-
-      if (newWin) {
-        newWin.location.href = url;
-      } else {
+      if (newWin) newWin.location.href = url;
+      else {
         try {
           await navigator.clipboard.writeText(url);
-          alert('O navegador bloqueou abertura automática. O link foi copiado para a área de transferência. Cole no Safari para abrir.');
-        } catch (e) {
+          alert('O navegador bloqueou abertura automática. Link copiado para a área de transferência.');
+        } catch {
           window.prompt('Abra este link no navegador (copie e cole):', url);
         }
       }
     } catch (err) {
       console.error('Erro ao carregar PDF:', err);
-      try { newWin?.close(); } catch (e) { /* ignore */ }
       alert('Não foi possível carregar o PDF.');
     } finally {
       setLoadingPdf(false);
@@ -109,52 +105,50 @@ export function OrcamentoCard({
   };
   const { label, color } = statusInfo[status] || { label: status, color: 'bg-gray-500' };
   const { isOpen, onOpen, onClose } = useDisclosure();
-  function handleClose() {
-    onClose();
-  }
+  function handleClose() { onClose(); }
 
   return (
     <>
-      {/* GRID container: min-w-0 é importante para permitir truncamento dentro do grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-8 gap-2 items-center bg-[#9B7F67] text-white p-4 rounded-md border border-[#9B7F67] hover:bg-[#E3DCD4] hover:text-black transition-colors min-w-0">
-        {/* ID */}
-        <span className="sm:col-span-1 text-sm sm:text-base truncate min-w-0">
+      {/* Container: FORÇA uma linha só (flex-nowrap). overflow-x-auto permite rolagem horizontal se necessário */}
+      <div className="flex flex-row flex-nowrap items-center gap-6 bg-[#9B7F67] text-white p-4 rounded-md border border-[#9B7F67] hover:bg-[#E3DCD4] hover:text-black transition-colors overflow-x-auto">
+        {/* ID: não encolhe */}
+        <span className="flex-shrink-0 text-sm min-w-[60px]">
           <strong>ID:</strong> {id_orcamento}
         </span>
 
-        {/* Paciente — ocupa mais espaço em sm */}
-        <span className="sm:col-span-3 text-sm sm:text-base truncate min-w-0">
+        {/* Paciente: ocupa o máximo possível, mas trunca se necessário */}
+        <span className="flex-1 min-w-0 text-sm truncate">
           <strong>Paciente:</strong> <span className="truncate">{usuario?.nome ?? '—'}</span>
         </span>
 
-        {/* Status */}
-        <div className="sm:col-span-2 flex items-center gap-3">
+        {/* Status: não encolhe, ícone + label */}
+        <div className="flex-shrink-0 flex items-center gap-2 text-sm whitespace-nowrap">
           <span className={`inline-block w-3 h-3 rounded-full ${color}`} />
-          <span className="text-sm whitespace-nowrap truncate">{label}</span>
+          <span className="truncate">{label}</span>
         </div>
 
         {/* Qtd procedimentos */}
-        <span className="sm:col-span-1 text-sm sm:text-base truncate min-w-0">
+        <span className="flex-shrink-0 text-sm whitespace-nowrap">
           <strong>Qtd:</strong> ({qtd_procedimentos})
         </span>
 
         {/* Data */}
-        <span className="sm:col-span-1 text-sm sm:text-base truncate min-w-0">
+        <span className="flex-shrink-0 text-sm whitespace-nowrap">
           <strong>Data:</strong> {formatDate}
         </span>
 
-        {/* Valor e método (em telas pequenas podem quebrar em linhas separadas) */}
-        <span className="sm:col-span-1 text-sm sm:text-base truncate min-w-0">
+        {/* Valor */}
+        <span className="flex-shrink-0 text-sm whitespace-nowrap">
           <strong>Valor:</strong> R${valor_total.toFixed(2)}
         </span>
 
-        {/* Método de pagamento (ocupa 1 coluna, mas em sm a distribuição fica melhor) */}
-        <span className="sm:col-span-1 text-sm sm:text-base truncate min-w-0">
+        {/* Método */}
+        <span className="flex-shrink-0 text-sm whitespace-nowrap">
           <strong>Método:</strong> {metodo_pag}
         </span>
 
-        {/* Botões — em sm ocupa 1 coluna à direita (alinha à direita) */}
-        <div className="sm:col-span-1 flex gap-2 justify-end items-center w-full">
+        {/* Botões (sempre à direita, não encolhem) */}
+        <div className="flex-shrink-0 flex items-center gap-2">
           <button
             onClick={handleVerPdf}
             disabled={loadingPdf}
@@ -165,7 +159,7 @@ export function OrcamentoCard({
 
           {usuario_id_tipo === 1 && onclick && (
             <>
-              <p onClick={onclick} className="underline cursor-pointer text-right bg-[#4d3c2d] p-2 rounded-lg whitespace-nowrap">
+              <p onClick={onclick} className="underline cursor-pointer text-sm bg-[#4d3c2d] p-2 rounded-lg whitespace-nowrap">
                 Atualizar
               </p>
 
