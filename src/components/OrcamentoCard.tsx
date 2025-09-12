@@ -10,9 +10,6 @@ import {
 } from '@heroui/react';
 import type { Usuario } from '../interfaces/Usuario';
 
- const [usuario, setUsuario] = useState<Usuario | undefined>();
-  const { token, user } = useTokenStore();
-
 interface OrcamentoProps {
   id_orcamento: number;
   qtd_procedimentos: number;
@@ -72,27 +69,32 @@ export function OrcamentoCard({
     }
   };
 
-    useEffect(() => {
-          async function pegaUsuario() {
-              try {
-                  const response = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/${id_paciente}`, {
-                      method: 'GET',
-                      headers: {
-                          'Content-Type': 'application/json',
-                          Authorization: `Bearer ${token}`,
-                      },
-                  });
-                  if (!response.ok) throw new Error('Erro ao buscar usuário');
-                  const usuarioAtual = await response.json();
-                  setUsuario(usuarioAtual);
-              } catch (err) {
-                  console.error(err);
-              }
-          }
-          pegaUsuario();
-      }, [token, user?.id]);
 
- 
+  const [usuario, setUsuario] = useState<Usuario | undefined>();
+  const { token } = useTokenStore();
+
+
+  useEffect(() => {
+    async function pegaUsuario() {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/${id_paciente}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) throw new Error('Erro ao buscar usuário');
+        const usuarioAtual = await response.json();
+        setUsuario(usuarioAtual);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    pegaUsuario();
+  }, [token, id_paciente]);
+
+
   const navigate = useNavigate();
 
   async function deletarOrc() {

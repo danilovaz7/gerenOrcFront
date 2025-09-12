@@ -215,17 +215,17 @@ function ListagemOrcamentoPage() {
                     ) : (
                         orcamentos.map((orcamentoItem) => (
                             <OrcamentoCard key={orcamentoItem.id}
-                            id_orcamento={orcamentoItem.id}
-                            qtd_procedimentos={orcamentoItem.procedimentosCount}
-                            status={orcamentoItem.status}
-                            dt_criacao={orcamentoItem.createdAt}
-                            valor_total={orcamentoItem.valor_total}
-                            onclick={() => {
-                                setIdOrcamento(orcamentoItem.id);
-                            } }
-                            metodo_pag={orcamentoItem.forma_pagamento}
-                            usuario_id_tipo={usuario?.id} 
-                            id_paciente={orcamentoItem.usuario_id} />
+                                id_orcamento={orcamentoItem.id}
+                                qtd_procedimentos={orcamentoItem.procedimentosCount}
+                                status={orcamentoItem.status}
+                                dt_criacao={orcamentoItem.createdAt}
+                                valor_total={orcamentoItem.valor_total}
+                                onclick={() => {
+                                    setIdOrcamento(orcamentoItem.id);
+                                }}
+                                metodo_pag={orcamentoItem.forma_pagamento}
+                                usuario_id_tipo={usuario?.id_tipo_usuario}
+                                id_paciente={orcamentoItem.usuario_id} />
                         ))
                     )}
                 </div>
@@ -258,9 +258,9 @@ function ListagemOrcamentoPage() {
                                                 control={control}
                                                 render={({ field }) => (
                                                     <Select
-                                                       
+
                                                         selectedKeys={selectedStatus ? new Set([selectedStatus]) : new Set()}
-                                                       
+
                                                         onSelectionChange={(keys: any) => {
                                                             let value = "";
                                                             if (typeof keys === "string") {
