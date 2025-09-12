@@ -115,7 +115,7 @@ export function OrcamentoCard({
       */}
       <div className="flex flex-col justify-between sm:flex-row sm:flex-nowrap items-start sm:items-center gap-3 sm:gap-4 bg-[#9B7F67] text-base p-4 rounded-md border border-[#9B7F67] hover:bg-[#E3DCD4] hover:text-black transition-colors">
         {/* Linha/Item: esquerda (ID). No mobile ocupa full width; no desktop não encolhe */}
-        <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center justify-between sm:justify-start gap-2">
+        <div className="w-full sm:w-auto flex flex-col sm:flex-row items-start sm:items-center justify-between sm:justify-start gap-2">
           <span className="text-base sm:flex-shrink-0 min-w-[70px]">
             <strong>ID:</strong> {id_orcamento}
           </span>
