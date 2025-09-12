@@ -39,12 +39,7 @@ export function OrcamentoCard({
   const handleVerPdf = async () => {
     const newWin = window.open('', '_blank');
 
-    if (newWin) {
-      setLoadingPdf(true);
-    } else {
-      setLoadingPdf(true);
-    }
-
+    setLoadingPdf(true);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/orcamento/${id_orcamento}/pdf`);
       if (!res.ok) throw new Error('Erro ao obter PDF');
@@ -69,10 +64,8 @@ export function OrcamentoCard({
     }
   };
 
-
   const [usuario, setUsuario] = useState<Usuario | undefined>();
   const { token } = useTokenStore();
-
 
   useEffect(() => {
     async function pegaUsuario() {
@@ -93,7 +86,6 @@ export function OrcamentoCard({
     }
     pegaUsuario();
   }, [token, id_paciente]);
-
 
   const navigate = useNavigate();
 
@@ -121,48 +113,71 @@ export function OrcamentoCard({
     onClose();
   }
 
-
   return (
     <>
-      <div className="flex flex-col gap-2 sm:flex-row items-start sm:items-center bg-[#9B7F67] text-white p-4 rounded-md border border-[#9B7F67] hover:bg-[#E3DCD4] hover:text-black transition-colors">
-        <span className="flex-1 text-sm sm:text-base">ID: {id_orcamento}</span>
-        <span className="flex-1 text-sm sm:text-base">
-          Paciente: {usuario?.nome}
+      {/* GRID container: min-w-0 é importante para permitir truncamento dentro do grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-8 gap-2 items-center bg-[#9B7F67] text-white p-4 rounded-md border border-[#9B7F67] hover:bg-[#E3DCD4] hover:text-black transition-colors min-w-0">
+        {/* ID */}
+        <span className="sm:col-span-1 text-sm sm:text-base truncate min-w-0">
+          <strong>ID:</strong> {id_orcamento}
         </span>
-        <div className="flex sm:flex-1 items-center gap-3">
+
+        {/* Paciente — ocupa mais espaço em sm */}
+        <span className="sm:col-span-3 text-sm sm:text-base truncate min-w-0">
+          <strong>Paciente:</strong> <span className="truncate">{usuario?.nome ?? '—'}</span>
+        </span>
+
+        {/* Status */}
+        <div className="sm:col-span-2 flex items-center gap-3">
           <span className={`inline-block w-3 h-3 rounded-full ${color}`} />
-          <span className="text-sm whitespace-nowrap">{label}</span>
+          <span className="text-sm whitespace-nowrap truncate">{label}</span>
         </div>
-        <span className="flex-1 text-sm sm:text-base">
-          Qtd procedimentos: ({qtd_procedimentos})
-        </span>
-        <span className="flex-1 text-sm sm:text-base">Data: {formatDate}</span>
-        <span className="flex-1 text-sm sm:text-base">
-          Valor: R${valor_total.toFixed(2)}
-        </span>
-        <span className="flex-1 text-sm sm:text-base">Método: {metodo_pag}</span>
-        <button
-          onClick={handleVerPdf}
-          disabled={loadingPdf}
-          className="mt-2 sm:mt-0 self-end sm:self-auto text-sm underline bg-[#4d3c2d] disabled:opacity-50"
-        >
-          {loadingPdf ? 'Carregando...' : 'Ver PDF'}
-        </button>
-        {usuario_id_tipo === 1 && onclick && (
-          <>
-            <p onClick={onclick} className="underline cursor-pointer self-end text-right sm:col-end-7 bg-[#4d3c2d] p-2 rounded-lg">
-              Atualizar
-            </p>
 
-            <button
-              onClick={onOpen}
-              className="mt-2 sm:mt-0 self-end sm:self-auto text-sm underline bg-[#831b14] disabled:opacity-50"
-            >
-              Deletar
-            </button>
-          </>
-        )}
+        {/* Qtd procedimentos */}
+        <span className="sm:col-span-1 text-sm sm:text-base truncate min-w-0">
+          <strong>Qtd:</strong> ({qtd_procedimentos})
+        </span>
 
+        {/* Data */}
+        <span className="sm:col-span-1 text-sm sm:text-base truncate min-w-0">
+          <strong>Data:</strong> {formatDate}
+        </span>
+
+        {/* Valor e método (em telas pequenas podem quebrar em linhas separadas) */}
+        <span className="sm:col-span-1 text-sm sm:text-base truncate min-w-0">
+          <strong>Valor:</strong> R${valor_total.toFixed(2)}
+        </span>
+
+        {/* Método de pagamento (ocupa 1 coluna, mas em sm a distribuição fica melhor) */}
+        <span className="sm:col-span-1 text-sm sm:text-base truncate min-w-0">
+          <strong>Método:</strong> {metodo_pag}
+        </span>
+
+        {/* Botões — em sm ocupa 1 coluna à direita (alinha à direita) */}
+        <div className="sm:col-span-1 flex gap-2 justify-end items-center w-full">
+          <button
+            onClick={handleVerPdf}
+            disabled={loadingPdf}
+            className="text-sm underline bg-[#4d3c2d] disabled:opacity-50 px-2 py-1 rounded"
+          >
+            {loadingPdf ? 'Carregando...' : 'Ver PDF'}
+          </button>
+
+          {usuario_id_tipo === 1 && onclick && (
+            <>
+              <p onClick={onclick} className="underline cursor-pointer text-right bg-[#4d3c2d] p-2 rounded-lg whitespace-nowrap">
+                Atualizar
+              </p>
+
+              <button
+                onClick={onOpen}
+                className="text-sm underline bg-[#831b14] disabled:opacity-50 px-2 py-1 rounded"
+              >
+                Deletar
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       <Modal className='bg-[#e5ded8]' isOpen={isOpen} size={'2xl'} onClose={handleClose}>
@@ -193,8 +208,5 @@ export function OrcamentoCard({
         </ModalContent>
       </Modal>
     </>
-
-
-
   );
 }
