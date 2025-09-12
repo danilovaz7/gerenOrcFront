@@ -109,63 +109,80 @@ export function OrcamentoCard({
 
   return (
     <>
-      {/* Linha única, texto um pouco maior, nome do paciente com largura limitada */}
-      <div className="flex flex-row flex-nowrap justify-between items-center gap-4 bg-[#9B7F67] text-base p-4 rounded-md border border-[#9B7F67] hover:bg-[#E3DCD4] hover:text-black transition-colors overflow-x-auto">
-        {/* ID: não encolhe */}
-        <span className="flex-shrink-0 text-base min-w-[70px]">
-          <strong>ID:</strong> {id_orcamento}
-        </span>
+      {/* Responsive:
+           - mobile (default): coluna (vertical) com itens full-width
+           - sm+ (telas grandes): linha única igual à versão aprovada
+      */}
+      <div className="flex flex-col sm:flex-row sm:flex-nowrap items-start sm:items-center gap-3 sm:gap-4 bg-[#9B7F67] text-base p-4 rounded-md border border-[#9B7F67] hover:bg-[#E3DCD4] hover:text-black transition-colors">
+        {/* Linha/Item: esquerda (ID). No mobile ocupa full width; no desktop não encolhe */}
+        <div className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2">
+          <span className="text-base sm:flex-shrink-0 min-w-[70px]">
+            <strong>ID:</strong> {id_orcamento}
+          </span>
 
-        {/* Paciente: largura limitada (não ocupa tanto) e trunca */}
-        <span className="flex-shrink-0 text-base min-w-[140px] max-w-[240px] truncate">
-          <strong>Paciente:</strong> <span className="truncate">{usuario?.nome ?? '—'}</span>
-        </span>
-
-        {/* Status: não encolhe, ícone + label */}
-        <div className="flex-shrink-0 flex items-center gap-2 text-base whitespace-nowrap">
-          <span className={`inline-block w-3 h-3 rounded-full ${color}`} />
-          <span className="truncate">{label}</span>
+          {/* Em mobile fazemos o paciente na mesma "linha" do ID (para economizar espaço),
+              mas ele também pode aparecer em linha separada. Aqui mantemos responsivo. */}
+          <span className="text-base sm:flex-shrink-0 sm:min-w-[140px] sm:max-w-[240px] truncate sm:ml-2">
+            <strong>Paciente:</strong>{' '}
+            <span className="truncate">{usuario?.nome ?? '—'}</span>
+          </span>
         </div>
 
-        {/* Qtd procedimentos */}
-        <span className="flex-shrink-0 text-base whitespace-nowrap">
-          <strong>Qtd:</strong> ({qtd_procedimentos})
-        </span>
+        {/* Em telas pequenas cada bloco abaixo ocupa full width (w-full). Em sm volta a ser inline */}
+        <div className="w-full sm:w-auto flex items-center gap-2">
+          <div className="flex items-center gap-2 text-base whitespace-nowrap">
+            <span className={`inline-block w-3 h-3 rounded-full ${color}`} />
+            <span className="truncate">{label}</span>
+          </div>
+        </div>
 
-        {/* Data */}
-        <span className="flex-shrink-0 text-base whitespace-nowrap">
-          <strong>Data:</strong> {formatDate}
-        </span>
+        <div className="w-full sm:w-auto flex items-center gap-2">
+          <span className="text-base whitespace-nowrap">
+            <strong>Qtd:</strong> ({qtd_procedimentos})
+          </span>
+        </div>
 
-        {/* Valor */}
-        <span className="flex-shrink-0 text-base whitespace-nowrap">
-          <strong>Valor:</strong> R${valor_total.toFixed(2)}
-        </span>
+        <div className="w-full sm:w-auto flex items-center gap-2">
+          <span className="text-base whitespace-nowrap">
+            <strong>Data:</strong> {formatDate}
+          </span>
+        </div>
 
-        {/* Método */}
-        <span className="flex-shrink-0 text-base whitespace-nowrap">
-          <strong>Método:</strong> {metodo_pag}
-        </span>
+        <div className="w-full sm:w-auto flex items-center gap-2">
+          <span className="text-base whitespace-nowrap">
+            <strong>Valor:</strong> R${valor_total.toFixed(2)}
+          </span>
+        </div>
 
-        {/* Botões (à direita, não encolhem) */}
-        <div className="flex-shrink-0 flex items-center gap-2">
+        <div className="w-full sm:w-auto flex items-center gap-2">
+          <span className="text-base whitespace-nowrap">
+            <strong>Método:</strong> {metodo_pag}
+          </span>
+        </div>
+
+        {/* Botões: em mobile ficam full-width (stacked horizontalmente com wrap),
+            em desktop ficam à direita sem encolher */}
+        <div className="w-full sm:w-auto flex flex-wrap sm:flex-nowrap gap-2 justify-start sm:justify-end items-center">
           <button
             onClick={handleVerPdf}
             disabled={loadingPdf}
-            className="text-base underline bg-[#4d3c2d] disabled:opacity-50 px-3 py-1 rounded"
+            className="w-full sm:w-auto text-base underline bg-[#4d3c2d] disabled:opacity-50 px-3 py-1 rounded"
           >
             {loadingPdf ? 'Carregando...' : 'Ver PDF'}
           </button>
 
           {usuario_id_tipo === 1 && onclick && (
             <>
-              <p onClick={onclick} className="underline cursor-pointer text-base bg-[#4d3c2d] p-2 rounded-lg whitespace-nowrap">
+              <p
+                onClick={onclick}
+                className="w-full sm:w-auto underline cursor-pointer text-base bg-[#4d3c2d] p-2 rounded-lg text-center sm:text-left"
+              >
                 Atualizar
               </p>
 
               <button
                 onClick={onOpen}
-                className="text-base underline bg-[#831b14] disabled:opacity-50 px-3 py-1 rounded"
+                className="w-full sm:w-auto text-base underline bg-[#831b14] disabled:opacity-50 px-3 py-1 rounded"
               >
                 Deletar
               </button>
