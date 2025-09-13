@@ -43,6 +43,7 @@ type FormValues = {
   valor_total: number;
   arquivo_pdf: string;
   procedimentos: ProcedimentoForm[];
+  observacao_pagamento: string
 };
 
 function UsuarioAutocomplete({
@@ -121,7 +122,8 @@ function AddOrcamentosPage() {
       valor_parcelado: "",
       validade: null,
       arquivo_pdf: "",
-      procedimentos: []
+      procedimentos: [],
+      observacao_pagamento: ""
     }
   });
   const {
@@ -187,8 +189,6 @@ function AddOrcamentosPage() {
       valor_total: Number(values.valor_total) || 0,
       procedimentos: procedimentosSanitizados
     };
-
-    console.log('payload', JSON.stringify(payload, null, 2));
 
     try {
       const res = await fetch(
@@ -298,7 +298,7 @@ function AddOrcamentosPage() {
               <Controller name={`procedimentos.${index}.obs_procedimento`} control={control}
                 render={({ field }) => (
                   <Input
-                    label="Observação (opcional)"
+                    label="Observação"
                     className="w-[100%]"
                     value={field.value ?? ''}
                     onChange={(e) => field.onChange(e.target.value === '' ? '' : e.target.value)}
@@ -390,6 +390,17 @@ function AddOrcamentosPage() {
                   label="Valor parcelado"
                   isDisabled
                   value={field.value ?? ''}
+                />
+              )}
+            />
+
+            <Controller name={`observacao_pagamento`} control={control}
+              render={({ field }) => (
+                <Input
+                  label="Observação de pagamento"
+                  className="w-[100%]"
+                  value={field.value ?? ''}
+                  onChange={(e) => field.onChange(e.target.value === '' ? '' : e.target.value)}
                 />
               )}
             />
